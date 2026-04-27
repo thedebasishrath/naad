@@ -131,6 +131,53 @@
   .share-pill svg { width: 16px; height: 16px; color: var(--whatsapp-deep); flex-shrink: 0; }
   .btn-primary svg { vertical-align: -3px; margin-right: 2px; }
 
+  /* === SPLASH === */
+  #screen-splash {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background: #FFFFFF;
+    gap: 14px;
+    padding: 0 24px;
+  }
+  #screen-splash .splash-logo {
+    width: 160px; height: 160px;
+    object-fit: contain;
+    filter: drop-shadow(0 8px 24px rgba(196, 65, 12, 0.18));
+    animation: splashEntry 0.9s cubic-bezier(0.34, 1.2, 0.64, 1) both;
+  }
+  #screen-splash .splash-wordmark {
+    font-family: 'Fraunces', serif;
+    font-style: italic;
+    font-weight: 300;
+    font-size: 38px;
+    color: var(--saffron-deep);
+    letter-spacing: -0.01em;
+    font-variation-settings: 'opsz' 144;
+    margin-top: 8px;
+    animation: splashFade 0.7s 0.35s both;
+  }
+  #screen-splash .splash-deva {
+    font-family: 'Noto Sans Devanagari', serif;
+    font-size: 14px;
+    color: var(--warm-gray);
+    letter-spacing: 0.32em;
+    animation: splashFade 0.7s 0.55s both;
+  }
+  #screen-splash.fade-out {
+    opacity: 0;
+    transition: opacity 0.5s ease;
+  }
+  @keyframes splashEntry {
+    from { opacity: 0; transform: scale(0.85); }
+    to   { opacity: 1; transform: scale(1); }
+  }
+  @keyframes splashFade {
+    from { opacity: 0; transform: translateY(6px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
   /* === WELCOME / CHAT ONBOARDING === */
   #screen-welcome {
     display: flex;
@@ -151,15 +198,18 @@
     flex-shrink: 0;
   }
   .chat-header-avatar {
-    width: 40px; height: 40px;
+    width: 72px; height: 72px;
     border-radius: 50%;
-    background: linear-gradient(135deg, rgba(196, 65, 12, 0.12), rgba(212, 165, 116, 0.18));
+    background: linear-gradient(135deg, rgba(196, 65, 12, 0.06), rgba(212, 165, 116, 0.10));
     border: 1px solid rgba(196, 65, 12, 0.18);
     display: flex; align-items: center; justify-content: center;
-    color: var(--saffron);
-    font-family: 'Noto Sans Devanagari', serif;
-    font-size: 22px;
     flex-shrink: 0;
+    overflow: hidden;
+  }
+  .chat-header-avatar img {
+    width: 92%; height: 92%;
+    object-fit: contain;
+    display: block;
   }
   .chat-header-info { display: flex; flex-direction: column; line-height: 1.2; }
   .chat-header-name {
@@ -1260,9 +1310,15 @@
 <body>
 
 <!-- 01 WELCOME -->
-<div class="screen active" id="screen-welcome">
+<div class="screen active" id="screen-splash">
+  <img class="splash-logo" src="ganesha.png" alt="Naad" decoding="async">
+  <div class="splash-wordmark">Naad</div>
+  <div class="splash-deva">नाद</div>
+</div>
+
+<div class="screen" id="screen-welcome">
   <div class="chat-header">
-    <div class="chat-header-avatar">ॐ</div>
+    <div class="chat-header-avatar"><img src="ganesha.png" alt="Naad" decoding="async"></div>
     <div class="chat-header-info">
       <div class="chat-header-name">Naad</div>
       <div class="chat-header-status">online</div>
@@ -1371,7 +1427,7 @@
 <div class="screen" id="screen-completion">
   <div class="completion-mark">✓</div>
   <div class="completion-title">Session <em>complete.</em></div>
-  <div class="streak-line">🔥 8 days in a row</div>
+  <div class="streak-line" id="streakLine"></div>
   <div class="mood-prompt">How do you feel now?</div>
   <div class="mood-emoji">
     <button>😌</button>
@@ -1494,6 +1550,112 @@
 </div>
 
 <canvas id="shareCanvas" width="1080" height="1080"></canvas>
+
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-app.js";
+  import {
+    getFirestore, collection, addDoc, serverTimestamp,
+    query, where, getDocs
+  } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-firestore.js";
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyCgX-DneDDkHoYQmj-FCGgjMtRbDybewi8",
+    authDomain: "naad-yoga-a1c9a.firebaseapp.com",
+    projectId: "naad-yoga-a1c9a",
+    storageBucket: "naad-yoga-a1c9a.firebasestorage.app",
+    messagingSenderId: "366727729934",
+    appId: "1:366727729934:web:7db0134cd6373f9cda7d5f",
+    measurementId: "G-VR5JF2ZWX0"
+  };
+
+  console.log('[naad] firebase module: starting');
+
+  window.addEventListener('unhandledrejection', (e) => {
+    console.error('[naad] unhandled promise rejection:', e.reason);
+  });
+
+  const app = initializeApp(firebaseConfig);
+  const db = getFirestore(app);
+  console.log('[naad] firebase initialized; projectId =', firebaseConfig.projectId);
+
+  let uid = localStorage.getItem('naad_uid');
+  if (!uid) {
+    uid = 'u_' + Date.now().toString(36) + '_' + Math.random().toString(36).slice(2, 8);
+    localStorage.setItem('naad_uid', uid);
+  }
+  console.log('[naad] uid =', uid);
+
+  const save = (col, data) =>
+    addDoc(collection(db, col), { uid, createdAt: serverTimestamp(), ...data })
+      .then(ref => { console.log('[naad] ✓ saved', col, ref.id); return ref; })
+      .catch(err => { console.error('[naad] ✗ save failed', col, err.code || '', err.message || err); throw err; });
+
+  // ----- Session history cache (drives streak + week tracker) -----
+  const sessionsCache = []; // Date[]
+
+  function startOfDay(d) {
+    const x = new Date(d); x.setHours(0, 0, 0, 0); return x;
+  }
+  function getCheckins(numDays = 7) {
+    const today = startOfDay(new Date());
+    const out = [];
+    for (let i = numDays - 1; i >= 0; i--) {
+      const day = new Date(today); day.setDate(today.getDate() - i);
+      const next = new Date(day);  next.setDate(day.getDate() + 1);
+      const hit = sessionsCache.some(d => d >= day && d < next);
+      if (hit) out.push(true);
+      else if (i === 0) out.push(null); // today still pending
+      else out.push(false);
+    }
+    return out;
+  }
+  function getStreak() {
+    const c = getCheckins(60); // wider window for true streak
+    let s = 0;
+    for (let i = c.length - 1; i >= 0; i--) {
+      if (c[i] === true) s++;
+      else if (c[i] === null && i === c.length - 1) continue;
+      else break;
+    }
+    return s;
+  }
+  async function loadSessions() {
+    try {
+      const snap = await getDocs(query(collection(db, 'sessions'), where('uid', '==', uid)));
+      sessionsCache.length = 0;
+      snap.forEach(doc => {
+        const t = doc.data().createdAt;
+        if (t?.toDate) sessionsCache.push(t.toDate());
+      });
+      sessionsCache.sort((a, b) => a - b);
+      console.log('[naad] loaded', sessionsCache.length, 'sessions');
+      if (typeof window.onSessionsLoaded === 'function') window.onSessionsLoaded();
+    } catch (err) {
+      console.error('[naad] loadSessions failed', err.code || '', err.message || err);
+    }
+  }
+
+  window.naadDB = {
+    uid,
+    saveUser:    (user)    => save('users', user),
+    saveProfile: (profile) => save('profiles', profile),
+    saveSession: (session) => {
+      sessionsCache.push(new Date()); // optimistic — keep streak current
+      return save('sessions', session);
+    },
+    saveMood:    (mood)    => save('moods', mood),
+    getCheckins,
+    getStreak,
+  };
+
+  loadSessions();
+
+  // Auto diagnostic write — confirms reachability + rules in one shot
+  console.log('[naad] attempting diagnostic write to _diagnostics …');
+  save('_diagnostics', { ping: 'page-load', ua: navigator.userAgent.slice(0, 80) })
+    .then(() => console.log('[naad] DIAGNOSTIC OK — Firestore writes are working'))
+    .catch(() => console.error('[naad] DIAGNOSTIC FAILED — see error above. Check Firestore is enabled and rules allow writes.'));
+</script>
 
 <script>
 /* ============================================================
@@ -1862,6 +2024,7 @@ function selectMood(key) {
   state.currentProblem = key;
   state.currentMantraId = p.primary;
   state.currentCount = MANTRA_DB[p.primary].counts[Math.floor(MANTRA_DB[p.primary].counts.length / 2)] || 21;
+  window.naadDB?.saveMood({ mood: key, mantraId: p.primary });
   go('recommendation');
 }
 
@@ -1887,10 +2050,11 @@ function renderCheckin() {
     });
   }
 
-  // Mock check-in history: previous 6 days completed, today pending (streak = 6 going).
-  // Tweak this list to demo any pattern — true=completed, false=missed, null=pending.
-  const checkins = [true, true, true, true, true, true, null]; // [-6, -5, -4, -3, -2, -1, today]
-  const streak = computeStreak(checkins);
+  // Check-in history sourced from Firestore `sessions` collection (filtered by anonymous uid).
+  // Falls back to all-empty if Firestore hasn't loaded yet — re-renders on `onSessionsLoaded`.
+  const checkins = window.naadDB?.getCheckins?.(7)
+    || [false, false, false, false, false, false, null];
+  const streak = window.naadDB?.getStreak?.() ?? computeStreak(checkins);
 
   // Build cells
   const cells = days.map((d, i) => {
@@ -2146,6 +2310,10 @@ $('#btnCalculate').addEventListener('click', () => {
   state.hasBirthData = true;
   $('#calcSub').textContent = chart.hasTime ? 'Moon · Sun · Lagna' : 'Moon · Sun';
   $('#calculating').classList.add('show');
+  window.naadDB?.saveProfile({
+    date, time, place: $('#inputPlace').value,
+    hasTime: !time.skipped,
+  });
   setTimeout(() => { $('#calculating').classList.remove('show'); go('horoscope'); }, 1400);
 });
 
@@ -2217,6 +2385,16 @@ function tickChant() {
         cachedLineSpans.forEach(s => s.style.setProperty('--line-progress', 1));
         stopPlayerSimulation();
         $('#chantHint').textContent = 'complete';
+        window.naadDB?.saveSession({
+          mantraId: state.currentMantraId,
+          problem: state.currentProblem,
+          count: state.currentCount,
+        });
+        const streakNow = window.naadDB?.getStreak?.() ?? 0;
+        const sl = document.getElementById('streakLine');
+        if (sl) sl.textContent = streakNow > 0
+          ? `🔥 ${streakNow} day${streakNow === 1 ? '' : 's'} in a row`
+          : '';
         setTimeout(() => go('completion'), 900);
         return;
       }
@@ -2664,6 +2842,11 @@ function handleChatSubmit() {
     chatUser(chat.userPhone);
     chatSetInput({ placeholder: '', enabled: false });
 
+    window.naadDB?.saveUser({
+      name: chat.userName,
+      phone: chat.userPhone,
+    });
+
     setTimeout(() => {
       chatBotSequence([
         [`Wonderful, <strong>${escapeHtml(chat.userName.split(' ')[0])}</strong>.`, 280],
@@ -2711,8 +2894,21 @@ $('#chatInput').addEventListener('keydown', e => {
   }
 });
 
-go('welcome');
-startChatFlow();
+// Splash → welcome transition: hold splash briefly, fade it, then start chat
+setTimeout(() => {
+  const splash = document.getElementById('screen-splash');
+  if (splash) splash.classList.add('fade-out');
+  setTimeout(() => {
+    go('welcome');
+    startChatFlow();
+  }, 480);
+}, 1600);
+
+// When Firestore session history loads after page render,
+// refresh the home tracker so streak + week dots reflect real data.
+window.onSessionsLoaded = () => {
+  if (state.currentScreen === 'home') renderCheckin();
+};
 </script>
 
 </body>
