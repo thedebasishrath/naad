@@ -1,0 +1,2070 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#FAF5E8">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="format-detection" content="telephone=no">
+<title>Naad</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght,SOFT@9..144,300..800,0..100&family=Manrope:wght@300;400;500;600;700&family=Noto+Sans+Devanagari:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --paper: #F2EBDC;
+    --paper-warm: #FAF5E8;
+    --paper-soft: #EBE2CE;
+    --ink: #1F1611;
+    --ink-soft: #2D211A;
+    --warm-gray: #6B5A4F;
+    --warm-gray-light: #A8998A;
+    --warm-gray-faint: #D9CFBE;
+    --saffron: #C2410C;
+    --saffron-deep: #9A2D0A;
+    --saffron-soft: #E8896A;
+    --gold: #B8754F;
+    --gold-soft: #D4A574;
+    --gold-pale: #ECD9BD;
+    --maroon: #7F1D1D;
+    --walnut: #1A0F08;
+    --line: #C9BCA5;
+    --whatsapp: #25D366;
+    --whatsapp-deep: #128C7E;
+    --safe-top: env(safe-area-inset-top, 0px);
+    --safe-bot: env(safe-area-inset-bottom, 0px);
+    --gradient-banner: linear-gradient(135deg, #F4D4B5 0%, #E8B891 60%, #D4A574 100%);
+    --gradient-horoscope: linear-gradient(140deg, #2D211A 0%, #4A3525 60%, #6B4A35 100%);
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+  html, body {
+    height: 100%;
+    overscroll-behavior: none;
+    background: var(--paper-warm);
+    font-family: 'Manrope', system-ui, sans-serif;
+    color: var(--ink);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    overflow: hidden;
+  }
+  body {
+    max-width: 480px;
+    margin: 0 auto;
+    position: relative;
+    height: 100dvh; height: 100vh;
+    box-shadow: 0 0 80px rgba(31, 22, 17, 0.08);
+  }
+  button { font-family: inherit; cursor: pointer; }
+  input, select { font-family: inherit; }
+
+  .screen {
+    position: absolute; inset: 0;
+    overflow-y: auto; overflow-x: hidden;
+    background: var(--paper-warm);
+    padding-top: var(--safe-top); padding-bottom: var(--safe-bot);
+    opacity: 0; pointer-events: none;
+    transform: translateY(8px);
+    transition: opacity 0.35s ease, transform 0.35s ease;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+  }
+  .screen::-webkit-scrollbar { display: none; }
+  .screen.active { opacity: 1; pointer-events: auto; transform: translateY(0); }
+  .screen.active > * { animation: rise 0.5s ease both; }
+  .screen.active > *:nth-child(1) { animation-delay: 0.05s; }
+  .screen.active > *:nth-child(2) { animation-delay: 0.10s; }
+  .screen.active > *:nth-child(3) { animation-delay: 0.16s; }
+  .screen.active > *:nth-child(4) { animation-delay: 0.22s; }
+  .screen.active > *:nth-child(5) { animation-delay: 0.28s; }
+  .screen.active > *:nth-child(6) { animation-delay: 0.34s; }
+  @keyframes rise { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+  .btn-primary {
+    display: inline-flex; align-items: center; justify-content: center;
+    gap: 8px; width: 100%;
+    background: var(--ink); color: var(--paper);
+    border: none; padding: 17px 20px; border-radius: 999px;
+    font-size: 15px; font-weight: 600; letter-spacing: 0.01em;
+    transition: transform 0.15s ease, background 0.25s ease;
+  }
+  .btn-primary:active { transform: scale(0.97); background: var(--saffron-deep); }
+  .btn-primary.saffron { background: var(--saffron); }
+  .btn-primary.saffron:active { background: var(--saffron-deep); }
+  .btn-primary.whatsapp { background: var(--whatsapp); }
+  .btn-primary.whatsapp:active { background: var(--whatsapp-deep); }
+  .btn-primary:disabled { opacity: 0.4; pointer-events: none; }
+
+  .btn-secondary {
+    background: transparent; border: none;
+    color: var(--warm-gray); font-size: 13px;
+    text-decoration: underline; text-underline-offset: 4px;
+    text-decoration-color: var(--warm-gray-faint);
+    padding: 14px;
+  }
+  .btn-secondary:active { color: var(--ink); }
+
+  .icon-btn {
+    width: 40px; height: 40px; border-radius: 50%;
+    background: var(--paper-soft); border: none;
+    display: flex; align-items: center; justify-content: center;
+    color: var(--ink); font-size: 18px;
+    transition: transform 0.15s, background 0.2s;
+  }
+  .icon-btn:active { transform: scale(0.92); background: var(--warm-gray-faint); }
+
+  .share-pill {
+    display: inline-flex; align-items: center; gap: 7px;
+    padding: 0 14px 0 11px;
+    height: 40px;
+    border-radius: 999px;
+    background: var(--paper-soft);
+    border: none;
+    color: var(--ink);
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.02em;
+    transition: transform 0.15s, background 0.2s;
+  }
+  .share-pill:active { transform: scale(0.96); background: var(--warm-gray-faint); }
+  .share-pill svg { width: 16px; height: 16px; color: var(--whatsapp-deep); flex-shrink: 0; }
+  .btn-primary svg { vertical-align: -3px; margin-right: 2px; }
+
+  /* === WELCOME === */
+  #screen-welcome {
+    display: flex; flex-direction: column;
+    padding: max(60px, calc(var(--safe-top) + 40px)) 32px max(40px, var(--safe-bot));
+  }
+  .welcome-logo { margin-top: 24px; display: flex; flex-direction: column; align-items: center; gap: 14px; }
+  .welcome-logo .symbol {
+    width: 72px; height: 72px; border-radius: 50%;
+    border: 1.5px solid var(--gold);
+    display: flex; align-items: center; justify-content: center;
+    font-family: 'Noto Sans Devanagari', serif; font-size: 36px;
+    color: var(--saffron);
+    background: radial-gradient(circle, rgba(196, 65, 12, 0.08) 0%, transparent 70%);
+  }
+  .welcome-logo .brand {
+    font-family: 'Fraunces', serif; font-weight: 400; font-size: 22px;
+    letter-spacing: 0.34em; text-transform: uppercase; color: var(--ink);
+  }
+  .welcome-hero { margin-top: auto; margin-bottom: 36px; }
+  .welcome-hero h1 {
+    font-family: 'Fraunces', serif; font-weight: 300; font-size: 40px;
+    line-height: 1.12; letter-spacing: -0.02em; color: var(--ink);
+    font-variation-settings: 'opsz' 144, 'SOFT' 80;
+  }
+  .welcome-hero h1 em { font-style: italic; color: var(--saffron-deep); font-weight: 300; }
+  .welcome-hero p { margin-top: 22px; font-size: 15px; line-height: 1.6; color: var(--warm-gray); max-width: 320px; }
+  .welcome-actions { display: flex; flex-direction: column; gap: 4px; align-items: center; }
+
+  /* === HOME === */
+  #screen-home { padding-bottom: calc(72px + var(--safe-bot)); }
+  .home-bar {
+    padding: max(20px, calc(var(--safe-top) + 14px)) 24px 14px;
+    display: flex; justify-content: space-between; align-items: center;
+    background: var(--paper-warm); position: sticky; top: 0; z-index: 5;
+  }
+  .home-bar .brand {
+    font-family: 'Fraunces', serif; font-weight: 500; font-size: 19px;
+    letter-spacing: 0.24em; text-transform: uppercase; color: var(--ink);
+  }
+  .home-bar .right { display: flex; gap: 12px; align-items: center; }
+  .streak {
+    display: inline-flex; align-items: center; gap: 4px;
+    background: var(--paper-soft); padding: 6px 12px; border-radius: 999px;
+    font-size: 13px; font-weight: 600; color: var(--saffron-deep);
+  }
+  .avatar {
+    width: 34px; height: 34px; border-radius: 50%;
+    background: var(--gradient-horoscope);
+    display: flex; align-items: center; justify-content: center;
+    color: var(--gold-pale); font-size: 13px; font-weight: 600;
+    font-family: 'Fraunces', serif;
+  }
+
+  .banner {
+    margin: 8px 24px 24px;
+    background: var(--gradient-banner);
+    border-radius: 22px; padding: 20px 22px;
+    position: relative; overflow: hidden;
+    box-shadow: 0 4px 18px rgba(196, 65, 12, 0.16);
+    transition: transform 0.15s;
+  }
+  .banner:active { transform: scale(0.98); }
+  .banner::before {
+    content: ''; position: absolute; inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200' viewBox='0 0 200 200'%3E%3Cdefs%3E%3CradialGradient id='g'%3E%3Cstop offset='0' stop-color='%23ffffff' stop-opacity='0.3'/%3E%3Cstop offset='1' stop-color='%23ffffff' stop-opacity='0'/%3E%3C/radialGradient%3E%3C/defs%3E%3Ccircle cx='160' cy='40' r='80' fill='url(%23g)'/%3E%3C/svg%3E");
+    pointer-events: none;
+  }
+  .banner-title { font-family: 'Fraunces', serif; font-weight: 500; font-size: 18px; color: var(--walnut); margin-bottom: 4px; position: relative; z-index: 2; }
+  .banner-sub { font-size: 12px; color: rgba(31, 22, 17, 0.7); position: relative; z-index: 2; }
+  .banner-arrow { position: absolute; right: 22px; top: 50%; transform: translateY(-50%); color: var(--walnut); font-size: 22px; z-index: 2; }
+  .banner-chart { background: var(--gradient-horoscope); }
+  .banner-chart .banner-title { color: var(--gold-pale); }
+  .banner-chart .banner-sub { color: rgba(236, 217, 189, 0.75); }
+  .banner-chart .banner-arrow { color: var(--gold-soft); }
+  .banner-chart::before { display: none; }
+  .banner-compact {
+    background: transparent !important; box-shadow: none !important;
+    border: 1px dashed var(--gold-soft);
+    padding: 12px 18px !important; margin-bottom: 16px !important;
+  }
+  .banner-compact .banner-title { font-size: 14px; color: var(--gold); font-weight: 600; }
+  .banner-compact .banner-arrow { font-size: 16px; color: var(--gold); }
+
+  .home-question { padding: 8px 24px 22px; }
+  .home-question h2 {
+    font-family: 'Fraunces', serif; font-weight: 300; font-size: 32px;
+    line-height: 1.18; color: var(--ink); letter-spacing: -0.015em;
+    font-variation-settings: 'opsz' 144;
+  }
+  .home-question h2 em { font-style: italic; color: var(--saffron-deep); }
+
+  .mood-grid {
+    padding: 0 24px;
+    display: grid; grid-template-columns: 1fr 1fr; gap: 10px;
+  }
+  .mood-chip {
+    background: var(--paper-soft); border: 1px solid transparent;
+    padding: 16px 14px; border-radius: 16px;
+    text-align: left; color: var(--ink);
+    display: flex; flex-direction: column;
+    transition: all 0.15s ease;
+  }
+  .mood-chip:active {
+    transform: scale(0.97);
+    background: var(--paper-warm);
+    border-color: var(--saffron-soft);
+  }
+  .mood-chip .emoji { font-size: 22px; line-height: 1; margin-bottom: 8px; }
+  .mood-chip .label { font-size: 14px; font-weight: 600; letter-spacing: -0.01em; margin-bottom: 1px; }
+  .mood-chip .sub { font-size: 11px; color: var(--warm-gray); }
+  .mood-chip.show-more {
+    background: transparent;
+    border: 1px dashed var(--warm-gray-light);
+    align-items: center; justify-content: center;
+    text-align: center;
+  }
+  .mood-chip.show-more .label { color: var(--warm-gray); }
+
+  .mood-extra { display: none; }
+  .mood-extra.show { display: contents; }
+
+  .resume-card {
+    margin: 24px; padding: 14px 18px;
+    background: rgba(31, 22, 17, 0.04); border-radius: 14px;
+    display: flex; align-items: center; gap: 14px;
+    transition: background 0.2s;
+  }
+  .resume-card:active { background: rgba(31, 22, 17, 0.08); }
+  .resume-card .play {
+    width: 38px; height: 38px; border-radius: 50%;
+    background: var(--ink); color: var(--paper);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 13px; flex-shrink: 0;
+  }
+  .resume-card .meta { flex: 1; min-width: 0; }
+  .resume-card .meta .t { font-size: 13px; font-weight: 600; color: var(--ink); margin-bottom: 1px; }
+  .resume-card .meta .d {
+    font-size: 11px; color: var(--warm-gray);
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  }
+
+  .bottom-nav {
+    position: absolute; bottom: 0; left: 0; right: 0;
+    height: calc(64px + var(--safe-bot));
+    padding-bottom: var(--safe-bot);
+    background: rgba(250, 245, 232, 0.94);
+    backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+    border-top: 1px solid var(--line);
+    display: none;
+    align-items: center; justify-content: space-around;
+    z-index: 50;
+  }
+  .bottom-nav.show { display: flex; }
+  .nav-item {
+    display: flex; flex-direction: column; align-items: center; gap: 3px;
+    color: var(--warm-gray-light); font-size: 10px;
+    padding: 8px 18px; transition: color 0.2s;
+    background: none; border: none;
+  }
+  .nav-item.active { color: var(--saffron); }
+  .nav-item .ico { font-size: 18px; }
+
+  /* === RECOMMENDATION === */
+  .top-actions {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: max(14px, calc(var(--safe-top) + 8px)) 24px 8px;
+  }
+  .rec-content { padding: 12px 24px 60px; }
+  .rec-context {
+    font-family: 'Fraunces', serif; font-style: italic; font-weight: 400;
+    font-size: 14px; color: var(--saffron-deep);
+    letter-spacing: 0.04em; margin-bottom: 12px;
+  }
+  .mantra-card-primary { margin-bottom: 20px; }
+  .mantra-deva {
+    font-family: 'Noto Sans Devanagari', serif;
+    font-size: 28px; line-height: 1.4; color: var(--ink);
+    font-weight: 500; margin-bottom: 10px;
+    white-space: pre-line;
+  }
+  .mantra-deva.long { font-size: 22px; line-height: 1.5; }
+  .mantra-trans {
+    font-family: 'Fraunces', serif; font-style: italic; font-weight: 400;
+    font-size: 17px; color: var(--ink-soft); margin-bottom: 14px;
+    line-height: 1.4;
+  }
+  .mantra-meta {
+    display: flex; gap: 12px; flex-wrap: wrap;
+    font-size: 11px; color: var(--warm-gray);
+    text-transform: uppercase; letter-spacing: 0.14em;
+    margin-bottom: 18px;
+  }
+  .mantra-meta span:not(:last-child)::after {
+    content: '·'; margin-left: 12px; color: var(--warm-gray-light);
+  }
+  .mantra-desc {
+    font-size: 14px; line-height: 1.6;
+    color: var(--warm-gray); margin-bottom: 20px;
+  }
+  .mantra-source {
+    font-size: 11px; color: var(--warm-gray-light);
+    font-style: italic; margin-bottom: 22px;
+    padding-left: 10px; border-left: 2px solid var(--warm-gray-faint);
+  }
+
+  .duration-pills { display: flex; gap: 8px; margin-bottom: 24px; }
+  .pill {
+    padding: 9px 16px; border-radius: 999px;
+    background: transparent; border: 1px solid var(--line);
+    font-size: 12px; font-weight: 500; color: var(--warm-gray);
+    transition: all 0.2s;
+  }
+  .pill.active { background: var(--ink); border-color: var(--ink); color: var(--paper); }
+  .pill:active { transform: scale(0.96); }
+
+  .alt-mantras {
+    margin-top: 28px;
+    padding: 18px;
+    background: var(--paper-soft);
+    border-radius: 14px;
+  }
+  .alt-mantras-label {
+    font-family: 'Fraunces', serif; font-style: italic;
+    font-size: 12px; color: var(--warm-gray);
+    margin-bottom: 12px; letter-spacing: 0.05em;
+  }
+  .alt-mantra {
+    display: flex; align-items: center; gap: 12px;
+    padding: 10px 0;
+    border-bottom: 1px solid var(--warm-gray-faint);
+    cursor: pointer;
+    transition: opacity 0.2s;
+  }
+  .alt-mantra:last-child { border-bottom: none; }
+  .alt-mantra:active { opacity: 0.6; }
+  .alt-mantra .deva {
+    font-family: 'Noto Sans Devanagari', serif;
+    font-size: 14px; color: var(--ink); font-weight: 500;
+    flex: 1; min-width: 0;
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  }
+  .alt-mantra .arrow { color: var(--warm-gray-light); font-size: 14px; }
+
+  .divider-ornate {
+    margin: 32px 0 24px;
+    display: flex; align-items: center; gap: 12px;
+  }
+  .divider-ornate::before, .divider-ornate::after {
+    content: ''; flex: 1; height: 1px;
+    background: linear-gradient(90deg, transparent, var(--line), transparent);
+  }
+  .divider-ornate-symbol { font-family: 'Fraunces', serif; font-style: italic; font-size: 14px; color: var(--gold); }
+
+  .secondary-card {
+    background: linear-gradient(140deg, rgba(184, 117, 79, 0.06), rgba(212, 165, 116, 0.10));
+    border: 1px solid rgba(184, 117, 79, 0.2);
+    border-radius: 18px; padding: 22px;
+  }
+  .secondary-card .label {
+    font-family: 'Fraunces', serif; font-style: italic;
+    font-size: 13px; color: var(--gold); margin-bottom: 8px;
+  }
+  .secondary-card .label::before { content: '✦'; margin-right: 6px; }
+  .secondary-card .name {
+    font-family: 'Fraunces', serif; font-weight: 500; font-size: 19px;
+    color: var(--ink); margin-bottom: 6px;
+  }
+  .secondary-card .reason {
+    font-size: 13px; color: var(--warm-gray); line-height: 1.5; margin-bottom: 16px;
+  }
+  .secondary-card .add-link {
+    color: var(--saffron-deep); font-size: 13px; font-weight: 600;
+    background: none; border: none; padding: 0;
+    display: inline-flex; align-items: center; gap: 6px;
+  }
+
+  /* === PLAYER === */
+  /* === CHANT SCREEN === */
+  #screen-player {
+    --chant-progress: 0;
+    background:
+      radial-gradient(ellipse at center 35%, rgba(216, 156, 96, calc(0.10 + var(--chant-progress, 0) * 0.18)) 0%, transparent 60%),
+      radial-gradient(ellipse at bottom, rgba(127, 29, 29, 0.06) 0%, transparent 60%),
+      var(--paper-warm);
+    display: flex;
+    flex-direction: column;
+    cursor: pointer;
+  }
+  .chant-stage {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 24px 28px;
+    text-align: center;
+    user-select: none;
+    -webkit-user-select: none;
+  }
+  .chant-mantra-deva {
+    font-family: 'Noto Sans Devanagari', serif;
+    font-size: 44px;
+    font-weight: 500;
+    line-height: 1.5;
+    margin-bottom: 32px;
+    animation: chantBreathe 5s ease-in-out infinite;
+  }
+  .chant-mantra-deva.long { font-size: 30px; line-height: 1.55; }
+  /* Each line is its own gradient-clipped span — fills left-to-right as --line-progress goes 0 → 1.
+     For multi-line mantras, lines fill one after another (line 1 first, then line 2, etc.). */
+  .chant-line {
+    display: block;
+    background: linear-gradient(
+      90deg,
+      var(--saffron-deep) 0%,
+      var(--saffron) calc(var(--line-progress, 0) * 100% - 6%),
+      var(--gold-soft) calc(var(--line-progress, 0) * 100%),
+      rgba(31, 22, 17, 0.22) calc(var(--line-progress, 0) * 100% + 4%),
+      rgba(31, 22, 17, 0.22) 100%
+    );
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    -webkit-text-fill-color: transparent;
+  }
+  @keyframes chantBreathe {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.018); }
+  }
+  #screen-player.paused .chant-mantra-deva { animation-play-state: paused; }
+  .chant-mantra-trans {
+    font-family: 'Fraunces', serif;
+    font-style: italic;
+    font-weight: 400;
+    font-size: 17px;
+    color: var(--warm-gray);
+    margin-bottom: 14px;
+    max-width: 340px;
+    line-height: 1.4;
+  }
+  .chant-mantra-meaning {
+    font-size: 13px;
+    color: var(--warm-gray-light);
+    font-style: italic;
+    max-width: 320px;
+    line-height: 1.5;
+  }
+  .chant-counter {
+    text-align: center;
+    padding: 20px 32px max(36px, calc(var(--safe-bot) + 24px));
+  }
+  .chant-counter-line {
+    width: 48px;
+    height: 1px;
+    background: var(--gold-soft);
+    margin: 0 auto 16px;
+    opacity: 0.5;
+  }
+  .chant-counter-num {
+    font-family: 'Fraunces', serif;
+    font-style: italic;
+    font-weight: 300;
+    font-size: 52px;
+    line-height: 1;
+    color: var(--saffron);
+    letter-spacing: -0.01em;
+    font-variant-numeric: tabular-nums;
+    font-variation-settings: 'opsz' 144, 'SOFT' 80;
+    margin-bottom: 6px;
+    transform-origin: center;
+    display: inline-block;
+  }
+  .chant-counter-num.tick { animation: chantTick 0.5s cubic-bezier(0.34, 1.56, 0.64, 1); }
+  @keyframes chantTick {
+    0%   { transform: scale(1);    color: var(--saffron); }
+    35%  { transform: scale(1.18); color: var(--saffron-deep); text-shadow: 0 0 24px rgba(196, 65, 12, 0.4); }
+    100% { transform: scale(1);    color: var(--saffron); text-shadow: none; }
+  }
+  .chant-counter-total {
+    font-family: 'Fraunces', serif;
+    font-style: italic;
+    font-weight: 400;
+    font-size: 13px;
+    color: var(--gold);
+    letter-spacing: 0.06em;
+    opacity: 0.85;
+    margin-bottom: 14px;
+  }
+  .chant-counter-total .num { color: var(--gold-soft); font-variant-numeric: tabular-nums; }
+  .chant-counter-label {
+    font-size: 10px;
+    color: var(--warm-gray-light);
+    text-transform: uppercase;
+    letter-spacing: 0.22em;
+    transition: color 0.3s, opacity 0.3s;
+  }
+  #screen-player.paused .chant-counter-label { color: var(--saffron); opacity: 1; }
+  #screen-player.paused .chant-mantra-deva { opacity: 0.85; }
+  /* Subtle vignette in corners to focus attention */
+  #screen-player::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(ellipse at center, transparent 50%, rgba(31, 22, 17, 0.04) 100%);
+    pointer-events: none;
+  }
+
+  /* === COMPLETION === */
+  #screen-completion {
+    padding: max(60px, calc(var(--safe-top) + 40px)) 32px max(28px, var(--safe-bot));
+    display: flex; flex-direction: column; text-align: center;
+  }
+  .completion-mark {
+    width: 88px; height: 88px; margin: 24px auto 28px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--gold-soft), var(--saffron));
+    display: flex; align-items: center; justify-content: center;
+    color: white; font-size: 36px;
+    box-shadow: 0 14px 36px rgba(196, 65, 12, 0.3);
+    animation: scaleIn 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
+  }
+  @keyframes scaleIn { from { opacity: 0; transform: scale(0.5); } to { opacity: 1; transform: scale(1); } }
+  .completion-title {
+    font-family: 'Fraunces', serif; font-weight: 300; font-size: 36px;
+    line-height: 1.15; color: var(--ink); margin-bottom: 10px;
+    font-variation-settings: 'opsz' 144;
+  }
+  .completion-title em { font-style: italic; color: var(--saffron-deep); }
+  .streak-line {
+    font-family: 'Fraunces', serif; font-style: italic;
+    font-size: 17px; color: var(--saffron); margin-bottom: 48px;
+  }
+  .mood-prompt {
+    font-size: 12px; color: var(--warm-gray); margin-bottom: 18px;
+    text-transform: uppercase; letter-spacing: 0.18em;
+  }
+  .mood-emoji { display: flex; justify-content: center; gap: 14px; margin-bottom: 48px; }
+  .mood-emoji button {
+    width: 54px; height: 54px; border-radius: 50%;
+    background: var(--paper-soft); border: 2px solid transparent;
+    font-size: 26px; transition: all 0.2s;
+  }
+  .mood-emoji button:active { transform: scale(0.92); }
+  .mood-emoji button.selected {
+    border-color: var(--saffron); background: var(--paper-warm); transform: scale(1.08);
+  }
+  .completion-actions { margin-top: auto; display: flex; flex-direction: column; gap: 4px; }
+
+  /* === BIRTH INPUT === */
+  .birth-content { padding: 16px 24px 60px; }
+  .birth-title {
+    font-family: 'Fraunces', serif; font-weight: 300; font-size: 34px;
+    line-height: 1.15; color: var(--ink); margin: 12px 0 8px;
+    font-variation-settings: 'opsz' 144;
+  }
+  .birth-title em { font-style: italic; color: var(--saffron-deep); }
+  .birth-sub { font-size: 13px; color: var(--warm-gray); font-style: italic; margin-bottom: 32px; }
+  .field { margin-bottom: 18px; }
+  .field label {
+    display: block; font-size: 11px; color: var(--warm-gray);
+    text-transform: uppercase; letter-spacing: 0.14em;
+    margin-bottom: 8px; font-weight: 600;
+  }
+  .field label .opt {
+    text-transform: none; font-style: italic; font-weight: 400;
+    color: var(--warm-gray-light); letter-spacing: 0.02em; margin-left: 4px;
+  }
+  .field input, .field select {
+    width: 100%;
+    background: var(--paper-soft);
+    border: 1px solid transparent;
+    border-radius: 14px;
+    padding: 16px 18px;
+    font-size: 15px; color: var(--ink);
+    transition: all 0.2s;
+    appearance: none; -webkit-appearance: none;
+  }
+  .field select {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='8' viewBox='0 0 14 8'%3E%3Cpath fill='none' stroke='%236B5A4F' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round' d='M1 1l6 6 6-6'/%3E%3C/svg%3E");
+    background-repeat: no-repeat; background-position: right 18px center;
+    padding-right: 44px; cursor: pointer;
+  }
+  .field input:focus, .field select:focus {
+    outline: none; border-color: var(--saffron); background-color: var(--paper-warm);
+  }
+  .field input::placeholder { color: var(--warm-gray-light); }
+  .field-error { color: var(--saffron-deep); font-size: 12px; margin-top: 6px; font-style: italic; display: none; }
+  .field.has-error input, .field.has-error select { border-color: var(--saffron-deep); }
+  .field.has-error .field-error { display: block; }
+  .field-help {
+    margin-top: 28px; padding: 16px 18px;
+    background: rgba(184, 117, 79, 0.08);
+    border-left: 2px solid var(--gold-soft);
+    border-radius: 4px;
+    font-size: 12px; line-height: 1.6;
+    color: var(--ink-soft); font-style: italic;
+  }
+  .birth-actions { margin-top: 32px; }
+
+  /* === HOROSCOPE === */
+  #screen-horoscope { background: var(--gradient-horoscope); color: var(--gold-pale); }
+  #screen-horoscope .top-actions .icon-btn { background: rgba(255, 245, 232, 0.1); color: var(--gold-pale); }
+  #screen-horoscope .top-actions .share-pill { background: rgba(255, 245, 232, 0.1); color: var(--gold-pale); }
+  #screen-horoscope .top-actions .share-pill svg { color: var(--gold-soft); }
+  .horo-content { padding: 12px 24px 60px; }
+  .horo-title {
+    font-family: 'Fraunces', serif; font-weight: 300; font-size: 34px;
+    line-height: 1.15; color: var(--gold-pale); margin: 12px 0 32px;
+    font-variation-settings: 'opsz' 144;
+  }
+  .horo-title em { font-style: italic; color: var(--gold-soft); }
+  .planet-row {
+    display: flex; gap: 14px; align-items: flex-start;
+    padding: 18px 0; border-bottom: 1px solid rgba(236, 217, 189, 0.12);
+  }
+  .planet-row:last-of-type { border-bottom: none; }
+  .planet-icon {
+    width: 46px; height: 46px; border-radius: 50%;
+    background: rgba(236, 217, 189, 0.1);
+    border: 1px solid rgba(236, 217, 189, 0.18);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 22px; flex-shrink: 0;
+  }
+  .planet-info { flex: 1; padding-top: 2px; }
+  .planet-info .name {
+    font-family: 'Fraunces', serif; font-weight: 500; font-size: 16px;
+    color: var(--gold-pale); margin-bottom: 4px;
+  }
+  .planet-info .name em { font-style: italic; color: var(--gold-soft); font-weight: 400; margin-left: 6px; }
+  .planet-info .degree {
+    font-size: 11px; color: rgba(236, 217, 189, 0.5);
+    margin-left: 6px; font-variant-numeric: tabular-nums;
+  }
+  .planet-info .desc {
+    font-size: 12px; color: rgba(236, 217, 189, 0.65); line-height: 1.5;
+  }
+  .horo-divider {
+    height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(236, 217, 189, 0.2), transparent);
+    margin: 32px 0 22px;
+  }
+  .horo-mantras-label {
+    font-family: 'Fraunces', serif; font-style: italic;
+    font-size: 14px; color: var(--gold-soft); margin-bottom: 16px;
+  }
+  .horo-mantra {
+    background: rgba(255, 245, 232, 0.05);
+    border: 1px solid rgba(236, 217, 189, 0.1);
+    border-radius: 16px; padding: 20px; margin-bottom: 12px;
+    transition: all 0.2s;
+  }
+  .horo-mantra:active { background: rgba(255, 245, 232, 0.1); transform: scale(0.99); }
+  .horo-mantra .deva {
+    font-family: 'Noto Sans Devanagari', serif;
+    font-size: 19px; color: var(--gold-pale);
+    margin-bottom: 6px; line-height: 1.4;
+  }
+  .horo-mantra .reason { font-size: 12px; color: rgba(236, 217, 189, 0.6); margin-bottom: 12px; font-style: italic; }
+  .horo-mantra .play-btn {
+    display: inline-flex; align-items: center; gap: 6px;
+    color: var(--gold-soft); font-size: 11px; font-weight: 600;
+    text-transform: uppercase; letter-spacing: 0.12em;
+  }
+  .horo-actions { margin-top: 32px; }
+  #screen-horoscope .btn-primary { background: var(--gold-pale); color: var(--walnut); }
+  #screen-horoscope .btn-primary:active { background: white; }
+
+  .calculating {
+    position: absolute; inset: 0;
+    background: rgba(45, 33, 26, 0.97);
+    display: none; flex-direction: column;
+    align-items: center; justify-content: center;
+    color: var(--gold-pale); z-index: 30;
+  }
+  .calculating.show { display: flex; }
+  .calc-orb {
+    width: 88px; height: 88px; border-radius: 50%;
+    border: 1.5px solid var(--gold-soft); border-top-color: transparent;
+    animation: spin 1.4s linear infinite; margin-bottom: 28px;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  .calc-text { font-family: 'Fraunces', serif; font-style: italic; font-size: 20px; color: var(--gold-pale); }
+  .calc-sub { font-size: 11px; color: rgba(236, 217, 189, 0.6); margin-top: 8px; letter-spacing: 0.18em; text-transform: uppercase; }
+
+  /* === DEV FAB === */
+  .dev-fab {
+    position: fixed; bottom: max(80px, calc(var(--safe-bot) + 80px)); right: 20px;
+    width: 44px; height: 44px; border-radius: 50%;
+    background: var(--ink); color: var(--paper); border: none;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 18px;
+    box-shadow: 0 6px 20px rgba(31, 22, 17, 0.25);
+    z-index: 100; opacity: 0.55;
+    transition: opacity 0.2s, transform 0.15s;
+  }
+  .dev-fab:active { transform: scale(0.92); opacity: 1; }
+  .dev-fab.with-nav { bottom: max(80px, calc(var(--safe-bot) + 80px)); }
+  .dev-fab.no-nav { bottom: max(20px, calc(var(--safe-bot) + 20px)); }
+
+  .sheet-backdrop {
+    position: fixed; inset: 0; background: rgba(31, 22, 17, 0.5);
+    z-index: 200; opacity: 0; pointer-events: none;
+    transition: opacity 0.3s;
+  }
+  .sheet-backdrop.show { opacity: 1; pointer-events: auto; }
+
+  .sheet {
+    position: fixed; bottom: 0; left: 50%;
+    transform: translateX(-50%) translateY(100%);
+    width: 100%; max-width: 480px;
+    background: var(--paper-warm);
+    border-radius: 24px 24px 0 0; z-index: 201;
+    transition: transform 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+    padding: 8px 24px max(28px, var(--safe-bot));
+    max-height: 80dvh; overflow-y: auto;
+    box-shadow: 0 -10px 40px rgba(31, 22, 17, 0.18);
+  }
+  .sheet.show { transform: translateX(-50%) translateY(0); }
+  .sheet-handle { width: 40px; height: 4px; background: var(--warm-gray-faint); border-radius: 2px; margin: 0 auto 18px; }
+  .sheet h3 {
+    font-family: 'Fraunces', serif; font-weight: 500; font-size: 13px;
+    letter-spacing: 0.18em; text-transform: uppercase; color: var(--warm-gray);
+    margin-bottom: 14px; padding-bottom: 10px;
+    border-bottom: 1px dashed var(--line);
+  }
+  .sheet-nav { display: flex; flex-direction: column; gap: 2px; margin-bottom: 24px; }
+  .sheet-nav button {
+    background: transparent; border: none; text-align: left;
+    padding: 14px 16px; font-size: 14px; font-weight: 500;
+    color: var(--ink-soft); border-radius: 10px;
+    display: flex; align-items: center; gap: 14px;
+    transition: background 0.2s;
+  }
+  .sheet-nav button:active { background: var(--paper-soft); }
+  .sheet-nav button.active { background: var(--paper-soft); color: var(--saffron-deep); }
+  .sheet-nav button .num {
+    font-family: 'Fraunces', serif; font-style: italic; font-weight: 400;
+    font-size: 12px; color: var(--warm-gray-light); min-width: 22px;
+  }
+  .sheet-nav button.active .num { color: var(--saffron); }
+  .sheet-info {
+    padding: 14px 16px; background: var(--paper-soft); border-radius: 12px;
+    font-size: 12px; line-height: 1.5; color: var(--ink-soft);
+  }
+  .sheet-info strong { color: var(--saffron-deep); }
+  .sheet-reset {
+    width: 100%; margin-top: 14px;
+    background: transparent; border: 1px solid var(--warm-gray);
+    color: var(--warm-gray); padding: 12px;
+    font-size: 12px; letter-spacing: 0.12em; text-transform: uppercase;
+    border-radius: 10px;
+  }
+  .sheet-reset:active { background: var(--ink); color: var(--paper); border-color: var(--ink); }
+
+  /* === SHARE MODAL === */
+  .share-modal {
+    position: fixed; inset: 0;
+    background: rgba(0, 0, 0, 0.85);
+    display: none; align-items: center; justify-content: center;
+    z-index: 300; padding: 20px;
+    opacity: 0; transition: opacity 0.3s;
+  }
+  .share-modal.show { display: flex; opacity: 1; }
+  .share-modal-content {
+    background: var(--paper-warm);
+    border-radius: 24px;
+    padding: 24px;
+    max-width: 380px; width: 100%;
+    text-align: center;
+    max-height: 90dvh;
+    overflow-y: auto;
+    position: relative;
+    animation: modalRise 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+  }
+  @keyframes modalRise { from { opacity: 0; transform: translateY(40px) scale(0.95); } to { opacity: 1; transform: translateY(0) scale(1); } }
+  .share-close {
+    position: absolute; top: 16px; right: 16px;
+    width: 32px; height: 32px; border-radius: 50%;
+    background: var(--paper-soft); border: none;
+    font-size: 18px; color: var(--ink);
+    display: flex; align-items: center; justify-content: center;
+  }
+  .share-modal h3 {
+    font-family: 'Fraunces', serif; font-weight: 500; font-size: 18px;
+    color: var(--ink); margin: 8px 0 4px;
+  }
+  .share-modal .sub {
+    font-size: 12px; color: var(--warm-gray);
+    margin-bottom: 20px;
+  }
+  #sharePreview {
+    width: 100%; max-height: 60vh;
+    border-radius: 16px; margin-bottom: 20px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+    background: #1A0F08;
+  }
+  .share-loading {
+    width: 100%; height: 320px;
+    display: flex; align-items: center; justify-content: center;
+    background: var(--paper-soft);
+    border-radius: 16px; margin-bottom: 20px;
+    color: var(--warm-gray);
+    font-style: italic;
+    flex-direction: column; gap: 16px;
+  }
+  .share-loading .spinner {
+    width: 32px; height: 32px; border-radius: 50%;
+    border: 2px solid var(--warm-gray-faint);
+    border-top-color: var(--saffron);
+    animation: spin 1s linear infinite;
+  }
+  .share-actions {
+    display: flex; flex-direction: column; gap: 8px;
+  }
+  .share-link-row {
+    margin-top: 16px; padding: 12px 14px;
+    background: var(--paper-soft); border-radius: 10px;
+    display: flex; align-items: center; gap: 8px;
+    font-size: 12px; color: var(--ink-soft);
+  }
+  .share-link-row .url {
+    flex: 1; min-width: 0;
+    overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+    font-family: monospace;
+  }
+  .share-link-row button {
+    background: var(--ink); color: var(--paper); border: none;
+    padding: 6px 12px; border-radius: 6px;
+    font-size: 11px; font-weight: 600;
+  }
+  .share-link-row button.copied { background: var(--whatsapp); }
+
+  /* Hidden canvas for generation */
+  #shareCanvas {
+    position: fixed; top: -10000px; left: -10000px;
+    pointer-events: none;
+  }
+</style>
+</head>
+<body>
+
+<!-- 01 WELCOME -->
+<div class="screen active" id="screen-welcome">
+  <div class="welcome-logo">
+    <div class="symbol">ॐ</div>
+    <div class="brand">N A A D</div>
+  </div>
+  <div class="welcome-hero">
+    <h1>Sound, for the moments <em>you need it</em>.</h1>
+    <p>Mantras are sound tools — used for thousands of years to steady the mind. Pick how you feel, and we'll guide a short session.</p>
+  </div>
+  <div class="welcome-actions">
+    <button class="btn-primary saffron" data-go="home">Begin</button>
+    <button class="btn-secondary">I have an account</button>
+  </div>
+</div>
+
+<!-- 02 HOME -->
+<div class="screen" id="screen-home">
+  <div class="home-bar">
+    <span class="brand">N A A D</span>
+    <div class="right">
+      <span class="streak">🔥 7</span>
+      <div class="avatar">A</div>
+    </div>
+  </div>
+  <div id="bannerSlot"></div>
+  <div class="home-question">
+    <h2>How are <em>you feeling?</em></h2>
+  </div>
+  <div class="mood-grid" id="moodGrid"></div>
+  <div class="resume-card">
+    <div class="play">▶</div>
+    <div class="meta">
+      <div class="t">Continue: Shiva Mantra</div>
+      <div class="d">87 of 108 chants · this morning</div>
+    </div>
+  </div>
+</div>
+
+<!-- 03 RECOMMENDATION -->
+<div class="screen" id="screen-recommendation">
+  <div class="top-actions">
+    <button class="icon-btn" data-go="home">←</button>
+    <button class="share-pill" id="shareBtnRec" aria-label="Share as">
+      <svg viewBox="0 0 24 24" fill="currentColor"><path d="M19.05 4.91A9.816 9.816 0 0 0 12.04 2c-5.46 0-9.91 4.45-9.91 9.91 0 1.75.46 3.45 1.32 4.95L2.05 22l5.25-1.38c1.45.79 3.08 1.21 4.74 1.21 5.46 0 9.91-4.45 9.91-9.91 0-2.65-1.03-5.14-2.9-7.01zM12.04 20.15c-1.48 0-2.93-.4-4.2-1.15l-.3-.18-3.12.82.83-3.04-.2-.31a8.264 8.264 0 0 1-1.26-4.38c0-4.54 3.7-8.24 8.24-8.24 2.2 0 4.27.86 5.82 2.42a8.183 8.183 0 0 1 2.41 5.83c.02 4.54-3.68 8.23-8.22 8.23zm4.52-6.16c-.25-.12-1.47-.72-1.69-.81-.23-.08-.39-.12-.56.12-.17.25-.64.81-.78.97-.14.17-.29.19-.54.06-.25-.12-1.05-.39-1.99-1.23-.74-.66-1.23-1.47-1.38-1.72-.14-.25-.02-.38.11-.51.11-.11.25-.29.37-.43s.17-.25.25-.41c.08-.17.04-.31-.02-.43s-.56-1.34-.76-1.84c-.2-.48-.41-.42-.56-.43h-.48c-.17 0-.43.06-.66.31-.22.25-.86.85-.86 2.07 0 1.22.89 2.4 1.01 2.56.12.17 1.75 2.67 4.23 3.74.59.26 1.05.41 1.41.52.59.19 1.13.16 1.56.1.48-.07 1.47-.6 1.67-1.18.21-.58.21-1.07.14-1.18s-.22-.16-.47-.28z"/></svg>
+      Share as
+    </button>
+  </div>
+  <div class="rec-content" id="recContent"></div>
+</div>
+
+<!-- 04 PLAYER -->
+<div class="screen" id="screen-player">
+  <div class="top-actions">
+    <button class="icon-btn" data-go="recommendation">⌄</button>
+    <button class="share-pill" id="shareBtnPlayer" aria-label="Share as">
+      <svg viewBox="0 0 24 24" fill="currentColor"><path d="M19.05 4.91A9.816 9.816 0 0 0 12.04 2c-5.46 0-9.91 4.45-9.91 9.91 0 1.75.46 3.45 1.32 4.95L2.05 22l5.25-1.38c1.45.79 3.08 1.21 4.74 1.21 5.46 0 9.91-4.45 9.91-9.91 0-2.65-1.03-5.14-2.9-7.01zM12.04 20.15c-1.48 0-2.93-.4-4.2-1.15l-.3-.18-3.12.82.83-3.04-.2-.31a8.264 8.264 0 0 1-1.26-4.38c0-4.54 3.7-8.24 8.24-8.24 2.2 0 4.27.86 5.82 2.42a8.183 8.183 0 0 1 2.41 5.83c.02 4.54-3.68 8.23-8.22 8.23zm4.52-6.16c-.25-.12-1.47-.72-1.69-.81-.23-.08-.39-.12-.56.12-.17.25-.64.81-.78.97-.14.17-.29.19-.54.06-.25-.12-1.05-.39-1.99-1.23-.74-.66-1.23-1.47-1.38-1.72-.14-.25-.02-.38.11-.51.11-.11.25-.29.37-.43s.17-.25.25-.41c.08-.17.04-.31-.02-.43s-.56-1.34-.76-1.84c-.2-.48-.41-.42-.56-.43h-.48c-.17 0-.43.06-.66.31-.22.25-.86.85-.86 2.07 0 1.22.89 2.4 1.01 2.56.12.17 1.75 2.67 4.23 3.74.59.26 1.05.41 1.41.52.59.19 1.13.16 1.56.1.48-.07 1.47-.6 1.67-1.18.21-.58.21-1.07.14-1.18s-.22-.16-.47-.28z"/></svg>
+      Share as
+    </button>
+  </div>
+  <div class="chant-stage" id="chantStage">
+    <div class="chant-mantra-deva" id="playerDeva"></div>
+    <div class="chant-mantra-trans" id="playerTrans"></div>
+    <div class="chant-mantra-meaning" id="playerMeaning"></div>
+  </div>
+  <div class="chant-counter">
+    <div class="chant-counter-line"></div>
+    <div class="chant-counter-num" id="chantCount">0</div>
+    <div class="chant-counter-total">of <span class="num" id="chantTotal">21</span> chants</div>
+    <div class="chant-counter-label" id="chantHint">tap anywhere to pause</div>
+  </div>
+</div>
+
+<!-- 05 COMPLETION -->
+<div class="screen" id="screen-completion">
+  <div class="completion-mark">✓</div>
+  <div class="completion-title">Session <em>complete.</em></div>
+  <div class="streak-line">🔥 8 days in a row</div>
+  <div class="mood-prompt">How do you feel now?</div>
+  <div class="mood-emoji">
+    <button>😌</button>
+    <button class="selected">🙂</button>
+    <button>😐</button>
+    <button>😞</button>
+  </div>
+  <div class="completion-actions">
+    <button class="btn-primary" data-go="home">Done</button>
+    <button class="btn-secondary" id="shareBtnCompletion">Share this mantra</button>
+  </div>
+</div>
+
+<!-- 06 BIRTH INPUT -->
+<div class="screen" id="screen-birth">
+  <div class="top-actions">
+    <button class="icon-btn" data-go="home">←</button>
+    <span></span>
+  </div>
+  <div class="birth-content">
+    <div class="birth-title">Three quick <em>details.</em></div>
+    <div class="birth-sub">Stays on your device. Never shared.</div>
+    <div class="field" id="fieldDate">
+      <label>Date of birth</label>
+      <input type="text" id="inputDate" placeholder="DD / MM / YYYY" value="14 / 08 / 1996" inputmode="numeric">
+      <div class="field-error">Use DD / MM / YYYY</div>
+    </div>
+    <div class="field" id="fieldTime">
+      <label>Time of birth <span class="opt">— optional, unlocks Lagna</span></label>
+      <input type="text" id="inputTime" placeholder="HH : MM (24h)" value="06 : 22" inputmode="numeric">
+      <div class="field-error">Use HH : MM (24-hour)</div>
+    </div>
+    <div class="field" id="fieldPlace">
+      <label>Place of birth</label>
+      <select id="inputPlace">
+        <option value="12.97,77.59,5.5" selected>Bengaluru, India</option>
+        <option value="19.07,72.87,5.5">Mumbai, India</option>
+        <option value="28.61,77.21,5.5">New Delhi, India</option>
+        <option value="13.08,80.27,5.5">Chennai, India</option>
+        <option value="22.57,88.36,5.5">Kolkata, India</option>
+        <option value="17.39,78.49,5.5">Hyderabad, India</option>
+        <option value="18.52,73.86,5.5">Pune, India</option>
+        <option value="23.03,72.58,5.5">Ahmedabad, India</option>
+        <option value="26.85,80.95,5.5">Lucknow, India</option>
+        <option value="25.32,82.97,5.5">Varanasi, India</option>
+        <option value="40.71,-74.01,-5">New York, USA</option>
+        <option value="34.05,-118.24,-8">Los Angeles, USA</option>
+        <option value="37.77,-122.42,-8">San Francisco, USA</option>
+        <option value="51.51,-0.13,0">London, UK</option>
+        <option value="1.35,103.82,8">Singapore</option>
+        <option value="25.28,55.30,4">Dubai, UAE</option>
+        <option value="43.65,-79.38,-5">Toronto, Canada</option>
+        <option value="-33.87,151.21,11">Sydney, Australia</option>
+      </select>
+    </div>
+    <div class="field-help">
+      In the Vedic tradition, the position of the planets at your birth is used to suggest mantras that resonate with you. This is optional — the app works fully without it.
+    </div>
+    <div class="birth-actions">
+      <button class="btn-primary" id="btnCalculate">Continue</button>
+    </div>
+  </div>
+  <div class="calculating" id="calculating">
+    <div class="calc-orb"></div>
+    <div class="calc-text">Calculating your chart…</div>
+    <div class="calc-sub" id="calcSub">Moon · Sun · Lagna</div>
+  </div>
+</div>
+
+<!-- 07 HOROSCOPE -->
+<div class="screen" id="screen-horoscope">
+  <div class="top-actions">
+    <button class="icon-btn" data-go="home">←</button>
+    <button class="share-pill" aria-label="Share as">
+      <svg viewBox="0 0 24 24" fill="currentColor"><path d="M19.05 4.91A9.816 9.816 0 0 0 12.04 2c-5.46 0-9.91 4.45-9.91 9.91 0 1.75.46 3.45 1.32 4.95L2.05 22l5.25-1.38c1.45.79 3.08 1.21 4.74 1.21 5.46 0 9.91-4.45 9.91-9.91 0-2.65-1.03-5.14-2.9-7.01zM12.04 20.15c-1.48 0-2.93-.4-4.2-1.15l-.3-.18-3.12.82.83-3.04-.2-.31a8.264 8.264 0 0 1-1.26-4.38c0-4.54 3.7-8.24 8.24-8.24 2.2 0 4.27.86 5.82 2.42a8.183 8.183 0 0 1 2.41 5.83c.02 4.54-3.68 8.23-8.22 8.23zm4.52-6.16c-.25-.12-1.47-.72-1.69-.81-.23-.08-.39-.12-.56.12-.17.25-.64.81-.78.97-.14.17-.29.19-.54.06-.25-.12-1.05-.39-1.99-1.23-.74-.66-1.23-1.47-1.38-1.72-.14-.25-.02-.38.11-.51.11-.11.25-.29.37-.43s.17-.25.25-.41c.08-.17.04-.31-.02-.43s-.56-1.34-.76-1.84c-.2-.48-.41-.42-.56-.43h-.48c-.17 0-.43.06-.66.31-.22.25-.86.85-.86 2.07 0 1.22.89 2.4 1.01 2.56.12.17 1.75 2.67 4.23 3.74.59.26 1.05.41 1.41.52.59.19 1.13.16 1.56.1.48-.07 1.47-.6 1.67-1.18.21-.58.21-1.07.14-1.18s-.22-.16-.47-.28z"/></svg>
+      Share as
+    </button>
+  </div>
+  <div class="horo-content">
+    <div class="horo-title">Your <em>chart.</em></div>
+    <div id="planetRows"></div>
+    <div class="horo-divider"></div>
+    <div class="horo-mantras-label">Your mantras</div>
+    <div id="mantraCards"></div>
+    <div class="horo-actions">
+      <button class="btn-primary" data-go="home">Continue to home</button>
+    </div>
+  </div>
+</div>
+
+<!-- BOTTOM NAV (sibling of screens, pinned to body bottom) -->
+<div class="bottom-nav" id="bottomNav">
+  <button class="nav-item active"><span class="ico">⌂</span><span>Home</span></button>
+  <button class="nav-item"><span class="ico">☰</span><span>Library</span></button>
+  <button class="nav-item"><span class="ico">◐</span><span>Me</span></button>
+</div>
+
+<!-- DEV FAB -->
+<button class="dev-fab" id="devFab" aria-label="Switch screens">≡</button>
+<div class="sheet-backdrop" id="sheetBackdrop"></div>
+<div class="sheet" id="sheet">
+  <div class="sheet-handle"></div>
+  <h3>Screens</h3>
+  <nav class="sheet-nav" id="sheetNav">
+    <button data-screen="welcome" class="active"><span class="num">01</span> Welcome</button>
+    <button data-screen="home"><span class="num">02</span> Home</button>
+    <button data-screen="recommendation"><span class="num">03</span> Recommendation</button>
+    <button data-screen="player"><span class="num">04</span> Player</button>
+    <button data-screen="completion"><span class="num">05</span> Completion</button>
+    <button data-screen="birth"><span class="num">06</span> Birth input</button>
+    <button data-screen="horoscope"><span class="num">07</span> Horoscope reveal</button>
+  </nav>
+  <h3>About</h3>
+  <div class="sheet-info">
+    Real Vedic chart calculation (Lahiri ayanamsa). 20 authenticated mantras with Devanagari, transliteration, meaning, and source. Share generates a 1080×1920 image and uses the <strong>Web Share API</strong> for WhatsApp status — falls back to a downloadable image with the dummy URL <strong>naad.app/m/{id}</strong>.
+    <button class="sheet-reset" id="btnReset">↻ Reset state</button>
+  </div>
+</div>
+
+<!-- SHARE MODAL -->
+<div class="share-modal" id="shareModal">
+  <div class="share-modal-content">
+    <button class="share-close" id="shareClose">×</button>
+    <h3>Share as WhatsApp status</h3>
+    <div class="sub">A 1080×1920 image, ready for stories</div>
+    <div id="sharePreviewWrap" class="share-loading">
+      <div class="spinner"></div>
+      <div>Generating your card…</div>
+    </div>
+    <div class="share-actions" id="shareActions" style="display: none;">
+      <button class="btn-primary whatsapp" id="btnShareWhatsapp">
+        <svg viewBox="0 0 24 24" fill="currentColor" width="18" height="18"><path d="M19.05 4.91A9.816 9.816 0 0 0 12.04 2c-5.46 0-9.91 4.45-9.91 9.91 0 1.75.46 3.45 1.32 4.95L2.05 22l5.25-1.38c1.45.79 3.08 1.21 4.74 1.21 5.46 0 9.91-4.45 9.91-9.91 0-2.65-1.03-5.14-2.9-7.01zM12.04 20.15c-1.48 0-2.93-.4-4.2-1.15l-.3-.18-3.12.82.83-3.04-.2-.31a8.264 8.264 0 0 1-1.26-4.38c0-4.54 3.7-8.24 8.24-8.24 2.2 0 4.27.86 5.82 2.42a8.183 8.183 0 0 1 2.41 5.83c.02 4.54-3.68 8.23-8.22 8.23zm4.52-6.16c-.25-.12-1.47-.72-1.69-.81-.23-.08-.39-.12-.56.12-.17.25-.64.81-.78.97-.14.17-.29.19-.54.06-.25-.12-1.05-.39-1.99-1.23-.74-.66-1.23-1.47-1.38-1.72-.14-.25-.02-.38.11-.51.11-.11.25-.29.37-.43s.17-.25.25-.41c.08-.17.04-.31-.02-.43s-.56-1.34-.76-1.84c-.2-.48-.41-.42-.56-.43h-.48c-.17 0-.43.06-.66.31-.22.25-.86.85-.86 2.07 0 1.22.89 2.4 1.01 2.56.12.17 1.75 2.67 4.23 3.74.59.26 1.05.41 1.41.52.59.19 1.13.16 1.56.1.48-.07 1.47-.6 1.67-1.18.21-.58.21-1.07.14-1.18s-.22-.16-.47-.28z"/></svg>
+        Share to WhatsApp
+      </button>
+      <button class="btn-primary" id="btnDownload">⬇  Download image</button>
+    </div>
+    <div class="share-link-row" id="shareLinkRow" style="display: none;">
+      <span class="url" id="shareUrl"></span>
+      <button id="copyLinkBtn">Copy</button>
+    </div>
+  </div>
+</div>
+
+<canvas id="shareCanvas" width="1080" height="1920"></canvas>
+
+<script>
+/* ============================================================
+   MANTRA DATABASE
+   20 authenticated mantras with Devanagari, transliteration,
+   meaning, deity, traditional source, and chant count options.
+   Sources verified across Templepurohit, Mahakatha, Drik Panchang,
+   Sonima, Healthline, and traditional Vedic texts.
+   ============================================================ */
+const MANTRA_DB = {
+  'om-namah-shivaya': {
+    deva: 'ॐ नमः शिवाय',
+    trans: 'Om Namah Shivaya',
+    meaning: 'I bow to the inner stillness.',
+    description: 'A grounding mantra. The five syllables (na-mah-shi-va-ya) purify the five elements within the body.',
+    deity: 'Shiva', counts: [7, 21, 108], chantSeconds: 3.5,
+    source: 'Yajurveda · Shri Rudram'
+  },
+  'maha-mrityunjaya': {
+    deva: 'ॐ त्र्यम्बकं यजामहे\nसुगन्धिं पुष्टिवर्धनम्।\nउर्वारुकमिव बन्धनान्\nमृत्योर्मुक्षीय माऽमृतात्॥',
+    trans: 'Om Tryambakam Yajamahe Sugandhim Pushtivardhanam, Urvarukamiva Bandhanan Mrityormukshiya Maamritat',
+    meaning: 'May we be freed from fear, as a ripe fruit falls easily from its stem.',
+    description: 'The "great death-conquering" mantra. For deep healing, fear, and liberation from suffering.',
+    deity: 'Shiva', counts: [7, 21, 54], chantSeconds: 13,
+    source: 'Rigveda 7.59.12'
+  },
+  'om-gam-ganapataye': {
+    deva: 'ॐ गं गणपतये नमः',
+    trans: 'Om Gam Ganapataye Namaha',
+    meaning: 'Salutations to the remover of obstacles.',
+    description: 'Chanted before any new beginning — a job, a journey, an exam. Clears the path of hurdles.',
+    deity: 'Ganesha', counts: [7, 21, 108], chantSeconds: 4,
+    source: 'Ganapati Atharvashirsha'
+  },
+  'om-shreem-mahalakshmi': {
+    deva: 'ॐ श्रीं महालक्ष्म्यै नमः',
+    trans: 'Om Shreem Mahalakshmiyei Namaha',
+    meaning: 'Salutations to the goddess of abundance.',
+    description: 'A mantra for material and spiritual prosperity. Best chanted on Fridays at sunrise.',
+    deity: 'Lakshmi', counts: [7, 21, 108], chantSeconds: 5,
+    source: 'Sri Suktam · Rigveda'
+  },
+  'om-hanumate': {
+    deva: 'ॐ हनुमते नमः',
+    trans: 'Om Hanumate Namaha',
+    meaning: 'I bow to the source of strength and devotion.',
+    description: 'For courage in fear, removing obstacles, and inner strength. Powerful on Tuesdays.',
+    deity: 'Hanuman', counts: [7, 21, 108], chantSeconds: 3,
+    source: 'Hanuman tradition · Ramayana'
+  },
+  'om-aim-saraswati': {
+    deva: 'ॐ ऐं सरस्वत्यै नमः',
+    trans: 'Om Aim Saraswatyei Namaha',
+    meaning: 'Salutations to the goddess of wisdom and learning.',
+    description: 'For students, focus, and clarity of mind. "Aim" is the seed syllable of wisdom.',
+    deity: 'Saraswati', counts: [7, 21, 108], chantSeconds: 4,
+    source: 'Saraswati Stotra'
+  },
+  'om-namo-narayanaya': {
+    deva: 'ॐ नमो नारायणाय',
+    trans: 'Om Namo Narayanaya',
+    meaning: 'I bow to the all-pervading consciousness.',
+    description: 'The eight-syllable Ashtakshara mantra. For deep peace, sleep, and surrender.',
+    deity: 'Vishnu', counts: [7, 21, 108], chantSeconds: 4.5,
+    source: 'Narayana Upanishad'
+  },
+  'om-suryaya': {
+    deva: 'ॐ सूर्याय नमः',
+    trans: 'Om Suryaya Namaha',
+    meaning: 'Salutations to the source of light.',
+    description: 'A morning mantra for vitality, gratitude, and confidence. Best at sunrise facing east.',
+    deity: 'Surya', counts: [7, 21, 108], chantSeconds: 3,
+    source: 'Aditya Hridayam · Ramayana'
+  },
+  'so-hum': {
+    deva: 'सो ऽहम्',
+    trans: 'So Hum',
+    meaning: 'I am that.',
+    description: '"So" rides the inhale, "Hum" the exhale. The natural mantra of the breath itself — needs no chanting, only attention.',
+    deity: null, counts: [7, 21, 108], chantSeconds: 4,
+    source: 'Vijnana Bhairava Tantra'
+  },
+  'om-shanti': {
+    deva: 'ॐ शान्तिः शान्तिः शान्तिः',
+    trans: 'Om Shantih Shantih Shantih',
+    meaning: 'Peace, peace, peace.',
+    description: 'A threefold prayer for peace — physical, mental, and spiritual.',
+    deity: null, counts: [7, 21, 108], chantSeconds: 5,
+    source: 'Upanishadic tradition'
+  },
+  'asato-ma': {
+    deva: 'ॐ असतो मा सद्गमय।\nतमसो मा ज्योतिर्गमय।\nमृत्योर्मा अमृतं गमय॥',
+    trans: 'Om Asato Ma Sadgamaya, Tamaso Ma Jyotirgamaya, Mrityorma Amritam Gamaya',
+    meaning: 'From untruth lead me to truth, from darkness to light, from death to immortality.',
+    description: 'A prayer for clarity and direction in difficult moments. Among the most beloved Upanishadic prayers.',
+    deity: null, counts: [7, 21, 108], chantSeconds: 9,
+    source: 'Brihadaranyaka Upanishad 1.3.28'
+  },
+  'om-mani-padme': {
+    deva: 'ॐ मणि पद्मे हूँ',
+    trans: 'Om Mani Padme Hum',
+    meaning: 'The jewel is in the lotus.',
+    description: 'A mantra of compassion. Slow to chant, deep in effect. Cultivates kindness toward self and others.',
+    deity: 'Avalokiteshvara', counts: [7, 21, 108], chantSeconds: 3.5,
+    source: 'Tibetan Buddhist tradition'
+  },
+  'gayatri': {
+    deva: 'ॐ भूर्भुवः स्वः।\nतत्सवितुर्वरेण्यं\nभर्गो देवस्य धीमहि।\nधियो यो नः प्रचोदयात्॥',
+    trans: 'Om Bhur Bhuvah Svah, Tat Savitur Varenyam, Bhargo Devasya Dhimahi, Dhiyo Yo Nah Prachodayat',
+    meaning: 'May the divine light illumine our minds.',
+    description: 'The Mother of the Vedas. Chanted at sunrise for clarity and intelligence. The most revered Vedic mantra.',
+    deity: 'Savitur (Sun)', counts: [7, 21, 54], chantSeconds: 11,
+    source: 'Rigveda 3.62.10'
+  },
+  'om-namo-bhagavate': {
+    deva: 'ॐ नमो भगवते वासुदेवाय',
+    trans: 'Om Namo Bhagavate Vasudevaya',
+    meaning: 'I bow to the supreme consciousness, dwelling in all.',
+    description: 'The twelve-syllable liberation mantra (Dvadasakshari). For grief, surrender, and self-realization.',
+    deity: 'Vishnu / Krishna', counts: [7, 21, 108], chantSeconds: 5,
+    source: 'Bhagavata Purana'
+  },
+  'dhanvantri': {
+    deva: 'ॐ नमो भगवते\nमहासुदर्शनाय वासुदेवाय\nधन्वन्तरये अमृतकलश हस्ताय\nसर्व आमय विनाशनाय\nत्रैलोक्य नाथाय श्री महाविष्णवे नमः',
+    trans: 'Om Namo Bhagavate Maha Sudarshanaya Vasudevaya Dhanvantraye',
+    meaning: 'Salutations to the divine physician.',
+    description: 'For physical healing and recovery. Dhanvantri is the deity of Ayurveda, holding the pot of immortality.',
+    deity: 'Dhanvantri', counts: [3, 11, 27], chantSeconds: 20,
+    source: 'Ayurvedic tradition'
+  },
+  'om-kleem-krishna': {
+    deva: 'ॐ क्लीं कृष्णाय नमः',
+    trans: 'Om Kleem Krishnaya Namaha',
+    meaning: 'Salutations to Krishna, the source of love.',
+    description: 'A mantra of attraction and divine love. "Kleem" is the bija (seed) of desire and connection.',
+    deity: 'Krishna', counts: [7, 21, 108], chantSeconds: 3.5,
+    source: 'Krishna tradition · Gopala Tapani Upanishad'
+  },
+  'lokah-samastah': {
+    deva: 'लोकाः समस्ताः सुखिनो भवन्तु',
+    trans: 'Lokah Samastah Sukhino Bhavantu',
+    meaning: 'May all beings everywhere be happy and free.',
+    description: 'A universal prayer for collective wellbeing. Often chanted to close practice — turns the merit outward.',
+    deity: null, counts: [7, 21, 108], chantSeconds: 5,
+    source: 'Sanskrit hymnal'
+  },
+  'om-dum-durga': {
+    deva: 'ॐ दुं दुर्गायै नमः',
+    trans: 'Om Dum Durgayei Namaha',
+    meaning: 'Salutations to Durga, the protector.',
+    description: 'For protection, courage, and victory over inner demons. Powerful during Navaratri.',
+    deity: 'Durga', counts: [7, 21, 108], chantSeconds: 3.5,
+    source: 'Durga Saptashati'
+  },
+  'hare-krishna': {
+    deva: 'हरे कृष्ण हरे कृष्ण\nकृष्ण कृष्ण हरे हरे।\nहरे राम हरे राम\nराम राम हरे हरे॥',
+    trans: 'Hare Krishna Hare Krishna, Krishna Krishna Hare Hare, Hare Rama Hare Rama, Rama Rama Hare Hare',
+    meaning: 'A 16-word call to divine love.',
+    description: 'The Maha Mantra. For devotion, joy, and dissolving the ego. Considered the most potent for the present age.',
+    deity: 'Krishna / Rama', counts: [7, 21, 108], chantSeconds: 11,
+    source: 'Kali Santarana Upanishad'
+  },
+  'kuber': {
+    deva: 'ॐ यक्षाय कुबेराय वैश्रवणाय\nधनधान्याधिपतये\nधनधान्यसमृद्धिं मे देहि\nदापय स्वाहा',
+    trans: 'Om Yakshaya Kuberaya Vaishravanaya Dhanadhanyadhipataye Dhanadhanyasamriddhim Me Dehi Dapaya Svaha',
+    meaning: 'A prayer to Kubera for wealth and abundance.',
+    description: 'For financial stability and freedom from debt. Best chanted on Wednesdays.',
+    deity: 'Kubera', counts: [7, 21, 54], chantSeconds: 12,
+    source: 'Kubera tradition · Mahabharata'
+  }
+};
+
+/* ============================================================
+   PROBLEMS DATABASE — 12 categories
+   Each problem maps to a primary mantra + 1-3 alternatives.
+   ============================================================ */
+const PROBLEMS_DB = {
+  'stress':     { label: 'Stressed',     sub: 'Tense, overwhelmed', emoji: '😟', contextLabel: 'For stress today',
+                  primary: 'om-namah-shivaya', alternatives: ['so-hum', 'om-shanti'] },
+  'restless':   { label: 'Restless',     sub: 'Can\'t settle',       emoji: '😴', contextLabel: 'To find rest',
+                  primary: 'om-namo-narayanaya', alternatives: ['om-shanti', 'so-hum'] },
+  'anxious':    { label: 'Anxious',      sub: 'Worry on loop',       emoji: '😨', contextLabel: 'For your anxiety',
+                  primary: 'maha-mrityunjaya', alternatives: ['om-namah-shivaya', 'so-hum'] },
+  'money':      { label: 'Money worries',sub: 'Scarcity feeling',    emoji: '💸', contextLabel: 'For abundance',
+                  primary: 'om-shreem-mahalakshmi', alternatives: ['kuber', 'om-gam-ganapataye'] },
+  'stuck':      { label: 'Stuck',        sub: 'Obstacles ahead',     emoji: '🚧', contextLabel: 'To clear obstacles',
+                  primary: 'om-gam-ganapataye', alternatives: ['om-hanumate'] },
+  'fear':       { label: 'Afraid',       sub: 'Need courage',        emoji: '💪', contextLabel: 'For courage',
+                  primary: 'om-hanumate', alternatives: ['om-dum-durga', 'maha-mrityunjaya'] },
+  'focus':      { label: 'Need focus',   sub: 'Mind scattered',      emoji: '🎯', contextLabel: 'For focus',
+                  primary: 'om-aim-saraswati', alternatives: ['gayatri', 'so-hum'] },
+  'heartbreak': { label: 'Heartbroken',  sub: 'In love or loss',     emoji: '💔', contextLabel: 'To heal the heart',
+                  primary: 'om-kleem-krishna', alternatives: ['om-namo-bhagavate', 'so-hum'] },
+  'grief':      { label: 'Grieving',     sub: 'Loss, change',        emoji: '🕊️', contextLabel: 'For grief',
+                  primary: 'om-namo-bhagavate', alternatives: ['om-namo-narayanaya', 'asato-ma'] },
+  'gratitude':  { label: 'Grateful',     sub: 'Morning light',       emoji: '🌅', contextLabel: 'A morning mantra',
+                  primary: 'om-suryaya', alternatives: ['gayatri', 'lokah-samastah'] },
+  'healing':    { label: 'Healing',      sub: 'Body or mind',        emoji: '✨', contextLabel: 'For healing',
+                  primary: 'maha-mrityunjaya', alternatives: ['dhanvantri', 'om-namah-shivaya'] },
+  'seeking':    { label: 'Seeking',      sub: 'Spiritual',           emoji: '🪷', contextLabel: 'For inner seeking',
+                  primary: 'asato-ma', alternatives: ['so-hum', 'om-namo-bhagavate', 'hare-krishna'] }
+};
+
+const VISIBLE_MOODS = ['stress', 'restless', 'anxious', 'money', 'stuck'];
+const EXTRA_MOODS = ['fear', 'focus', 'heartbreak', 'grief', 'gratitude', 'healing', 'seeking'];
+
+/* ============================================================
+   VEDIC ASTROLOGY (same as before — Sun, Moon, Lagna, Lahiri)
+   ============================================================ */
+const DEG = Math.PI / 180, RAD = 180 / Math.PI, J2000 = 2451545.0;
+
+function toJulianDay(year, month, day, hour, minute, tzOffset) {
+  let utHours = hour + minute / 60 - tzOffset, utDay = day, utMonth = month, utYear = year;
+  if (utHours < 0) { utHours += 24; utDay -= 1; }
+  if (utHours >= 24) { utHours -= 24; utDay += 1; }
+  let y = utYear, m = utMonth;
+  if (m <= 2) { y -= 1; m += 12; }
+  const A = Math.floor(y / 100), B = 2 - A + Math.floor(A / 4);
+  return Math.floor(365.25 * (y + 4716)) + Math.floor(30.6001 * (m + 1)) + utDay + B - 1524.5 + utHours / 24;
+}
+function sunLongitude(jd) {
+  const T = (jd - J2000) / 36525;
+  const L0 = mod360(280.46646 + 36000.76983 * T + 0.0003032 * T * T);
+  const M = mod360(357.52911 + 35999.05029 * T - 0.0001537 * T * T);
+  const Mr = M * DEG;
+  const C = (1.914602 - 0.004817 * T) * Math.sin(Mr) + (0.019993 - 0.000101 * T) * Math.sin(2 * Mr) + 0.000289 * Math.sin(3 * Mr);
+  return mod360(L0 + C);
+}
+function moonLongitude(jd) {
+  const T = (jd - J2000) / 36525;
+  const Lp = mod360(218.3164477 + 481267.88123421 * T - 0.0015786 * T * T);
+  const D = mod360(297.8501921 + 445267.1114034 * T - 0.0018819 * T * T);
+  const M = mod360(357.5291092 + 35999.0502909 * T - 0.0001536 * T * T);
+  const Mp = mod360(134.9633964 + 477198.8675055 * T + 0.0087414 * T * T);
+  const F = mod360(93.2720950 + 483202.0175233 * T - 0.0036539 * T * T);
+  const Dr = D * DEG, Mr = M * DEG, Mpr = Mp * DEG, Fr = F * DEG;
+  const lon = Lp + 6.288774 * Math.sin(Mpr) + 1.274027 * Math.sin(2*Dr - Mpr) + 0.658314 * Math.sin(2*Dr) +
+              0.213618 * Math.sin(2*Mpr) - 0.185116 * Math.sin(Mr) - 0.114332 * Math.sin(2*Fr) +
+              0.058793 * Math.sin(2*Dr - 2*Mpr) + 0.057066 * Math.sin(2*Dr - Mr - Mpr) +
+              0.053322 * Math.sin(2*Dr + Mpr) + 0.045758 * Math.sin(2*Dr - Mr) -
+              0.040923 * Math.sin(Mr - Mpr) - 0.034720 * Math.sin(Dr) - 0.030383 * Math.sin(Mr + Mpr);
+  return mod360(lon);
+}
+function calcAscendant(jd, lat, lon) {
+  const T = (jd - J2000) / 36525;
+  let GMST = 280.46061837 + 360.98564736629 * (jd - J2000) + 0.000387933 * T * T - T * T * T / 38710000;
+  GMST = mod360(GMST);
+  const LST = mod360(GMST + lon), RAMC = LST * DEG;
+  const eps = (23.4392911 - 0.0130042 * T) * DEG, phi = lat * DEG;
+  const y = -Math.cos(RAMC), x = Math.sin(RAMC) * Math.cos(eps) + Math.tan(phi) * Math.sin(eps);
+  let asc = Math.atan2(y, x) * RAD;
+  if (asc < 0) asc += 360;
+  return asc;
+}
+function lahiri(jd) {
+  return 23.853 + 0.013966 * ((jd - J2000) / 365.25);
+}
+function mod360(x) { return ((x % 360) + 360) % 360; }
+
+const RASHIS = [
+  { en: 'Aries',       sa: 'Mesha',     lord: 'Mars',    desc: 'Bold, pioneering, action-driven.' },
+  { en: 'Taurus',      sa: 'Vrishabha', lord: 'Venus',   desc: 'Steady, sensual, drawn to comfort.' },
+  { en: 'Gemini',      sa: 'Mithuna',   lord: 'Mercury', desc: 'Curious, communicative, restless mind.' },
+  { en: 'Cancer',      sa: 'Karka',     lord: 'Moon',    desc: 'Emotional, intuitive, sensitive to surroundings.' },
+  { en: 'Leo',         sa: 'Simha',     lord: 'Sun',     desc: 'Confident, creative, drawn to expression.' },
+  { en: 'Virgo',       sa: 'Kanya',     lord: 'Mercury', desc: 'Methodical, detail-oriented, service-minded.' },
+  { en: 'Libra',       sa: 'Tula',      lord: 'Venus',   desc: 'Harmonious, relational, drawn to balance.' },
+  { en: 'Scorpio',     sa: 'Vrischika', lord: 'Mars',    desc: 'Intense, transformative, deep waters.' },
+  { en: 'Sagittarius', sa: 'Dhanu',     lord: 'Jupiter', desc: 'Philosophical, expansive, seeker of truth.' },
+  { en: 'Capricorn',   sa: 'Makara',    lord: 'Saturn',  desc: 'Disciplined, ambitious, builder of structures.' },
+  { en: 'Aquarius',    sa: 'Kumbha',    lord: 'Saturn',  desc: 'Independent, humanitarian, unconventional.' },
+  { en: 'Pisces',      sa: 'Meena',     lord: 'Jupiter', desc: 'Compassionate, dreamy, spiritually inclined.' }
+];
+function getRashi(longitude) {
+  const idx = Math.floor(mod360(longitude) / 30);
+  return { ...RASHIS[idx], degInSign: mod360(longitude) - idx * 30 };
+}
+
+const PLANET_MANTRA_IDS = {
+  'Sun': 'om-suryaya', 'Moon': 'om-namah-shivaya', 'Mars': 'om-hanumate',
+  'Mercury': 'om-aim-saraswati', 'Jupiter': 'gayatri',
+  'Venus': 'om-shreem-mahalakshmi', 'Saturn': 'om-namah-shivaya'
+};
+const PLANET_NAVAGRAHA = {
+  'Sun':     { deva: 'ॐ ह्रां ह्रीं ह्रौं सः सूर्याय नमः',     trans: 'Om Hraam Hreem Hraum Sah Suryaya Namaha' },
+  'Moon':    { deva: 'ॐ श्राँ श्रीं श्रौं सः चन्द्रमसे नमः',   trans: 'Om Shraam Shreem Shraum Sah Chandraya Namaha' },
+  'Mars':    { deva: 'ॐ क्रां क्रीं क्रौं सः भौमाय नमः',      trans: 'Om Kraam Kreem Kraum Sah Bhaumaya Namaha' },
+  'Mercury': { deva: 'ॐ ब्रां ब्रीं ब्रौं सः बुधाय नमः',      trans: 'Om Braam Breem Braum Sah Budhaya Namaha' },
+  'Jupiter': { deva: 'ॐ ग्रां ग्रीं ग्रौं सः गुरवे नमः',      trans: 'Om Graam Greem Graum Sah Gurave Namaha' },
+  'Venus':   { deva: 'ॐ द्रां द्रीं द्रौं सः शुक्राय नमः',     trans: 'Om Draam Dreem Draum Sah Shukraya Namaha' },
+  'Saturn':  { deva: 'ॐ प्रां प्रीं प्रौं सः शनैश्चराय नमः',   trans: 'Om Praam Preem Praum Sah Shanaischaraya Namaha' }
+};
+
+function computeChart({ year, month, day, hour, minute, lat, lon, tz }) {
+  const hasTime = hour !== null && minute !== null;
+  const h = hasTime ? hour : 12, m = hasTime ? minute : 0;
+  const jd = toJulianDay(year, month, day, h, m, tz);
+  const sunTrop = sunLongitude(jd), moonTrop = moonLongitude(jd), ayan = lahiri(jd);
+  const sunSid = mod360(sunTrop - ayan), moonSid = mod360(moonTrop - ayan);
+  const chart = { sun: getRashi(sunSid), moon: getRashi(moonSid), ascendant: null, jd, ayan, hasTime };
+  if (hasTime) {
+    const ascTrop = calcAscendant(jd, lat, lon);
+    chart.ascendant = getRashi(mod360(ascTrop - ayan));
+  }
+  return chart;
+}
+function fmtDeg(deg) { const d = Math.floor(deg), m = Math.round((deg - d) * 60); return `${d}° ${m.toString().padStart(2, '0')}'`; }
+
+/* ============================================================
+   STATE & RENDERING
+   ============================================================ */
+const screensWithBottomNav = ['home'];
+let state = {
+  currentScreen: 'welcome',
+  currentMantraId: 'om-namah-shivaya',
+  currentProblem: 'stress',
+  currentCount: 21,
+  hasBirthData: false,
+  bannerDismissed: false,
+  showAllMoods: false,
+  chart: null
+};
+
+const $ = sel => document.querySelector(sel);
+const $$ = sel => document.querySelectorAll(sel);
+
+function go(screenId) {
+  $$('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById('screen-' + screenId).classList.add('active');
+  state.currentScreen = screenId;
+  $$('#sheetNav button').forEach(b => b.classList.toggle('active', b.dataset.screen === screenId));
+  const fab = $('#devFab');
+  const showNav = screensWithBottomNav.includes(screenId);
+  $('#bottomNav').classList.toggle('show', showNav);
+  if (showNav) { fab.classList.add('with-nav'); fab.classList.remove('no-nav'); }
+  else { fab.classList.add('no-nav'); fab.classList.remove('with-nav'); }
+  if (screenId === 'home') { renderBanner(); renderMoodGrid(); }
+  if (screenId === 'recommendation') renderRecommendation();
+  if (screenId === 'player') { renderPlayer(); startPlayerSimulation(); }
+  else stopPlayerSimulation();
+  if (screenId === 'horoscope') renderHoroscope();
+  closeSheet();
+}
+
+function renderMoodGrid() {
+  const grid = $('#moodGrid');
+  const visible = VISIBLE_MOODS.map(k => moodChip(k)).join('');
+  const showMoreBtn = !state.showAllMoods
+    ? `<button class="mood-chip show-more" id="showMoreBtn"><span class="emoji">✨</span><span class="label">Show more</span><span class="sub">7 more moods</span></button>`
+    : '';
+  const extra = state.showAllMoods
+    ? '<div class="mood-extra show">' + EXTRA_MOODS.map(k => moodChip(k)).join('') + '</div>'
+    : '';
+  grid.innerHTML = visible + showMoreBtn + extra;
+
+  grid.querySelectorAll('.mood-chip[data-mood]').forEach(chip => {
+    chip.addEventListener('click', () => selectMood(chip.dataset.mood));
+  });
+  const more = grid.querySelector('#showMoreBtn');
+  if (more) more.addEventListener('click', () => { state.showAllMoods = true; renderMoodGrid(); });
+}
+function moodChip(key) {
+  const p = PROBLEMS_DB[key];
+  return `<button class="mood-chip" data-mood="${key}">
+    <span class="emoji">${p.emoji}</span>
+    <span class="label">${p.label}</span>
+    <span class="sub">${p.sub}</span>
+  </button>`;
+}
+function selectMood(key) {
+  const p = PROBLEMS_DB[key];
+  state.currentProblem = key;
+  state.currentMantraId = p.primary;
+  state.currentCount = MANTRA_DB[p.primary].counts[Math.floor(MANTRA_DB[p.primary].counts.length / 2)] || 21;
+  go('recommendation');
+}
+
+function renderBanner() {
+  const slot = $('#bannerSlot');
+  if (state.hasBirthData && state.chart) {
+    const c = state.chart;
+    const todayLord = todayPlanet();
+    const ascText = c.ascendant ? ` · ${c.ascendant.en} rising` : '';
+    slot.innerHTML = `<div class="banner banner-chart" data-go="horoscope">
+      <div class="banner-title">Today's chart</div>
+      <div class="banner-sub">${c.moon.en} Moon${ascText} · Today: ${todayLord}</div>
+      <div class="banner-arrow">→</div>
+    </div>`;
+  } else if (state.bannerDismissed) {
+    slot.innerHTML = `<div class="banner banner-compact" data-go="birth">
+      <div class="banner-title">✨ Add chart</div>
+      <div class="banner-arrow">→</div>
+    </div>`;
+  } else {
+    slot.innerHTML = `<div class="banner" data-go="birth">
+      <div class="banner-title">✨ Your mantra horoscope</div>
+      <div class="banner-sub">60 seconds · birth details · personalized mantras</div>
+      <div class="banner-arrow">→</div>
+    </div>`;
+  }
+  slot.querySelectorAll('[data-go]').forEach(el => el.addEventListener('click', () => go(el.dataset.go)));
+}
+
+function renderRecommendation() {
+  const m = MANTRA_DB[state.currentMantraId];
+  const p = PROBLEMS_DB[state.currentProblem];
+  const isLong = (m.deva.split('\n').length > 1) || m.deva.length > 30;
+
+  const durationPills = m.counts.map(d => `
+    <button class="pill ${d === state.currentCount ? 'active' : ''}" data-count="${d}">${d} chants</button>
+  `).join('');
+
+  const altMantras = (p && p.alternatives) ? `
+    <div class="alt-mantras">
+      <div class="alt-mantras-label">Other mantras for this</div>
+      ${p.alternatives.map(altId => {
+        const alt = MANTRA_DB[altId];
+        return `<div class="alt-mantra" data-alt="${altId}">
+          <div class="deva">${alt.deva.replace(/\n/g, ' ')}</div>
+          <div class="arrow">→</div>
+        </div>`;
+      }).join('')}
+    </div>` : '';
+
+  const secondaryCard = (state.hasBirthData && state.chart) ? (() => {
+    const c = state.chart;
+    return `<div class="divider-ornate"><span class="divider-ornate-symbol">✦</span></div>
+      <div class="secondary-card">
+        <div class="label">From your chart</div>
+        <div class="name">${c.moon.lord} mantra</div>
+        <div class="reason">Your Moon (${c.moon.en}) is ruled by ${c.moon.lord}. This planet mantra layers under the primary practice.</div>
+        <button class="add-link">+ Add to today's session</button>
+      </div>`;
+  })() : '';
+
+  $('#recContent').innerHTML = `
+    <div class="rec-context">${p ? p.contextLabel : 'A mantra for today'}</div>
+    <div class="mantra-card-primary">
+      <div class="mantra-deva ${isLong ? 'long' : ''}">${m.deva}</div>
+      <div class="mantra-trans">${m.trans}</div>
+      <div class="mantra-meta">
+        <span>${m.deity || 'Universal'}</span>
+        <span>${state.currentCount} chants</span>
+      </div>
+      <div class="mantra-desc">${m.description}</div>
+      <div class="mantra-source">— ${m.source}</div>
+      <div class="duration-pills">${durationPills}</div>
+      <button class="btn-primary" data-go="player">▶  Begin session</button>
+    </div>
+    ${altMantras}
+    ${secondaryCard}
+  `;
+
+  // Wire up
+  $('#recContent').querySelectorAll('[data-go]').forEach(el => el.addEventListener('click', () => go(el.dataset.go)));
+  $('#recContent').querySelectorAll('.pill').forEach(p => p.addEventListener('click', () => {
+    state.currentCount = parseInt(p.dataset.count);
+    renderRecommendation();
+  }));
+  $('#recContent').querySelectorAll('.alt-mantra').forEach(el => el.addEventListener('click', () => {
+    state.currentMantraId = el.dataset.alt;
+    const newM = MANTRA_DB[state.currentMantraId];
+    if (!newM.counts.includes(state.currentCount)) {
+      state.currentCount = newM.counts[Math.floor(newM.counts.length / 2)] || 21;
+    }
+    renderRecommendation();
+  }));
+}
+
+function renderPlayer() {
+  const m = MANTRA_DB[state.currentMantraId];
+  const lines = m.deva.split('\n');
+  const isLong = lines.length > 1;
+  $('#playerDeva').innerHTML = lines.map(l =>
+    `<span class="chant-line">${l}</span>`
+  ).join('');
+  $('#playerDeva').classList.toggle('long', isLong);
+  cachedLineSpans = $('#playerDeva').querySelectorAll('.chant-line');
+  $('#playerTrans').textContent = m.trans;
+  $('#playerMeaning').textContent = '— ' + m.meaning;
+  $('#chantCount').textContent = '0';
+  $('#chantCount').classList.remove('tick');
+  $('#chantTotal').textContent = state.currentCount;
+  $('#chantHint').textContent = 'tap anywhere to pause';
+  $('#screen-player').classList.remove('paused');
+  $('#screen-player').style.setProperty('--chant-progress', 0);
+  cachedLineSpans.forEach(s => s.style.setProperty('--line-progress', 0));
+  chantIndex = 0;
+  phaseElapsed = 0;
+  chantPhase = 'chant';
+}
+
+function renderHoroscope() {
+  if (!state.chart) return;
+  const c = state.chart;
+  const rows = [
+    { icon: '🌙', name: `Moon in ${c.moon.en}`, sa: c.moon.sa, degree: fmtDeg(c.moon.degInSign), desc: c.moon.desc },
+    { icon: '☀', name: `Sun in ${c.sun.en}`, sa: c.sun.sa, degree: fmtDeg(c.sun.degInSign), desc: c.sun.desc }
+  ];
+  if (c.ascendant) rows.push({ icon: '↗', name: `${c.ascendant.en} rising`, sa: c.ascendant.sa, degree: fmtDeg(c.ascendant.degInSign), desc: c.ascendant.desc });
+
+  $('#planetRows').innerHTML = rows.map(r => `
+    <div class="planet-row">
+      <div class="planet-icon">${r.icon}</div>
+      <div class="planet-info">
+        <div class="name">${r.name} <em>· ${r.sa}</em><span class="degree">${r.degree}</span></div>
+        <div class="desc">${r.desc}</div>
+      </div>
+    </div>
+  `).join('');
+
+  const mantras = [];
+  const moonNg = PLANET_NAVAGRAHA[c.moon.lord];
+  mantras.push({ deva: moonNg.deva, reason: `Aligned with your Moon in ${c.moon.en} (ruled by ${c.moon.lord}).` });
+  if (c.ascendant && c.ascendant.lord !== c.moon.lord) {
+    const ascNg = PLANET_NAVAGRAHA[c.ascendant.lord];
+    mantras.push({ deva: ascNg.deva, reason: `${c.ascendant.lord} rules your rising sign (${c.ascendant.en}).` });
+  } else if (!c.ascendant && c.sun.lord !== c.moon.lord) {
+    const sunNg = PLANET_NAVAGRAHA[c.sun.lord];
+    mantras.push({ deva: sunNg.deva, reason: `${c.sun.lord} rules your Sun sign (${c.sun.en}).` });
+  }
+  $('#mantraCards').innerHTML = mantras.map((m, i) => `
+    <div class="horo-mantra" data-horo-mantra="${i}">
+      <div class="deva">${m.deva}</div>
+      <div class="reason">${m.reason}</div>
+      <div class="play-btn">▶ Listen · 108 chants</div>
+    </div>
+  `).join('');
+  $('#mantraCards').querySelectorAll('[data-horo-mantra]').forEach(el => {
+    el.addEventListener('click', () => {
+      // Use the moon-lord planet mantra as the current
+      state.currentMantraId = PLANET_MANTRA_IDS[c.moon.lord] || 'om-namah-shivaya';
+      state.currentCount = 21;
+      go('player');
+    });
+  });
+}
+
+function todayPlanet() {
+  return ['Sun', 'Moon', 'Mars', 'Mercury', 'Jupiter', 'Venus', 'Saturn'][new Date().getDay()];
+}
+
+/* ============================================================
+   BIRTH INPUT
+   ============================================================ */
+function parseDate(s) {
+  const m = s.replace(/\s+/g, '').match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})$/);
+  if (!m) return null;
+  const day = +m[1], month = +m[2], year = +m[3];
+  if (day < 1 || day > 31 || month < 1 || month > 12 || year < 1900 || year > 2100) return null;
+  return { day, month, year };
+}
+function parseTime(s) {
+  if (!s.trim()) return { skipped: true };
+  const m = s.replace(/\s+/g, '').match(/^(\d{1,2}):(\d{2})$/);
+  if (!m) return null;
+  const hour = +m[1], minute = +m[2];
+  if (hour < 0 || hour > 23 || minute < 0 || minute > 59) return null;
+  return { hour, minute, skipped: false };
+}
+$('#btnCalculate').addEventListener('click', () => {
+  $$('.field').forEach(f => f.classList.remove('has-error'));
+  const date = parseDate($('#inputDate').value);
+  if (!date) { $('#fieldDate').classList.add('has-error'); return; }
+  const time = parseTime($('#inputTime').value);
+  if (time === null) { $('#fieldTime').classList.add('has-error'); return; }
+  const [latStr, lonStr, tzStr] = $('#inputPlace').value.split(',');
+  const chart = computeChart({
+    year: date.year, month: date.month, day: date.day,
+    hour: time.skipped ? null : time.hour, minute: time.skipped ? null : time.minute,
+    lat: parseFloat(latStr), lon: parseFloat(lonStr), tz: parseFloat(tzStr)
+  });
+  state.chart = chart;
+  state.hasBirthData = true;
+  $('#calcSub').textContent = chart.hasTime ? 'Moon · Sun · Lagna' : 'Moon · Sun';
+  $('#calculating').classList.add('show');
+  setTimeout(() => { $('#calculating').classList.remove('show'); go('horoscope'); }, 1400);
+});
+
+/* ============================================================
+   PLAYER SIM
+   ============================================================ */
+/* ============================================================
+   CHANT SIMULATION
+   Each repetition is one CYCLE = chant phase + gap phase.
+   - Chant phase (mantra.chantSeconds): gradient sweeps 0 → 1 (left to right)
+   - Gap phase (4 seconds): gradient releases 1 → 0 (the breath between chants)
+   Counter increments at the chant→gap boundary (when the chant is complete).
+   Loops `state.currentCount` times, then advances to completion.
+   ============================================================ */
+const CHANT_GAP_MS = 4000;
+
+let playerInterval = null;
+let chantIndex = 0;       // completed chants (0 to currentCount)
+let phaseElapsed = 0;     // ms within the current phase
+let chantPhase = 'chant'; // 'chant' (sweeping) | 'gap' (releasing)
+let lastTickAt = 0;       // wall-clock anchor for delta-time accumulation
+let cachedLineSpans = []; // line spans inside the mantra, populated by renderPlayer
+
+function startPlayerSimulation() {
+  // Pause-and-resume safe: don't reset state here.
+  // renderPlayer() is the single reset point on fresh screen entry.
+  if (playerInterval) return;
+  if (chantIndex >= state.currentCount) return; // already complete
+  lastTickAt = Date.now();
+  playerInterval = setInterval(tickChant, 16);
+}
+
+function stopPlayerSimulation() {
+  if (playerInterval) { clearInterval(playerInterval); playerInterval = null; }
+}
+
+function tickChant() {
+  const m = MANTRA_DB[state.currentMantraId];
+  const chantMs = (m.chantSeconds || 4) * 1000;
+  const total = state.currentCount;
+  const now = Date.now();
+  const dt = now - lastTickAt;
+  lastTickAt = now;
+
+  phaseElapsed += dt;
+
+  // Resolve any phase transitions completed this tick (loop handles slow ticks)
+  while (true) {
+    if (chantPhase === 'chant') {
+      if (phaseElapsed < chantMs) break;
+      // Chant complete — increment counter, enter gap, pulse the count
+      chantIndex++;
+      const countEl = $('#chantCount');
+      countEl.textContent = chantIndex;
+      countEl.classList.remove('tick'); // restart animation if already playing
+      void countEl.offsetWidth;          // force reflow so the re-add triggers a fresh run
+      countEl.classList.add('tick');
+      if (chantIndex >= total) {
+        // Final chant done — hold gradient full, transition out
+        $('#screen-player').style.setProperty('--chant-progress', 1);
+        cachedLineSpans.forEach(s => s.style.setProperty('--line-progress', 1));
+        stopPlayerSimulation();
+        $('#chantHint').textContent = 'complete';
+        setTimeout(() => go('completion'), 900);
+        return;
+      }
+      chantPhase = 'gap';
+      phaseElapsed -= chantMs;
+    } else {
+      // gap phase
+      if (phaseElapsed < CHANT_GAP_MS) break;
+      // Gap complete — start next chant
+      chantPhase = 'chant';
+      phaseElapsed -= CHANT_GAP_MS;
+    }
+  }
+
+  // Compute the chant's overall progress (0 → 1 during chant phase, 0 during gap)
+  const overallProgress = (chantPhase === 'chant') ? (phaseElapsed / chantMs) : 0;
+  $('#screen-player').style.setProperty('--chant-progress', overallProgress);
+
+  // Distribute progress across lines: each line owns 1/N of the chant duration.
+  // Line 0 fills first (0 → 1), then line 1, etc. — sequential reading flow.
+  const lineCount = cachedLineSpans.length || 1;
+  for (let i = 0; i < lineCount; i++) {
+    const lineStart = i / lineCount;
+    const lineEnd = (i + 1) / lineCount;
+    let lp;
+    if (overallProgress >= lineEnd) lp = 1;
+    else if (overallProgress < lineStart) lp = 0;
+    else lp = (overallProgress - lineStart) / (lineEnd - lineStart);
+    cachedLineSpans[i].style.setProperty('--line-progress', lp);
+  }
+}
+
+/* ============================================================
+   SHARE: CANVAS GENERATION + WHATSAPP
+   Generates a 1080x1920 image (story format) with the mantra,
+   transliteration, meaning, and a dummy URL.
+   ============================================================ */
+const SHARE_BASE_URL = 'https://naad.app/m/'; // ← replace with real URL when live
+
+async function generateShareCard(mantra, contextLabel) {
+  // Ensure fonts are loaded into the canvas font cache
+  await document.fonts.ready;
+  await Promise.all([
+    document.fonts.load('500 84px "Noto Sans Devanagari"'),
+    document.fonts.load('400 64px "Noto Sans Devanagari"'),
+    document.fonts.load('italic 42px "Fraunces"'),
+    document.fonts.load('500 32px "Manrope"'),
+    document.fonts.load('600 36px "Manrope"')
+  ]);
+
+  const canvas = $('#shareCanvas');
+  const ctx = canvas.getContext('2d');
+
+  // Clear
+  ctx.clearRect(0, 0, 1080, 1920);
+
+  // Background gradient (dark walnut → warm amber)
+  const grad = ctx.createLinearGradient(0, 0, 0, 1920);
+  grad.addColorStop(0, '#1A0F08');
+  grad.addColorStop(0.55, '#3D2A1A');
+  grad.addColorStop(1, '#5A3D26');
+  ctx.fillStyle = grad;
+  ctx.fillRect(0, 0, 1080, 1920);
+
+  // Vignette
+  const vignette = ctx.createRadialGradient(540, 960, 200, 540, 960, 1300);
+  vignette.addColorStop(0, 'rgba(0, 0, 0, 0)');
+  vignette.addColorStop(1, 'rgba(0, 0, 0, 0.5)');
+  ctx.fillStyle = vignette;
+  ctx.fillRect(0, 0, 1080, 1920);
+
+  // Decorative concentric rings around Om
+  ctx.strokeStyle = 'rgba(212, 165, 116, 0.18)';
+  ctx.lineWidth = 1;
+  for (const r of [330, 280, 230, 180, 130]) {
+    ctx.beginPath();
+    ctx.arc(540, 580, r, 0, Math.PI * 2);
+    ctx.stroke();
+  }
+
+  // Top divider lines flanking context label
+  const labelY = 200;
+  ctx.strokeStyle = 'rgba(212, 165, 116, 0.4)';
+  ctx.lineWidth = 1;
+  ctx.beginPath();
+  ctx.moveTo(180, labelY); ctx.lineTo(360, labelY);
+  ctx.moveTo(720, labelY); ctx.lineTo(900, labelY);
+  ctx.stroke();
+
+  // Context label "FOR STRESS TODAY"
+  ctx.fillStyle = 'rgba(212, 165, 116, 0.85)';
+  ctx.font = '600 26px "Manrope", sans-serif';
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'middle';
+  drawLetterSpaced(ctx, contextLabel.toUpperCase(), 540, labelY, 6);
+
+  // Om symbol
+  ctx.fillStyle = '#D4A574';
+  ctx.font = '300px "Noto Sans Devanagari", serif';
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'middle';
+  ctx.fillText('ॐ', 540, 580);
+
+  // Mantra Devanagari (multi-line aware)
+  const lines = mantra.deva.split('\n');
+  const fontSize = lines.length === 1 ? 80 : (lines.length === 2 ? 60 : 50);
+  ctx.fillStyle = '#ECD9BD';
+  ctx.font = `500 ${fontSize}px "Noto Sans Devanagari", serif`;
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'middle';
+  const lineHeight = fontSize * 1.45;
+  const blockHeight = lines.length * lineHeight;
+  let mantraY = 1010 - (blockHeight / 2) + (lineHeight / 2);
+  for (const line of lines) {
+    ctx.fillText(line, 540, mantraY);
+    mantraY += lineHeight;
+  }
+
+  // Transliteration
+  const transY = mantraY + 30;
+  ctx.fillStyle = '#D4A574';
+  ctx.font = 'italic 400 38px "Fraunces", serif';
+  const transLines = wrapText(ctx, mantra.trans, 920);
+  let yy = transY;
+  for (const line of transLines) {
+    ctx.fillText(line, 540, yy);
+    yy += 52;
+  }
+
+  // Meaning
+  ctx.fillStyle = 'rgba(236, 217, 189, 0.65)';
+  ctx.font = '400 30px "Manrope", sans-serif';
+  const meaningLines = wrapText(ctx, '— ' + mantra.meaning, 880);
+  let my = yy + 40;
+  for (const line of meaningLines) {
+    ctx.fillText(line, 540, my);
+    my += 42;
+  }
+
+  // Bottom brand block
+  // Decorative line
+  ctx.strokeStyle = 'rgba(212, 165, 116, 0.3)';
+  ctx.lineWidth = 1;
+  ctx.beginPath();
+  ctx.moveTo(420, 1700); ctx.lineTo(660, 1700);
+  ctx.stroke();
+
+  ctx.fillStyle = '#D4A574';
+  ctx.font = '600 38px "Manrope", sans-serif';
+  ctx.textAlign = 'center';
+  drawLetterSpaced(ctx, 'NAAD', 540, 1755, 14);
+
+  ctx.fillStyle = 'rgba(212, 165, 116, 0.55)';
+  ctx.font = '400 24px "Manrope", sans-serif';
+  ctx.fillText('mantras for modern moments', 540, 1810);
+
+  ctx.fillStyle = 'rgba(212, 165, 116, 0.4)';
+  ctx.font = '400 20px "Manrope", sans-serif';
+  ctx.fillText('naad.app', 540, 1850);
+
+  return new Promise(resolve => canvas.toBlob(resolve, 'image/png', 0.95));
+}
+
+function drawLetterSpaced(ctx, text, x, y, spacing) {
+  const chars = text.split('');
+  const widths = chars.map(c => ctx.measureText(c).width);
+  const total = widths.reduce((a, b) => a + b, 0) + spacing * (chars.length - 1);
+  let cursor = x - total / 2;
+  ctx.textAlign = 'left';
+  for (let i = 0; i < chars.length; i++) {
+    ctx.fillText(chars[i], cursor + widths[i] / 2 - widths[i] / 2, y);
+    cursor += widths[i] + spacing;
+  }
+  ctx.textAlign = 'center';
+}
+
+function wrapText(ctx, text, maxWidth) {
+  const words = text.split(' ');
+  const lines = [];
+  let line = '';
+  for (const word of words) {
+    const testLine = line ? line + ' ' + word : word;
+    if (ctx.measureText(testLine).width > maxWidth && line) {
+      lines.push(line);
+      line = word;
+    } else {
+      line = testLine;
+    }
+  }
+  if (line) lines.push(line);
+  return lines;
+}
+
+async function openShareModal() {
+  const m = MANTRA_DB[state.currentMantraId];
+  const p = PROBLEMS_DB[state.currentProblem];
+  const contextLabel = p ? p.contextLabel : 'A mantra for today';
+  const shareUrl = SHARE_BASE_URL + state.currentMantraId;
+  const shareText = `${m.trans}\n— ${m.meaning}\n\nListen on Naad: ${shareUrl}`;
+
+  $('#shareModal').classList.add('show');
+  $('#sharePreviewWrap').innerHTML = '<div class="spinner"></div><div>Generating your card…</div>';
+  $('#sharePreviewWrap').className = 'share-loading';
+  $('#shareActions').style.display = 'none';
+  $('#shareLinkRow').style.display = 'none';
+
+  try {
+    const blob = await generateShareCard(m, contextLabel);
+    const url = URL.createObjectURL(blob);
+
+    // Show preview
+    $('#sharePreviewWrap').className = '';
+    $('#sharePreviewWrap').innerHTML = `<img id="sharePreview" src="${url}" alt="Mantra card preview">`;
+    $('#shareActions').style.display = 'flex';
+    $('#shareLinkRow').style.display = 'flex';
+    $('#shareUrl').textContent = shareUrl;
+
+    // Wire up share to WhatsApp
+    $('#btnShareWhatsapp').onclick = async () => {
+      const file = new File([blob], `naad-${state.currentMantraId}.png`, { type: 'image/png' });
+      // Try native Web Share API with file (mobile)
+      if (navigator.canShare && navigator.canShare({ files: [file] })) {
+        try {
+          await navigator.share({
+            files: [file],
+            text: shareText,
+            title: 'Mantra from Naad'
+          });
+          return;
+        } catch (err) {
+          if (err.name === 'AbortError') return; // user cancelled
+          console.warn('Web Share failed, falling back:', err);
+        }
+      }
+      // Fallback: trigger download + open WhatsApp web with text
+      triggerDownload(blob, `naad-${state.currentMantraId}.png`);
+      setTimeout(() => {
+        window.open('https://wa.me/?text=' + encodeURIComponent(shareText), '_blank');
+      }, 400);
+    };
+
+    // Download button
+    $('#btnDownload').onclick = () => triggerDownload(blob, `naad-${state.currentMantraId}.png`);
+
+    // Copy link
+    $('#copyLinkBtn').onclick = async () => {
+      try {
+        await navigator.clipboard.writeText(shareUrl);
+        $('#copyLinkBtn').textContent = '✓ Copied';
+        $('#copyLinkBtn').classList.add('copied');
+        setTimeout(() => {
+          $('#copyLinkBtn').textContent = 'Copy';
+          $('#copyLinkBtn').classList.remove('copied');
+        }, 1500);
+      } catch (e) {
+        // Fallback for older browsers
+        const ta = document.createElement('textarea');
+        ta.value = shareUrl;
+        document.body.appendChild(ta);
+        ta.select();
+        document.execCommand('copy');
+        document.body.removeChild(ta);
+      }
+    };
+  } catch (err) {
+    console.error('Generation failed', err);
+    $('#sharePreviewWrap').innerHTML = '<div style="color: #9A2D0A">Couldn\'t generate the card. Please try again.</div>';
+  }
+}
+
+function triggerDownload(blob, filename) {
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = filename;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  setTimeout(() => URL.revokeObjectURL(url), 1000);
+}
+
+function closeShareModal() { $('#shareModal').classList.remove('show'); }
+
+/* ============================================================
+   SHEET / NAV
+   ============================================================ */
+function openSheet() { $('#sheet').classList.add('show'); $('#sheetBackdrop').classList.add('show'); }
+function closeSheet() { $('#sheet').classList.remove('show'); $('#sheetBackdrop').classList.remove('show'); }
+
+document.body.addEventListener('click', e => {
+  const target = e.target.closest('[data-go]');
+  if (target) { e.stopPropagation(); go(target.dataset.go); }
+});
+
+$$('#sheetNav button').forEach(b => b.addEventListener('click', () => go(b.dataset.screen)));
+$('#chantStage').addEventListener('click', () => {
+  if (chantIndex >= state.currentCount) return; // session done — no toggle
+  if (playerInterval) {
+    stopPlayerSimulation();
+    $('#screen-player').classList.add('paused');
+    $('#chantHint').textContent = 'paused — tap to resume';
+  } else {
+    startPlayerSimulation();
+    $('#screen-player').classList.remove('paused');
+    $('#chantHint').textContent = 'tap anywhere to pause';
+  }
+});
+$$('.mood-emoji button').forEach(b => b.addEventListener('click', () => {
+  $$('.mood-emoji button').forEach(x => x.classList.remove('selected'));
+  b.classList.add('selected');
+}));
+
+// Share buttons
+$('#shareBtnRec').addEventListener('click', openShareModal);
+$('#shareBtnPlayer').addEventListener('click', openShareModal);
+$('#shareBtnCompletion').addEventListener('click', openShareModal);
+$('#shareClose').addEventListener('click', closeShareModal);
+$('#shareModal').addEventListener('click', e => {
+  if (e.target.id === 'shareModal') closeShareModal();
+});
+
+$('#btnReset').addEventListener('click', () => {
+  state = { currentScreen: 'welcome', currentMantraId: 'om-namah-shivaya', currentProblem: 'stress',
+    currentCount: 21, hasBirthData: false, bannerDismissed: false, showAllMoods: false, chart: null };
+  go('welcome');
+});
+
+$('#devFab').addEventListener('click', openSheet);
+$('#sheetBackdrop').addEventListener('click', closeSheet);
+
+go('welcome');
+</script>
+
+</body>
+</html>
