@@ -715,76 +715,6 @@
   .calc-text { font-family: 'Fraunces', serif; font-style: italic; font-size: 20px; color: var(--gold-pale); }
   .calc-sub { font-size: 11px; color: rgba(236, 217, 189, 0.6); margin-top: 8px; letter-spacing: 0.18em; text-transform: uppercase; }
 
-  /* === DEV FAB === */
-  .dev-fab {
-    position: fixed; bottom: max(80px, calc(var(--safe-bot) + 80px)); right: 20px;
-    width: 44px; height: 44px; border-radius: 50%;
-    background: var(--ink); color: var(--paper); border: none;
-    display: flex; align-items: center; justify-content: center;
-    font-size: 18px;
-    box-shadow: 0 6px 20px rgba(31, 22, 17, 0.25);
-    z-index: 100; opacity: 0.55;
-    transition: opacity 0.2s, transform 0.15s;
-  }
-  .dev-fab:active { transform: scale(0.92); opacity: 1; }
-  .dev-fab.with-nav { bottom: max(80px, calc(var(--safe-bot) + 80px)); }
-  .dev-fab.no-nav { bottom: max(20px, calc(var(--safe-bot) + 20px)); }
-
-  .sheet-backdrop {
-    position: fixed; inset: 0; background: rgba(31, 22, 17, 0.5);
-    z-index: 200; opacity: 0; pointer-events: none;
-    transition: opacity 0.3s;
-  }
-  .sheet-backdrop.show { opacity: 1; pointer-events: auto; }
-
-  .sheet {
-    position: fixed; bottom: 0; left: 50%;
-    transform: translateX(-50%) translateY(100%);
-    width: 100%; max-width: 480px;
-    background: var(--paper-warm);
-    border-radius: 24px 24px 0 0; z-index: 201;
-    transition: transform 0.35s cubic-bezier(0.4, 0, 0.2, 1);
-    padding: 8px 24px max(28px, var(--safe-bot));
-    max-height: 80dvh; overflow-y: auto;
-    box-shadow: 0 -10px 40px rgba(31, 22, 17, 0.18);
-  }
-  .sheet.show { transform: translateX(-50%) translateY(0); }
-  .sheet-handle { width: 40px; height: 4px; background: var(--warm-gray-faint); border-radius: 2px; margin: 0 auto 18px; }
-  .sheet h3 {
-    font-family: 'Fraunces', serif; font-weight: 500; font-size: 13px;
-    letter-spacing: 0.18em; text-transform: uppercase; color: var(--warm-gray);
-    margin-bottom: 14px; padding-bottom: 10px;
-    border-bottom: 1px dashed var(--line);
-  }
-  .sheet-nav { display: flex; flex-direction: column; gap: 2px; margin-bottom: 24px; }
-  .sheet-nav button {
-    background: transparent; border: none; text-align: left;
-    padding: 14px 16px; font-size: 14px; font-weight: 500;
-    color: var(--ink-soft); border-radius: 10px;
-    display: flex; align-items: center; gap: 14px;
-    transition: background 0.2s;
-  }
-  .sheet-nav button:active { background: var(--paper-soft); }
-  .sheet-nav button.active { background: var(--paper-soft); color: var(--saffron-deep); }
-  .sheet-nav button .num {
-    font-family: 'Fraunces', serif; font-style: italic; font-weight: 400;
-    font-size: 12px; color: var(--warm-gray-light); min-width: 22px;
-  }
-  .sheet-nav button.active .num { color: var(--saffron); }
-  .sheet-info {
-    padding: 14px 16px; background: var(--paper-soft); border-radius: 12px;
-    font-size: 12px; line-height: 1.5; color: var(--ink-soft);
-  }
-  .sheet-info strong { color: var(--saffron-deep); }
-  .sheet-reset {
-    width: 100%; margin-top: 14px;
-    background: transparent; border: 1px solid var(--warm-gray);
-    color: var(--warm-gray); padding: 12px;
-    font-size: 12px; letter-spacing: 0.12em; text-transform: uppercase;
-    border-radius: 10px;
-  }
-  .sheet-reset:active { background: var(--ink); color: var(--paper); border-color: var(--ink); }
-
   /* === SHARE MODAL === */
   .share-modal {
     position: fixed; inset: 0;
@@ -1045,28 +975,6 @@
   <button class="nav-item active"><span class="ico">⌂</span><span>Home</span></button>
   <button class="nav-item"><span class="ico">☰</span><span>Library</span></button>
   <button class="nav-item"><span class="ico">◐</span><span>Me</span></button>
-</div>
-
-<!-- DEV FAB -->
-<button class="dev-fab" id="devFab" aria-label="Switch screens">≡</button>
-<div class="sheet-backdrop" id="sheetBackdrop"></div>
-<div class="sheet" id="sheet">
-  <div class="sheet-handle"></div>
-  <h3>Screens</h3>
-  <nav class="sheet-nav" id="sheetNav">
-    <button data-screen="welcome" class="active"><span class="num">01</span> Welcome</button>
-    <button data-screen="home"><span class="num">02</span> Home</button>
-    <button data-screen="recommendation"><span class="num">03</span> Recommendation</button>
-    <button data-screen="player"><span class="num">04</span> Player</button>
-    <button data-screen="completion"><span class="num">05</span> Completion</button>
-    <button data-screen="birth"><span class="num">06</span> Birth input</button>
-    <button data-screen="horoscope"><span class="num">07</span> Horoscope reveal</button>
-  </nav>
-  <h3>About</h3>
-  <div class="sheet-info">
-    Real Vedic chart calculation (Lahiri ayanamsa). 20 authenticated mantras with Devanagari, transliteration, meaning, and source. Share generates a 1080×1920 image and uses the <strong>Web Share API</strong> for WhatsApp status — falls back to a downloadable image with the dummy URL <strong>naad.app/m/{id}</strong>.
-    <button class="sheet-reset" id="btnReset">↻ Reset state</button>
-  </div>
 </div>
 
 <!-- SHARE MODAL -->
@@ -1424,18 +1332,12 @@ function go(screenId) {
   $$('.screen').forEach(s => s.classList.remove('active'));
   document.getElementById('screen-' + screenId).classList.add('active');
   state.currentScreen = screenId;
-  $$('#sheetNav button').forEach(b => b.classList.toggle('active', b.dataset.screen === screenId));
-  const fab = $('#devFab');
-  const showNav = screensWithBottomNav.includes(screenId);
-  $('#bottomNav').classList.toggle('show', showNav);
-  if (showNav) { fab.classList.add('with-nav'); fab.classList.remove('no-nav'); }
-  else { fab.classList.add('no-nav'); fab.classList.remove('with-nav'); }
+  $('#bottomNav').classList.toggle('show', screensWithBottomNav.includes(screenId));
   if (screenId === 'home') { renderBanner(); renderMoodGrid(); }
   if (screenId === 'recommendation') renderRecommendation();
   if (screenId === 'player') { renderPlayer(); startPlayerSimulation(); }
   else stopPlayerSimulation();
   if (screenId === 'horoscope') renderHoroscope();
-  closeSheet();
 }
 
 function renderMoodGrid() {
@@ -2017,17 +1919,13 @@ function triggerDownload(blob, filename) {
 function closeShareModal() { $('#shareModal').classList.remove('show'); }
 
 /* ============================================================
-   SHEET / NAV
+   GLOBAL HANDLERS
    ============================================================ */
-function openSheet() { $('#sheet').classList.add('show'); $('#sheetBackdrop').classList.add('show'); }
-function closeSheet() { $('#sheet').classList.remove('show'); $('#sheetBackdrop').classList.remove('show'); }
-
 document.body.addEventListener('click', e => {
   const target = e.target.closest('[data-go]');
   if (target) { e.stopPropagation(); go(target.dataset.go); }
 });
 
-$$('#sheetNav button').forEach(b => b.addEventListener('click', () => go(b.dataset.screen)));
 $('#chantStage').addEventListener('click', () => {
   if (chantIndex >= state.currentCount) return; // session done — no toggle
   if (playerInterval) {
@@ -2053,15 +1951,6 @@ $('#shareClose').addEventListener('click', closeShareModal);
 $('#shareModal').addEventListener('click', e => {
   if (e.target.id === 'shareModal') closeShareModal();
 });
-
-$('#btnReset').addEventListener('click', () => {
-  state = { currentScreen: 'welcome', currentMantraId: 'om-namah-shivaya', currentProblem: 'stress',
-    currentCount: 21, hasBirthData: false, bannerDismissed: false, showAllMoods: false, chart: null };
-  go('welcome');
-});
-
-$('#devFab').addEventListener('click', openSheet);
-$('#sheetBackdrop').addEventListener('click', closeSheet);
 
 go('welcome');
 </script>
