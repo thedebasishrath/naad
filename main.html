@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="theme-color" content="#FAF5E8">
+<meta name="theme-color" content="#FFFFFF">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <meta name="format-detection" content="telephone=no">
@@ -13,9 +13,9 @@
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght,SOFT@9..144,300..800,0..100&family=Manrope:wght@300;400;500;600;700&family=Noto+Sans+Devanagari:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
   :root {
-    --paper: #F2EBDC;
-    --paper-warm: #FAF5E8;
-    --paper-soft: #EBE2CE;
+    --paper: #F5F6F8;
+    --paper-warm: #FFFFFF;
+    --paper-soft: #EEF0F3;
     --ink: #1F1611;
     --ink-soft: #2D211A;
     --warm-gray: #6B5A4F;
@@ -131,33 +131,298 @@
   .share-pill svg { width: 16px; height: 16px; color: var(--whatsapp-deep); flex-shrink: 0; }
   .btn-primary svg { vertical-align: -3px; margin-right: 2px; }
 
-  /* === WELCOME === */
+  /* === SPLASH === */
+  #screen-splash {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background: #FFFFFF;
+    gap: 14px;
+    padding: 0 24px;
+  }
+  #screen-splash .splash-logo {
+    width: 160px; height: 160px;
+    object-fit: contain;
+    filter: drop-shadow(0 8px 24px rgba(196, 65, 12, 0.18));
+    animation: splashEntry 0.9s cubic-bezier(0.34, 1.2, 0.64, 1) both;
+  }
+  #screen-splash .splash-wordmark {
+    font-family: 'Fraunces', serif;
+    font-style: italic;
+    font-weight: 300;
+    font-size: 38px;
+    color: var(--saffron-deep);
+    letter-spacing: -0.01em;
+    font-variation-settings: 'opsz' 144;
+    margin-top: 8px;
+    animation: splashFade 0.7s 0.35s both;
+  }
+  #screen-splash .splash-deva {
+    font-family: 'Noto Sans Devanagari', serif;
+    font-size: 14px;
+    color: var(--warm-gray);
+    letter-spacing: 0.32em;
+    animation: splashFade 0.7s 0.55s both;
+  }
+  #screen-splash.fade-out {
+    opacity: 0;
+    transition: opacity 0.5s ease;
+  }
+  @keyframes splashEntry {
+    from { opacity: 0; transform: scale(0.85); }
+    to   { opacity: 1; transform: scale(1); }
+  }
+  @keyframes splashFade {
+    from { opacity: 0; transform: translateY(6px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  /* === WELCOME / CHAT ONBOARDING === */
   #screen-welcome {
-    display: flex; flex-direction: column;
-    padding: max(60px, calc(var(--safe-top) + 40px)) 32px max(40px, var(--safe-bot));
+    display: flex;
+    flex-direction: column;
+    background: #FFFFFF;
+    padding: 0;
+    overflow: hidden;
   }
-  .welcome-logo { margin-top: 24px; display: flex; flex-direction: column; align-items: center; gap: 14px; }
-  .welcome-logo .symbol {
-    width: 72px; height: 72px; border-radius: 50%;
-    border: 1.5px solid var(--gold);
+
+  /* Header — WhatsApp-style chat top bar */
+  .chat-header {
+    padding: max(14px, calc(var(--safe-top) + 8px)) 18px 14px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    border-bottom: 1px solid var(--paper-soft);
+    background: #FFFFFF;
+    flex-shrink: 0;
+  }
+  .chat-header-avatar {
+    width: 72px; height: 72px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, rgba(196, 65, 12, 0.06), rgba(212, 165, 116, 0.10));
+    border: 1px solid rgba(196, 65, 12, 0.18);
     display: flex; align-items: center; justify-content: center;
-    font-family: 'Noto Sans Devanagari', serif; font-size: 36px;
-    color: var(--saffron);
-    background: radial-gradient(circle, rgba(196, 65, 12, 0.08) 0%, transparent 70%);
+    flex-shrink: 0;
+    overflow: hidden;
   }
-  .welcome-logo .brand {
-    font-family: 'Fraunces', serif; font-weight: 400; font-size: 22px;
-    letter-spacing: 0.34em; text-transform: uppercase; color: var(--ink);
+  .chat-header-avatar img {
+    width: 92%; height: 92%;
+    object-fit: contain;
+    display: block;
   }
-  .welcome-hero { margin-top: auto; margin-bottom: 36px; }
-  .welcome-hero h1 {
-    font-family: 'Fraunces', serif; font-weight: 300; font-size: 40px;
-    line-height: 1.12; letter-spacing: -0.02em; color: var(--ink);
-    font-variation-settings: 'opsz' 144, 'SOFT' 80;
+  .chat-header-info { display: flex; flex-direction: column; line-height: 1.2; }
+  .chat-header-name {
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--ink);
+    letter-spacing: 0.01em;
   }
-  .welcome-hero h1 em { font-style: italic; color: var(--saffron-deep); font-weight: 300; }
-  .welcome-hero p { margin-top: 22px; font-size: 15px; line-height: 1.6; color: var(--warm-gray); max-width: 320px; }
-  .welcome-actions { display: flex; flex-direction: column; gap: 4px; align-items: center; }
+  .chat-header-status {
+    font-size: 11px;
+    color: var(--warm-gray);
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    margin-top: 2px;
+  }
+  .chat-header-status::before {
+    content: '';
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: #25D366;
+    display: inline-block;
+  }
+
+  /* Messages scroll area */
+  .chat-messages {
+    flex: 1;
+    overflow-y: auto;
+    overflow-x: hidden;
+    padding: 18px 14px 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+  }
+  .chat-messages::-webkit-scrollbar { display: none; }
+
+  /* Message bubbles */
+  .chat-msg {
+    max-width: 78%;
+    padding: 10px 14px;
+    border-radius: 16px;
+    font-size: 14.5px;
+    line-height: 1.45;
+    animation: chatRise 0.32s cubic-bezier(0.34, 1.2, 0.64, 1) both;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+  }
+  @keyframes chatRise {
+    from { opacity: 0; transform: translateY(8px) scale(0.98); }
+    to { opacity: 1; transform: translateY(0) scale(1); }
+  }
+  .chat-msg.bot {
+    align-self: flex-start;
+    background: var(--paper-soft);
+    color: var(--ink);
+    border-bottom-left-radius: 4px;
+  }
+  .chat-msg.user {
+    align-self: flex-end;
+    background: var(--saffron);
+    color: #FFFFFF;
+    border-bottom-right-radius: 4px;
+  }
+  /* Tighter gap between same-sender consecutive bubbles */
+  .chat-msg.bot + .chat-msg.bot,
+  .chat-msg.user + .chat-msg.user { margin-top: -4px; }
+  .chat-msg.bot + .chat-msg.user,
+  .chat-msg.user + .chat-msg.bot { margin-top: 6px; }
+
+  /* Devanagari greeting in bot bubble */
+  .chat-msg.bot .deva {
+    font-family: 'Noto Sans Devanagari', serif;
+    font-size: 18px;
+    color: var(--saffron-deep);
+    font-weight: 500;
+  }
+
+  /* Typing indicator */
+  .chat-typing {
+    align-self: flex-start;
+    background: var(--paper-soft);
+    border-radius: 16px;
+    border-bottom-left-radius: 4px;
+    padding: 13px 16px;
+    display: flex;
+    gap: 4px;
+    animation: chatRise 0.3s ease both;
+  }
+  .chat-typing span {
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: var(--warm-gray-light);
+    animation: typingDot 1.4s infinite;
+  }
+  .chat-typing span:nth-child(2) { animation-delay: 0.18s; }
+  .chat-typing span:nth-child(3) { animation-delay: 0.36s; }
+  @keyframes typingDot {
+    0%, 60%, 100% { opacity: 0.35; transform: translateY(0); }
+    30% { opacity: 1; transform: translateY(-3px); }
+  }
+
+  /* Input bar pinned bottom */
+  .chat-input-bar {
+    padding: 12px 14px max(14px, calc(var(--safe-bot) + 12px));
+    border-top: 1px solid var(--paper-soft);
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    background: #FFFFFF;
+    flex-shrink: 0;
+  }
+  .chat-input {
+    flex: 1;
+    background: var(--paper-soft);
+    border: 1px solid transparent;
+    border-radius: 999px;
+    padding: 12px 18px;
+    font-size: 15px;
+    color: var(--ink);
+    outline: none;
+    transition: border-color 0.2s, background 0.2s;
+    min-width: 0;
+  }
+  .chat-input:focus {
+    border-color: rgba(196, 65, 12, 0.3);
+    background: #FFFFFF;
+  }
+  .chat-input::placeholder { color: var(--warm-gray-light); }
+  .chat-input:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+  }
+  /* Brief saffron border pulse when input becomes ready */
+  .chat-input-bar.ready-pulse .chat-input {
+    animation: chatReadyPulse 0.9s ease-out;
+  }
+  @keyframes chatReadyPulse {
+    0%   { border-color: transparent; }
+    35%  { border-color: var(--saffron); background: #FFF7F0; }
+    100% { border-color: transparent; }
+  }
+  .chat-send {
+    width: 44px; height: 44px;
+    border-radius: 50%;
+    background: var(--saffron);
+    color: #FFFFFF;
+    border: none;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+    transition: transform 0.15s ease, background 0.2s, opacity 0.2s;
+  }
+  .chat-send:active:not(:disabled) {
+    transform: scale(0.92);
+    background: var(--saffron-deep);
+  }
+  .chat-send:disabled {
+    opacity: 0.35;
+    cursor: not-allowed;
+  }
+
+  /* Final loading overlay */
+  .chat-loading-overlay {
+    position: absolute;
+    inset: 0;
+    background: rgba(255, 255, 255, 0.96);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 18px;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.5s ease;
+    z-index: 50;
+  }
+  /* Opt out of the screen's rise animation — its own opacity transition
+     handles visibility, controlled by the .show class. Without this,
+     the rise animation's final keyframe (opacity: 1) leaks through
+     and blocks the chat UI from the moment the page loads. */
+  #screen-welcome > .chat-loading-overlay {
+    animation: none;
+  }
+  .chat-loading-overlay.show {
+    opacity: 1;
+    pointer-events: auto;
+  }
+  .chat-loading-orb {
+    width: 60px; height: 60px;
+    border: 1.5px solid var(--saffron);
+    border-top-color: transparent;
+    border-radius: 50%;
+    animation: spin 1.2s linear infinite;
+  }
+  .chat-loading-text {
+    font-family: 'Fraunces', serif;
+    font-style: italic;
+    font-weight: 300;
+    font-size: 22px;
+    color: var(--saffron-deep);
+    letter-spacing: -0.01em;
+    font-variation-settings: 'opsz' 144;
+  }
+  .chat-loading-sub {
+    font-size: 10px;
+    color: var(--warm-gray);
+    text-transform: uppercase;
+    letter-spacing: 0.28em;
+    font-weight: 700;
+  }
 
   /* === HOME === */
   #screen-home { padding-bottom: calc(72px + var(--safe-bot)); }
@@ -213,6 +478,146 @@
   }
   .banner-compact .banner-title { font-size: 14px; color: var(--gold); font-weight: 600; }
   .banner-compact .banner-arrow { font-size: 16px; color: var(--gold); }
+
+  /* === DAILY CHECK-IN TRACKER === */
+  .tracker {
+    margin: 8px 24px 28px;
+    background: #FFFFFF;
+    border: 1px solid var(--paper-soft);
+    border-radius: 18px;
+    padding: 22px 22px 20px;
+  }
+  .tracker-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 12px;
+    margin-bottom: 18px;
+  }
+  .tracker-date-block {
+    flex: 1;
+    min-width: 0;
+  }
+  .tracker-day {
+    font-family: 'Fraunces', serif;
+    font-style: italic;
+    font-weight: 400;
+    font-size: 26px;
+    color: var(--ink);
+    line-height: 1;
+    letter-spacing: -0.01em;
+    margin-bottom: 6px;
+    font-variation-settings: 'opsz' 144;
+  }
+  .tracker-date {
+    font-size: 11px;
+    color: var(--warm-gray);
+    text-transform: uppercase;
+    letter-spacing: 0.18em;
+    font-weight: 600;
+  }
+  .tracker-streak {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 4px;
+    flex-shrink: 0;
+  }
+  .tracker-streak-num {
+    font-family: 'Fraunces', serif;
+    font-style: italic;
+    font-weight: 400;
+    font-size: 30px;
+    color: var(--saffron);
+    line-height: 1;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-variant-numeric: tabular-nums;
+    font-variation-settings: 'opsz' 144;
+  }
+  .tracker-streak-num .fire { font-size: 22px; line-height: 1; }
+  .tracker-streak-label {
+    font-size: 9px;
+    color: var(--warm-gray);
+    text-transform: uppercase;
+    letter-spacing: 0.22em;
+    font-weight: 700;
+  }
+  .tracker-divider {
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--paper-soft) 20%, var(--paper-soft) 80%, transparent);
+    margin-bottom: 18px;
+  }
+  .tracker-week {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 2px;
+    text-align: center;
+  }
+  .tracker-cell {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+    padding: 4px 0;
+  }
+  .tracker-cell .day-label {
+    font-size: 9px;
+    color: var(--warm-gray-light);
+    text-transform: uppercase;
+    letter-spacing: 0.16em;
+    font-weight: 700;
+  }
+  .tracker-cell .day-num {
+    font-family: 'Fraunces', serif;
+    font-style: italic;
+    font-weight: 400;
+    font-size: 13px;
+    color: var(--warm-gray);
+    line-height: 1;
+    font-variant-numeric: tabular-nums;
+  }
+  .tracker-cell .day-dot {
+    width: 22px; height: 22px;
+    border-radius: 50%;
+    border: 1.5px solid var(--paper-soft);
+    background: transparent;
+    transition: all 0.2s;
+    position: relative;
+  }
+  /* Completed: filled saffron */
+  .tracker-cell.completed .day-dot {
+    background: var(--saffron);
+    border-color: var(--saffron-deep);
+  }
+  /* Today: outlined saffron with soft glow */
+  .tracker-cell.today .day-dot {
+    border-color: var(--saffron);
+    background: white;
+    box-shadow: 0 0 0 4px rgba(196, 65, 12, 0.12);
+  }
+  .tracker-cell.today.completed .day-dot {
+    background: var(--saffron);
+    box-shadow: 0 0 0 4px rgba(196, 65, 12, 0.18);
+  }
+  /* Today highlight on label/num */
+  .tracker-cell.today .day-label,
+  .tracker-cell.today .day-num {
+    color: var(--saffron-deep);
+    font-weight: 700;
+  }
+  .tracker-cell.today .day-num { font-weight: 500; }
+  /* Missed: subtle X mark inside the dot */
+  .tracker-cell.missed .day-dot::before {
+    content: '';
+    position: absolute;
+    top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+    width: 8px; height: 1.5px;
+    background: var(--warm-gray-light);
+    border-radius: 1px;
+  }
 
   .home-question { padding: 8px 24px 22px; }
   .home-question h2 {
@@ -276,7 +681,7 @@
     position: absolute; bottom: 0; left: 0; right: 0;
     height: calc(64px + var(--safe-bot));
     padding-bottom: var(--safe-bot);
-    background: rgba(250, 245, 232, 0.94);
+    background: rgba(255, 255, 255, 0.94);
     backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
     border-top: 1px solid var(--line);
     display: none;
@@ -299,80 +704,126 @@
     padding: max(14px, calc(var(--safe-top) + 8px)) 24px 8px;
   }
   .rec-content { padding: 12px 24px 60px; }
-  .rec-context {
-    font-family: 'Fraunces', serif; font-style: italic; font-weight: 400;
-    font-size: 14px; color: var(--saffron-deep);
-    letter-spacing: 0.04em; margin-bottom: 12px;
+
+  /* Tiny italic eyebrow above the mantra hero */
+  .rec-eyebrow {
+    text-align: center;
+    font-family: 'Fraunces', serif;
+    font-style: italic;
+    font-weight: 400;
+    font-size: 13px;
+    color: var(--saffron-deep);
+    letter-spacing: 0.06em;
+    margin-bottom: 28px;
+    text-transform: lowercase;
   }
-  .mantra-card-primary { margin-bottom: 20px; }
+
+  /* HERO: the mantra is the center of attention */
+  .rec-hero {
+    text-align: center;
+    margin-bottom: 32px;
+  }
   .mantra-deva {
     font-family: 'Noto Sans Devanagari', serif;
-    font-size: 28px; line-height: 1.4; color: var(--ink);
-    font-weight: 500; margin-bottom: 10px;
-    white-space: pre-line;
-  }
-  .mantra-deva.long { font-size: 22px; line-height: 1.5; }
-  .mantra-trans {
-    font-family: 'Fraunces', serif; font-style: italic; font-weight: 400;
-    font-size: 17px; color: var(--ink-soft); margin-bottom: 14px;
+    font-size: 42px;
     line-height: 1.4;
-  }
-  .mantra-meta {
-    display: flex; gap: 12px; flex-wrap: wrap;
-    font-size: 11px; color: var(--warm-gray);
-    text-transform: uppercase; letter-spacing: 0.14em;
+    color: var(--ink);
+    font-weight: 600;
     margin-bottom: 18px;
+    white-space: pre-line;
+    word-spacing: 0.04em;
+    letter-spacing: -0.005em;
   }
-  .mantra-meta span:not(:last-child)::after {
-    content: '·'; margin-left: 12px; color: var(--warm-gray-light);
+  .mantra-deva.long { font-size: 28px; line-height: 1.55; font-weight: 500; }
+  .mantra-trans {
+    font-family: 'Fraunces', serif;
+    font-style: italic;
+    font-weight: 500;
+    font-size: 19px;
+    color: var(--saffron-deep);
+    margin-bottom: 18px;
+    line-height: 1.4;
+    letter-spacing: 0.005em;
   }
-  .mantra-desc {
-    font-size: 14px; line-height: 1.6;
-    color: var(--warm-gray); margin-bottom: 20px;
+  .mantra-meaning {
+    font-size: 14px;
+    line-height: 1.6;
+    color: var(--warm-gray);
+    font-style: italic;
+    margin: 0 auto 20px;
+    max-width: 320px;
   }
   .mantra-source {
-    font-size: 11px; color: var(--warm-gray-light);
-    font-style: italic; margin-bottom: 22px;
-    padding-left: 10px; border-left: 2px solid var(--warm-gray-faint);
+    font-family: 'Manrope', sans-serif;
+    font-size: 10px;
+    color: var(--warm-gray-light);
+    text-transform: uppercase;
+    letter-spacing: 0.22em;
+    font-weight: 600;
   }
 
-  .duration-pills { display: flex; gap: 8px; margin-bottom: 24px; }
-  .pill {
-    padding: 9px 16px; border-radius: 999px;
-    background: transparent; border: 1px solid var(--line);
-    font-size: 12px; font-weight: 500; color: var(--warm-gray);
-    transition: all 0.2s;
+  /* Description (tertiary — small block below hero) */
+  .mantra-desc {
+    font-size: 13px;
+    line-height: 1.65;
+    color: var(--warm-gray);
+    text-align: center;
+    margin: 0 auto 32px;
+    max-width: 340px;
   }
-  .pill.active { background: var(--ink); border-color: var(--ink); color: var(--paper); }
+
+  /* Ornamental divider between hero and session-setup */
+  .rec-divider {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    margin: 8px 0 28px;
+  }
+  .rec-divider::before,
+  .rec-divider::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--line), transparent);
+  }
+  .rec-divider-mark {
+    font-family: 'Fraunces', serif;
+    font-style: italic;
+    font-size: 14px;
+    color: var(--gold);
+  }
+
+  /* SESSION SETUP zone */
+  .rec-session-label {
+    font-family: 'Fraunces', serif;
+    font-style: italic;
+    font-weight: 400;
+    font-size: 18px;
+    color: var(--ink);
+    text-align: center;
+    margin-bottom: 16px;
+    letter-spacing: -0.005em;
+  }
+  .duration-pills {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 28px;
+    justify-content: center;
+  }
+  .pill {
+    padding: 11px 20px; border-radius: 999px;
+    background: transparent; border: 1px solid var(--line);
+    font-size: 13px; font-weight: 500; color: var(--warm-gray);
+    transition: all 0.2s;
+    font-variant-numeric: tabular-nums;
+  }
+  .pill.active {
+    background: var(--ink); border-color: var(--ink); color: white;
+    font-weight: 600;
+  }
   .pill:active { transform: scale(0.96); }
 
-  .alt-mantras {
-    margin-top: 28px;
-    padding: 18px;
-    background: var(--paper-soft);
-    border-radius: 14px;
-  }
-  .alt-mantras-label {
-    font-family: 'Fraunces', serif; font-style: italic;
-    font-size: 12px; color: var(--warm-gray);
-    margin-bottom: 12px; letter-spacing: 0.05em;
-  }
-  .alt-mantra {
-    display: flex; align-items: center; gap: 12px;
-    padding: 10px 0;
-    border-bottom: 1px solid var(--warm-gray-faint);
-    cursor: pointer;
-    transition: opacity 0.2s;
-  }
-  .alt-mantra:last-child { border-bottom: none; }
-  .alt-mantra:active { opacity: 0.6; }
-  .alt-mantra .deva {
-    font-family: 'Noto Sans Devanagari', serif;
-    font-size: 14px; color: var(--ink); font-weight: 500;
-    flex: 1; min-width: 0;
-    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
-  }
-  .alt-mantra .arrow { color: var(--warm-gray-light); font-size: 14px; }
+  .mantra-card-primary { margin-bottom: 20px; }
 
   .divider-ornate {
     margin: 32px 0 24px;
@@ -409,38 +860,140 @@
 
   /* === PLAYER === */
   /* === CHANT SCREEN === */
+  /* === CHANT SCREEN — mala / bead circle === */
   #screen-player {
-    --chant-progress: 0;
-    background:
-      radial-gradient(ellipse at center 35%, rgba(216, 156, 96, calc(0.10 + var(--chant-progress, 0) * 0.18)) 0%, transparent 60%),
-      radial-gradient(ellipse at bottom, rgba(127, 29, 29, 0.06) 0%, transparent 60%),
-      var(--paper-warm);
+    background: #FFFFFF;
     display: flex;
     flex-direction: column;
     cursor: pointer;
+    position: relative;
   }
+  /* Architectural rules at top + bottom — gives the screen a magazine-spread feel */
+  #screen-player::before,
+  #screen-player::after {
+    content: '';
+    position: absolute;
+    left: 50%;
+    width: 1px;
+    height: 28px;
+    background: var(--gold-soft);
+    opacity: 0.4;
+    pointer-events: none;
+  }
+  #screen-player::before { top: calc(var(--safe-top) + 6px); }
+  #screen-player::after { bottom: calc(var(--safe-bot) + 6px); }
+
   .chant-stage {
     flex: 1;
     display: flex;
     flex-direction: column;
     align-items: center;
-    justify-content: center;
-    padding: 24px 28px;
+    padding: 36px 24px max(28px, var(--safe-bot));
     text-align: center;
     user-select: none;
     -webkit-user-select: none;
+    position: relative;
+  }
+
+  /* === MALA: the bead circle === */
+  .chant-mala-wrap {
+    position: relative;
+    width: min(72vw, 280px);
+    aspect-ratio: 1;
+    flex-shrink: 0;
+    margin-top: auto;
+  }
+  /* Faint guide circle under the beads — the "thread" of the mala */
+  .chant-mala-wrap::before {
+    content: '';
+    position: absolute;
+    inset: 8%;
+    border: 1px dashed var(--paper-soft);
+    border-radius: 50%;
+    pointer-events: none;
+  }
+  .chant-mala { position: absolute; inset: 0; }
+  .chant-bead {
+    position: absolute;
+    width: 9px; height: 9px;
+    border-radius: 50%;
+    background: #FFFFFF;
+    border: 1.5px solid var(--warm-gray-faint);
+    transform: translate(-50%, -50%);
+    transition: background 0.25s ease, border-color 0.25s ease;
+  }
+  .chant-bead.filled {
+    background: var(--saffron);
+    border-color: var(--saffron-deep);
+  }
+  .chant-bead.just-filled {
+    animation: beadPulse 0.7s ease-out;
+  }
+  @keyframes beadPulse {
+    0%   { transform: translate(-50%, -50%) scale(1);   box-shadow: 0 0 0 0 rgba(196, 65, 12, 0.55); }
+    35%  { transform: translate(-50%, -50%) scale(1.7); box-shadow: 0 0 0 6px rgba(196, 65, 12, 0.18); }
+    100% { transform: translate(-50%, -50%) scale(1);   box-shadow: 0 0 0 16px rgba(196, 65, 12, 0); }
+  }
+
+  /* === MEGA COUNTER inside the mala === */
+  .chant-mala-center {
+    position: absolute;
+    top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+    text-align: center;
+    pointer-events: none;
+    width: 70%;
+  }
+  .chant-mega-num {
+    font-family: 'Fraunces', serif;
+    font-style: italic;
+    font-weight: 200;
+    font-size: clamp(96px, 32vw, 132px);
+    line-height: 0.85;
+    color: var(--saffron);
+    font-variant-numeric: tabular-nums;
+    font-variation-settings: 'opsz' 144, 'SOFT' 100;
+    letter-spacing: -0.05em;
+    display: inline-block;
+    transform-origin: center;
+  }
+  .chant-mega-num.tick {
+    animation: megaTick 0.55s cubic-bezier(0.34, 1.56, 0.64, 1);
+  }
+  @keyframes megaTick {
+    0%   { transform: scale(1);    color: var(--saffron); }
+    35%  { transform: scale(1.13); color: var(--saffron-deep); text-shadow: 0 0 28px rgba(196, 65, 12, 0.35); }
+    100% { transform: scale(1);    color: var(--saffron); text-shadow: none; }
+  }
+  .chant-mega-caption {
+    font-family: 'Fraunces', serif;
+    font-style: italic;
+    font-size: 12px;
+    color: var(--gold);
+    letter-spacing: 0.05em;
+    margin-top: 4px;
+  }
+  .chant-mega-caption .total {
+    color: var(--saffron);
+    font-weight: 500;
+    font-variant-numeric: tabular-nums;
+  }
+
+  /* === MANTRA: below the mala === */
+  .chant-mantra-section {
+    max-width: 360px;
+    margin-top: 64px;
   }
   .chant-mantra-deva {
     font-family: 'Noto Sans Devanagari', serif;
-    font-size: 44px;
+    font-size: 30px;
     font-weight: 500;
-    line-height: 1.5;
-    margin-bottom: 32px;
-    animation: chantBreathe 5s ease-in-out infinite;
+    line-height: 1.7;
+    word-spacing: 0.04em;
+    margin-bottom: 22px;
   }
-  .chant-mantra-deva.long { font-size: 30px; line-height: 1.55; }
-  /* Each line is its own gradient-clipped span — fills left-to-right as --line-progress goes 0 → 1.
-     For multi-line mantras, lines fill one after another (line 1 first, then line 2, etc.). */
+  .chant-mantra-deva.long { font-size: 21px; line-height: 1.75; }
+  /* Per-line gradient: line 1 fills first, then line 2, etc. */
   .chant-line {
     display: block;
     background: linear-gradient(
@@ -448,95 +1001,49 @@
       var(--saffron-deep) 0%,
       var(--saffron) calc(var(--line-progress, 0) * 100% - 6%),
       var(--gold-soft) calc(var(--line-progress, 0) * 100%),
-      rgba(31, 22, 17, 0.22) calc(var(--line-progress, 0) * 100% + 4%),
-      rgba(31, 22, 17, 0.22) 100%
+      rgba(31, 22, 17, 0.18) calc(var(--line-progress, 0) * 100% + 4%),
+      rgba(31, 22, 17, 0.18) 100%
     );
     -webkit-background-clip: text;
     background-clip: text;
     color: transparent;
     -webkit-text-fill-color: transparent;
   }
-  @keyframes chantBreathe {
-    0%, 100% { transform: scale(1); }
-    50% { transform: scale(1.018); }
-  }
-  #screen-player.paused .chant-mantra-deva { animation-play-state: paused; }
   .chant-mantra-trans {
     font-family: 'Fraunces', serif;
     font-style: italic;
     font-weight: 400;
-    font-size: 17px;
+    font-size: 15px;
     color: var(--warm-gray);
-    margin-bottom: 14px;
-    max-width: 340px;
-    line-height: 1.4;
+    margin-bottom: 12px;
+    line-height: 1.55;
+    letter-spacing: 0.01em;
   }
   .chant-mantra-meaning {
-    font-size: 13px;
+    font-size: 12px;
     color: var(--warm-gray-light);
     font-style: italic;
-    max-width: 320px;
-    line-height: 1.5;
+    line-height: 1.65;
   }
-  .chant-counter {
+
+  /* === BOTTOM HINT === */
+  .chant-hint-block {
     text-align: center;
-    padding: 20px 32px max(36px, calc(var(--safe-bot) + 24px));
+    margin-top: auto;
+    padding-top: 24px;
   }
-  .chant-counter-line {
-    width: 48px;
-    height: 1px;
-    background: var(--gold-soft);
-    margin: 0 auto 16px;
-    opacity: 0.5;
-  }
-  .chant-counter-num {
-    font-family: 'Fraunces', serif;
-    font-style: italic;
-    font-weight: 300;
-    font-size: 52px;
-    line-height: 1;
-    color: var(--saffron);
-    letter-spacing: -0.01em;
-    font-variant-numeric: tabular-nums;
-    font-variation-settings: 'opsz' 144, 'SOFT' 80;
-    margin-bottom: 6px;
-    transform-origin: center;
-    display: inline-block;
-  }
-  .chant-counter-num.tick { animation: chantTick 0.5s cubic-bezier(0.34, 1.56, 0.64, 1); }
-  @keyframes chantTick {
-    0%   { transform: scale(1);    color: var(--saffron); }
-    35%  { transform: scale(1.18); color: var(--saffron-deep); text-shadow: 0 0 24px rgba(196, 65, 12, 0.4); }
-    100% { transform: scale(1);    color: var(--saffron); text-shadow: none; }
-  }
-  .chant-counter-total {
-    font-family: 'Fraunces', serif;
-    font-style: italic;
-    font-weight: 400;
-    font-size: 13px;
-    color: var(--gold);
-    letter-spacing: 0.06em;
-    opacity: 0.85;
-    margin-bottom: 14px;
-  }
-  .chant-counter-total .num { color: var(--gold-soft); font-variant-numeric: tabular-nums; }
-  .chant-counter-label {
-    font-size: 10px;
+  .chant-hint {
+    font-size: 9.5px;
     color: var(--warm-gray-light);
     text-transform: uppercase;
-    letter-spacing: 0.22em;
-    transition: color 0.3s, opacity 0.3s;
+    letter-spacing: 0.28em;
+    transition: color 0.3s ease;
   }
-  #screen-player.paused .chant-counter-label { color: var(--saffron); opacity: 1; }
-  #screen-player.paused .chant-mantra-deva { opacity: 0.85; }
-  /* Subtle vignette in corners to focus attention */
-  #screen-player::after {
-    content: '';
-    position: absolute;
-    inset: 0;
-    background: radial-gradient(ellipse at center, transparent 50%, rgba(31, 22, 17, 0.04) 100%);
-    pointer-events: none;
-  }
+
+  /* Pause states */
+  #screen-player.paused .chant-hint { color: var(--saffron); }
+  #screen-player.paused .chant-mega-num { opacity: 0.65; }
+  #screen-player.paused .chant-bead.filled { opacity: 0.7; }
 
   /* === COMPLETION === */
   #screen-completion {
@@ -715,76 +1222,6 @@
   .calc-text { font-family: 'Fraunces', serif; font-style: italic; font-size: 20px; color: var(--gold-pale); }
   .calc-sub { font-size: 11px; color: rgba(236, 217, 189, 0.6); margin-top: 8px; letter-spacing: 0.18em; text-transform: uppercase; }
 
-  /* === DEV FAB === */
-  .dev-fab {
-    position: fixed; bottom: max(80px, calc(var(--safe-bot) + 80px)); right: 20px;
-    width: 44px; height: 44px; border-radius: 50%;
-    background: var(--ink); color: var(--paper); border: none;
-    display: flex; align-items: center; justify-content: center;
-    font-size: 18px;
-    box-shadow: 0 6px 20px rgba(31, 22, 17, 0.25);
-    z-index: 100; opacity: 0.55;
-    transition: opacity 0.2s, transform 0.15s;
-  }
-  .dev-fab:active { transform: scale(0.92); opacity: 1; }
-  .dev-fab.with-nav { bottom: max(80px, calc(var(--safe-bot) + 80px)); }
-  .dev-fab.no-nav { bottom: max(20px, calc(var(--safe-bot) + 20px)); }
-
-  .sheet-backdrop {
-    position: fixed; inset: 0; background: rgba(31, 22, 17, 0.5);
-    z-index: 200; opacity: 0; pointer-events: none;
-    transition: opacity 0.3s;
-  }
-  .sheet-backdrop.show { opacity: 1; pointer-events: auto; }
-
-  .sheet {
-    position: fixed; bottom: 0; left: 50%;
-    transform: translateX(-50%) translateY(100%);
-    width: 100%; max-width: 480px;
-    background: var(--paper-warm);
-    border-radius: 24px 24px 0 0; z-index: 201;
-    transition: transform 0.35s cubic-bezier(0.4, 0, 0.2, 1);
-    padding: 8px 24px max(28px, var(--safe-bot));
-    max-height: 80dvh; overflow-y: auto;
-    box-shadow: 0 -10px 40px rgba(31, 22, 17, 0.18);
-  }
-  .sheet.show { transform: translateX(-50%) translateY(0); }
-  .sheet-handle { width: 40px; height: 4px; background: var(--warm-gray-faint); border-radius: 2px; margin: 0 auto 18px; }
-  .sheet h3 {
-    font-family: 'Fraunces', serif; font-weight: 500; font-size: 13px;
-    letter-spacing: 0.18em; text-transform: uppercase; color: var(--warm-gray);
-    margin-bottom: 14px; padding-bottom: 10px;
-    border-bottom: 1px dashed var(--line);
-  }
-  .sheet-nav { display: flex; flex-direction: column; gap: 2px; margin-bottom: 24px; }
-  .sheet-nav button {
-    background: transparent; border: none; text-align: left;
-    padding: 14px 16px; font-size: 14px; font-weight: 500;
-    color: var(--ink-soft); border-radius: 10px;
-    display: flex; align-items: center; gap: 14px;
-    transition: background 0.2s;
-  }
-  .sheet-nav button:active { background: var(--paper-soft); }
-  .sheet-nav button.active { background: var(--paper-soft); color: var(--saffron-deep); }
-  .sheet-nav button .num {
-    font-family: 'Fraunces', serif; font-style: italic; font-weight: 400;
-    font-size: 12px; color: var(--warm-gray-light); min-width: 22px;
-  }
-  .sheet-nav button.active .num { color: var(--saffron); }
-  .sheet-info {
-    padding: 14px 16px; background: var(--paper-soft); border-radius: 12px;
-    font-size: 12px; line-height: 1.5; color: var(--ink-soft);
-  }
-  .sheet-info strong { color: var(--saffron-deep); }
-  .sheet-reset {
-    width: 100%; margin-top: 14px;
-    background: transparent; border: 1px solid var(--warm-gray);
-    color: var(--warm-gray); padding: 12px;
-    font-size: 12px; letter-spacing: 0.12em; text-transform: uppercase;
-    border-radius: 10px;
-  }
-  .sheet-reset:active { background: var(--ink); color: var(--paper); border-color: var(--ink); }
-
   /* === SHARE MODAL === */
   .share-modal {
     position: fixed; inset: 0;
@@ -873,18 +1310,46 @@
 <body>
 
 <!-- 01 WELCOME -->
-<div class="screen active" id="screen-welcome">
-  <div class="welcome-logo">
-    <div class="symbol">ॐ</div>
-    <div class="brand">N A A D</div>
+<div class="screen active" id="screen-splash">
+  <img class="splash-logo" src="https://raw.githubusercontent.com/thedebasishrath/naad/main/ganesha.webp" alt="Naad" decoding="async">
+  <div class="splash-wordmark">Naad</div>
+  <div class="splash-deva">नाद</div>
+</div>
+
+<div class="screen" id="screen-welcome">
+  <div class="chat-header">
+    <div class="chat-header-avatar"><img src="https://raw.githubusercontent.com/thedebasishrath/naad/main/ganesha.webp" alt="Naad" decoding="async"></div>
+    <div class="chat-header-info">
+      <div class="chat-header-name">Naad</div>
+      <div class="chat-header-status">online</div>
+    </div>
   </div>
-  <div class="welcome-hero">
-    <h1>Sound, for the moments <em>you need it</em>.</h1>
-    <p>Mantras are sound tools — used for thousands of years to steady the mind. Pick how you feel, and we'll guide a short session.</p>
-  </div>
-  <div class="welcome-actions">
-    <button class="btn-primary saffron" data-go="home">Begin</button>
-    <button class="btn-secondary">I have an account</button>
+
+  <div class="chat-messages" id="chatMessages"></div>
+
+  <form class="chat-input-bar" id="chatForm" autocomplete="off">
+    <input
+      class="chat-input"
+      id="chatInput"
+      type="text"
+      placeholder="Setting up…"
+      disabled
+      autocomplete="off"
+      autocapitalize="words"
+      enterkeyhint="send"
+    >
+    <button type="submit" class="chat-send" id="chatSend" disabled aria-label="Send">
+      <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M22 2L11 13"/>
+        <path d="M22 2l-7 20-4-9-9-4 20-7z"/>
+      </svg>
+    </button>
+  </form>
+
+  <div class="chat-loading-overlay" id="chatLoading">
+    <div class="chat-loading-orb"></div>
+    <div class="chat-loading-text">Preparing your mantras</div>
+    <div class="chat-loading-sub">PLEASE WAIT</div>
   </div>
 </div>
 
@@ -893,11 +1358,11 @@
   <div class="home-bar">
     <span class="brand">N A A D</span>
     <div class="right">
-      <span class="streak">🔥 7</span>
       <div class="avatar">A</div>
     </div>
   </div>
   <div id="bannerSlot"></div>
+  <div id="trackerSlot"></div>
   <div class="home-question">
     <h2>How are <em>you feeling?</em></h2>
   </div>
@@ -914,7 +1379,7 @@
 <!-- 03 RECOMMENDATION -->
 <div class="screen" id="screen-recommendation">
   <div class="top-actions">
-    <button class="icon-btn" data-go="home">←</button>
+    <button class="icon-btn" data-go="home" aria-label="Back"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M12 19l-7-7 7-7"/></svg></button>
     <button class="share-pill" id="shareBtnRec" aria-label="Share as">
       <svg viewBox="0 0 24 24" fill="currentColor"><path d="M19.05 4.91A9.816 9.816 0 0 0 12.04 2c-5.46 0-9.91 4.45-9.91 9.91 0 1.75.46 3.45 1.32 4.95L2.05 22l5.25-1.38c1.45.79 3.08 1.21 4.74 1.21 5.46 0 9.91-4.45 9.91-9.91 0-2.65-1.03-5.14-2.9-7.01zM12.04 20.15c-1.48 0-2.93-.4-4.2-1.15l-.3-.18-3.12.82.83-3.04-.2-.31a8.264 8.264 0 0 1-1.26-4.38c0-4.54 3.7-8.24 8.24-8.24 2.2 0 4.27.86 5.82 2.42a8.183 8.183 0 0 1 2.41 5.83c.02 4.54-3.68 8.23-8.22 8.23zm4.52-6.16c-.25-.12-1.47-.72-1.69-.81-.23-.08-.39-.12-.56.12-.17.25-.64.81-.78.97-.14.17-.29.19-.54.06-.25-.12-1.05-.39-1.99-1.23-.74-.66-1.23-1.47-1.38-1.72-.14-.25-.02-.38.11-.51.11-.11.25-.29.37-.43s.17-.25.25-.41c.08-.17.04-.31-.02-.43s-.56-1.34-.76-1.84c-.2-.48-.41-.42-.56-.43h-.48c-.17 0-.43.06-.66.31-.22.25-.86.85-.86 2.07 0 1.22.89 2.4 1.01 2.56.12.17 1.75 2.67 4.23 3.74.59.26 1.05.41 1.41.52.59.19 1.13.16 1.56.1.48-.07 1.47-.6 1.67-1.18.21-.58.21-1.07.14-1.18s-.22-.16-.47-.28z"/></svg>
       Share as
@@ -926,22 +1391,35 @@
 <!-- 04 PLAYER -->
 <div class="screen" id="screen-player">
   <div class="top-actions">
-    <button class="icon-btn" data-go="recommendation">⌄</button>
+    <button class="icon-btn" data-go="recommendation" aria-label="Back">
+      <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+    </button>
     <button class="share-pill" id="shareBtnPlayer" aria-label="Share as">
       <svg viewBox="0 0 24 24" fill="currentColor"><path d="M19.05 4.91A9.816 9.816 0 0 0 12.04 2c-5.46 0-9.91 4.45-9.91 9.91 0 1.75.46 3.45 1.32 4.95L2.05 22l5.25-1.38c1.45.79 3.08 1.21 4.74 1.21 5.46 0 9.91-4.45 9.91-9.91 0-2.65-1.03-5.14-2.9-7.01zM12.04 20.15c-1.48 0-2.93-.4-4.2-1.15l-.3-.18-3.12.82.83-3.04-.2-.31a8.264 8.264 0 0 1-1.26-4.38c0-4.54 3.7-8.24 8.24-8.24 2.2 0 4.27.86 5.82 2.42a8.183 8.183 0 0 1 2.41 5.83c.02 4.54-3.68 8.23-8.22 8.23zm4.52-6.16c-.25-.12-1.47-.72-1.69-.81-.23-.08-.39-.12-.56.12-.17.25-.64.81-.78.97-.14.17-.29.19-.54.06-.25-.12-1.05-.39-1.99-1.23-.74-.66-1.23-1.47-1.38-1.72-.14-.25-.02-.38.11-.51.11-.11.25-.29.37-.43s.17-.25.25-.41c.08-.17.04-.31-.02-.43s-.56-1.34-.76-1.84c-.2-.48-.41-.42-.56-.43h-.48c-.17 0-.43.06-.66.31-.22.25-.86.85-.86 2.07 0 1.22.89 2.4 1.01 2.56.12.17 1.75 2.67 4.23 3.74.59.26 1.05.41 1.41.52.59.19 1.13.16 1.56.1.48-.07 1.47-.6 1.67-1.18.21-.58.21-1.07.14-1.18s-.22-.16-.47-.28z"/></svg>
       Share as
     </button>
   </div>
   <div class="chant-stage" id="chantStage">
-    <div class="chant-mantra-deva" id="playerDeva"></div>
-    <div class="chant-mantra-trans" id="playerTrans"></div>
-    <div class="chant-mantra-meaning" id="playerMeaning"></div>
-  </div>
-  <div class="chant-counter">
-    <div class="chant-counter-line"></div>
-    <div class="chant-counter-num" id="chantCount">0</div>
-    <div class="chant-counter-total">of <span class="num" id="chantTotal">21</span> chants</div>
-    <div class="chant-counter-label" id="chantHint">tap anywhere to pause</div>
+    <!-- Mala: bead circle with the chant counter at its center -->
+    <div class="chant-mala-wrap">
+      <div class="chant-mala" id="chantMala"></div>
+      <div class="chant-mala-center">
+        <div class="chant-mega-num" id="chantCount">0</div>
+        <div class="chant-mega-caption">of <span class="total" id="chantTotal">21</span></div>
+      </div>
+    </div>
+
+    <!-- Mantra below the mala -->
+    <div class="chant-mantra-section">
+      <div class="chant-mantra-deva" id="playerDeva"></div>
+      <div class="chant-mantra-trans" id="playerTrans"></div>
+      <div class="chant-mantra-meaning" id="playerMeaning"></div>
+    </div>
+
+    <!-- Pause hint -->
+    <div class="chant-hint-block">
+      <div class="chant-hint" id="chantHint">tap anywhere to pause</div>
+    </div>
   </div>
 </div>
 
@@ -949,7 +1427,7 @@
 <div class="screen" id="screen-completion">
   <div class="completion-mark">✓</div>
   <div class="completion-title">Session <em>complete.</em></div>
-  <div class="streak-line">🔥 8 days in a row</div>
+  <div class="streak-line" id="streakLine"></div>
   <div class="mood-prompt">How do you feel now?</div>
   <div class="mood-emoji">
     <button>😌</button>
@@ -966,7 +1444,7 @@
 <!-- 06 BIRTH INPUT -->
 <div class="screen" id="screen-birth">
   <div class="top-actions">
-    <button class="icon-btn" data-go="home">←</button>
+    <button class="icon-btn" data-go="home" aria-label="Back"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M12 19l-7-7 7-7"/></svg></button>
     <span></span>
   </div>
   <div class="birth-content">
@@ -1022,7 +1500,7 @@
 <!-- 07 HOROSCOPE -->
 <div class="screen" id="screen-horoscope">
   <div class="top-actions">
-    <button class="icon-btn" data-go="home">←</button>
+    <button class="icon-btn" data-go="home" aria-label="Back"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M12 19l-7-7 7-7"/></svg></button>
     <button class="share-pill" aria-label="Share as">
       <svg viewBox="0 0 24 24" fill="currentColor"><path d="M19.05 4.91A9.816 9.816 0 0 0 12.04 2c-5.46 0-9.91 4.45-9.91 9.91 0 1.75.46 3.45 1.32 4.95L2.05 22l5.25-1.38c1.45.79 3.08 1.21 4.74 1.21 5.46 0 9.91-4.45 9.91-9.91 0-2.65-1.03-5.14-2.9-7.01zM12.04 20.15c-1.48 0-2.93-.4-4.2-1.15l-.3-.18-3.12.82.83-3.04-.2-.31a8.264 8.264 0 0 1-1.26-4.38c0-4.54 3.7-8.24 8.24-8.24 2.2 0 4.27.86 5.82 2.42a8.183 8.183 0 0 1 2.41 5.83c.02 4.54-3.68 8.23-8.22 8.23zm4.52-6.16c-.25-.12-1.47-.72-1.69-.81-.23-.08-.39-.12-.56.12-.17.25-.64.81-.78.97-.14.17-.29.19-.54.06-.25-.12-1.05-.39-1.99-1.23-.74-.66-1.23-1.47-1.38-1.72-.14-.25-.02-.38.11-.51.11-.11.25-.29.37-.43s.17-.25.25-.41c.08-.17.04-.31-.02-.43s-.56-1.34-.76-1.84c-.2-.48-.41-.42-.56-.43h-.48c-.17 0-.43.06-.66.31-.22.25-.86.85-.86 2.07 0 1.22.89 2.4 1.01 2.56.12.17 1.75 2.67 4.23 3.74.59.26 1.05.41 1.41.52.59.19 1.13.16 1.56.1.48-.07 1.47-.6 1.67-1.18.21-.58.21-1.07.14-1.18s-.22-.16-.47-.28z"/></svg>
       Share as
@@ -1047,34 +1525,12 @@
   <button class="nav-item"><span class="ico">◐</span><span>Me</span></button>
 </div>
 
-<!-- DEV FAB -->
-<button class="dev-fab" id="devFab" aria-label="Switch screens">≡</button>
-<div class="sheet-backdrop" id="sheetBackdrop"></div>
-<div class="sheet" id="sheet">
-  <div class="sheet-handle"></div>
-  <h3>Screens</h3>
-  <nav class="sheet-nav" id="sheetNav">
-    <button data-screen="welcome" class="active"><span class="num">01</span> Welcome</button>
-    <button data-screen="home"><span class="num">02</span> Home</button>
-    <button data-screen="recommendation"><span class="num">03</span> Recommendation</button>
-    <button data-screen="player"><span class="num">04</span> Player</button>
-    <button data-screen="completion"><span class="num">05</span> Completion</button>
-    <button data-screen="birth"><span class="num">06</span> Birth input</button>
-    <button data-screen="horoscope"><span class="num">07</span> Horoscope reveal</button>
-  </nav>
-  <h3>About</h3>
-  <div class="sheet-info">
-    Real Vedic chart calculation (Lahiri ayanamsa). 20 authenticated mantras with Devanagari, transliteration, meaning, and source. Share generates a 1080×1920 image and uses the <strong>Web Share API</strong> for WhatsApp status — falls back to a downloadable image with the dummy URL <strong>naad.app/m/{id}</strong>.
-    <button class="sheet-reset" id="btnReset">↻ Reset state</button>
-  </div>
-</div>
-
 <!-- SHARE MODAL -->
 <div class="share-modal" id="shareModal">
   <div class="share-modal-content">
     <button class="share-close" id="shareClose">×</button>
     <h3>Share as WhatsApp status</h3>
-    <div class="sub">A 1080×1920 image, ready for stories</div>
+    <div class="sub">A 1080×1080 square image, ready for status</div>
     <div id="sharePreviewWrap" class="share-loading">
       <div class="spinner"></div>
       <div>Generating your card…</div>
@@ -1093,7 +1549,113 @@
   </div>
 </div>
 
-<canvas id="shareCanvas" width="1080" height="1920"></canvas>
+<canvas id="shareCanvas" width="1080" height="1080"></canvas>
+
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-app.js";
+  import {
+    getFirestore, collection, addDoc, serverTimestamp,
+    query, where, getDocs
+  } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-firestore.js";
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyCgX-DneDDkHoYQmj-FCGgjMtRbDybewi8",
+    authDomain: "naad-yoga-a1c9a.firebaseapp.com",
+    projectId: "naad-yoga-a1c9a",
+    storageBucket: "naad-yoga-a1c9a.firebasestorage.app",
+    messagingSenderId: "366727729934",
+    appId: "1:366727729934:web:7db0134cd6373f9cda7d5f",
+    measurementId: "G-VR5JF2ZWX0"
+  };
+
+  console.log('[naad] firebase module: starting');
+
+  window.addEventListener('unhandledrejection', (e) => {
+    console.error('[naad] unhandled promise rejection:', e.reason);
+  });
+
+  const app = initializeApp(firebaseConfig);
+  const db = getFirestore(app);
+  console.log('[naad] firebase initialized; projectId =', firebaseConfig.projectId);
+
+  let uid = localStorage.getItem('naad_uid');
+  if (!uid) {
+    uid = 'u_' + Date.now().toString(36) + '_' + Math.random().toString(36).slice(2, 8);
+    localStorage.setItem('naad_uid', uid);
+  }
+  console.log('[naad] uid =', uid);
+
+  const save = (col, data) =>
+    addDoc(collection(db, col), { uid, createdAt: serverTimestamp(), ...data })
+      .then(ref => { console.log('[naad] ✓ saved', col, ref.id); return ref; })
+      .catch(err => { console.error('[naad] ✗ save failed', col, err.code || '', err.message || err); throw err; });
+
+  // ----- Session history cache (drives streak + week tracker) -----
+  const sessionsCache = []; // Date[]
+
+  function startOfDay(d) {
+    const x = new Date(d); x.setHours(0, 0, 0, 0); return x;
+  }
+  function getCheckins(numDays = 7) {
+    const today = startOfDay(new Date());
+    const out = [];
+    for (let i = numDays - 1; i >= 0; i--) {
+      const day = new Date(today); day.setDate(today.getDate() - i);
+      const next = new Date(day);  next.setDate(day.getDate() + 1);
+      const hit = sessionsCache.some(d => d >= day && d < next);
+      if (hit) out.push(true);
+      else if (i === 0) out.push(null); // today still pending
+      else out.push(false);
+    }
+    return out;
+  }
+  function getStreak() {
+    const c = getCheckins(60); // wider window for true streak
+    let s = 0;
+    for (let i = c.length - 1; i >= 0; i--) {
+      if (c[i] === true) s++;
+      else if (c[i] === null && i === c.length - 1) continue;
+      else break;
+    }
+    return s;
+  }
+  async function loadSessions() {
+    try {
+      const snap = await getDocs(query(collection(db, 'sessions'), where('uid', '==', uid)));
+      sessionsCache.length = 0;
+      snap.forEach(doc => {
+        const t = doc.data().createdAt;
+        if (t?.toDate) sessionsCache.push(t.toDate());
+      });
+      sessionsCache.sort((a, b) => a - b);
+      console.log('[naad] loaded', sessionsCache.length, 'sessions');
+      if (typeof window.onSessionsLoaded === 'function') window.onSessionsLoaded();
+    } catch (err) {
+      console.error('[naad] loadSessions failed', err.code || '', err.message || err);
+    }
+  }
+
+  window.naadDB = {
+    uid,
+    saveUser:    (user)    => save('users', user),
+    saveProfile: (profile) => save('profiles', profile),
+    saveSession: (session) => {
+      sessionsCache.push(new Date()); // optimistic — keep streak current
+      return save('sessions', session);
+    },
+    saveMood:    (mood)    => save('moods', mood),
+    getCheckins,
+    getStreak,
+  };
+
+  loadSessions();
+
+  // Auto diagnostic write — confirms reachability + rules in one shot
+  console.log('[naad] attempting diagnostic write to _diagnostics …');
+  save('_diagnostics', { ping: 'page-load', ua: navigator.userAgent.slice(0, 80) })
+    .then(() => console.log('[naad] DIAGNOSTIC OK — Firestore writes are working'))
+    .catch(() => console.error('[naad] DIAGNOSTIC FAILED — see error above. Check Firestore is enabled and rules allow writes.'));
+</script>
 
 <script>
 /* ============================================================
@@ -1424,18 +1986,12 @@ function go(screenId) {
   $$('.screen').forEach(s => s.classList.remove('active'));
   document.getElementById('screen-' + screenId).classList.add('active');
   state.currentScreen = screenId;
-  $$('#sheetNav button').forEach(b => b.classList.toggle('active', b.dataset.screen === screenId));
-  const fab = $('#devFab');
-  const showNav = screensWithBottomNav.includes(screenId);
-  $('#bottomNav').classList.toggle('show', showNav);
-  if (showNav) { fab.classList.add('with-nav'); fab.classList.remove('no-nav'); }
-  else { fab.classList.add('no-nav'); fab.classList.remove('with-nav'); }
-  if (screenId === 'home') { renderBanner(); renderMoodGrid(); }
+  $('#bottomNav').classList.toggle('show', screensWithBottomNav.includes(screenId));
+  if (screenId === 'home') { renderBanner(); renderCheckin(); renderMoodGrid(); }
   if (screenId === 'recommendation') renderRecommendation();
   if (screenId === 'player') { renderPlayer(); startPlayerSimulation(); }
   else stopPlayerSimulation();
   if (screenId === 'horoscope') renderHoroscope();
-  closeSheet();
 }
 
 function renderMoodGrid() {
@@ -1468,7 +2024,83 @@ function selectMood(key) {
   state.currentProblem = key;
   state.currentMantraId = p.primary;
   state.currentCount = MANTRA_DB[p.primary].counts[Math.floor(MANTRA_DB[p.primary].counts.length / 2)] || 21;
+  window.naadDB?.saveMood({ mood: key, mantraId: p.primary });
   go('recommendation');
+}
+
+function renderCheckin() {
+  const today = new Date();
+  const dayNamesFull = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+  const dayNamesShort = ['SUN', 'MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT'];
+  const monthNames = ['January', 'February', 'March', 'April', 'May', 'June',
+                      'July', 'August', 'September', 'October', 'November', 'December'];
+
+  const todayLabel = dayNamesFull[today.getDay()];
+  const dateLabel = `${monthNames[today.getMonth()]} ${today.getDate()}, ${today.getFullYear()}`;
+
+  // Show the last 7 days ending with today (today = rightmost cell)
+  const days = [];
+  for (let i = 6; i >= 0; i--) {
+    const d = new Date(today);
+    d.setDate(today.getDate() - i);
+    days.push({
+      dayOfWeek: d.getDay(),
+      dayNum: d.getDate(),
+      isToday: i === 0
+    });
+  }
+
+  // Check-in history sourced from Firestore `sessions` collection (filtered by anonymous uid).
+  // Falls back to all-empty if Firestore hasn't loaded yet — re-renders on `onSessionsLoaded`.
+  const checkins = window.naadDB?.getCheckins?.(7)
+    || [false, false, false, false, false, false, null];
+  const streak = window.naadDB?.getStreak?.() ?? computeStreak(checkins);
+
+  // Build cells
+  const cells = days.map((d, i) => {
+    const status = checkins[i];
+    const classes = ['tracker-cell'];
+    if (d.isToday) classes.push('today');
+    if (status === true) classes.push('completed');
+    else if (status === false) classes.push('missed');
+    return `
+      <div class="${classes.join(' ')}">
+        <div class="day-label">${dayNamesShort[d.dayOfWeek]}</div>
+        <div class="day-num">${d.dayNum}</div>
+        <div class="day-dot"></div>
+      </div>`;
+  }).join('');
+
+  $('#trackerSlot').innerHTML = `
+    <div class="tracker">
+      <div class="tracker-header">
+        <div class="tracker-date-block">
+          <div class="tracker-day">${todayLabel}</div>
+          <div class="tracker-date">${dateLabel}</div>
+        </div>
+        <div class="tracker-streak">
+          <div class="tracker-streak-num">
+            <span class="fire">🔥</span>
+            <span>${streak}</span>
+          </div>
+          <div class="tracker-streak-label">DAY STREAK</div>
+        </div>
+      </div>
+      <div class="tracker-divider"></div>
+      <div class="tracker-week">${cells}</div>
+    </div>`;
+}
+
+/* Counts consecutive completed days ending at today (or yesterday if today is null/pending).
+   Walks backward through the array. */
+function computeStreak(checkins) {
+  let streak = 0;
+  for (let i = checkins.length - 1; i >= 0; i--) {
+    if (checkins[i] === true) streak++;
+    else if (checkins[i] === null && i === checkins.length - 1) continue; // today pending — don't break, keep counting backward
+    else break;
+  }
+  return streak;
 }
 
 function renderBanner() {
@@ -1506,18 +2138,6 @@ function renderRecommendation() {
     <button class="pill ${d === state.currentCount ? 'active' : ''}" data-count="${d}">${d} chants</button>
   `).join('');
 
-  const altMantras = (p && p.alternatives) ? `
-    <div class="alt-mantras">
-      <div class="alt-mantras-label">Other mantras for this</div>
-      ${p.alternatives.map(altId => {
-        const alt = MANTRA_DB[altId];
-        return `<div class="alt-mantra" data-alt="${altId}">
-          <div class="deva">${alt.deva.replace(/\n/g, ' ')}</div>
-          <div class="arrow">→</div>
-        </div>`;
-      }).join('')}
-    </div>` : '';
-
   const secondaryCard = (state.hasBirthData && state.chart) ? (() => {
     const c = state.chart;
     return `<div class="divider-ornate"><span class="divider-ornate-symbol">✦</span></div>
@@ -1530,20 +2150,23 @@ function renderRecommendation() {
   })() : '';
 
   $('#recContent').innerHTML = `
-    <div class="rec-context">${p ? p.contextLabel : 'A mantra for today'}</div>
-    <div class="mantra-card-primary">
+    <div class="rec-eyebrow">${p ? p.contextLabel : 'a mantra for today'}</div>
+
+    <div class="rec-hero">
       <div class="mantra-deva ${isLong ? 'long' : ''}">${m.deva}</div>
       <div class="mantra-trans">${m.trans}</div>
-      <div class="mantra-meta">
-        <span>${m.deity || 'Universal'}</span>
-        <span>${state.currentCount} chants</span>
-      </div>
-      <div class="mantra-desc">${m.description}</div>
-      <div class="mantra-source">— ${m.source}</div>
-      <div class="duration-pills">${durationPills}</div>
-      <button class="btn-primary" data-go="player">▶  Begin session</button>
+      <div class="mantra-meaning">— ${m.meaning}</div>
+      <div class="mantra-source">${m.deity ? m.deity + ' · ' : ''}${m.source}</div>
     </div>
-    ${altMantras}
+
+    <div class="mantra-desc">${m.description}</div>
+
+    <div class="rec-divider"><span class="rec-divider-mark">/</span></div>
+
+    <div class="rec-session-label">How many chants?</div>
+    <div class="duration-pills">${durationPills}</div>
+    <button class="btn-primary saffron" data-go="player">Start chanting</button>
+
     ${secondaryCard}
   `;
 
@@ -1551,14 +2174,6 @@ function renderRecommendation() {
   $('#recContent').querySelectorAll('[data-go]').forEach(el => el.addEventListener('click', () => go(el.dataset.go)));
   $('#recContent').querySelectorAll('.pill').forEach(p => p.addEventListener('click', () => {
     state.currentCount = parseInt(p.dataset.count);
-    renderRecommendation();
-  }));
-  $('#recContent').querySelectorAll('.alt-mantra').forEach(el => el.addEventListener('click', () => {
-    state.currentMantraId = el.dataset.alt;
-    const newM = MANTRA_DB[state.currentMantraId];
-    if (!newM.counts.includes(state.currentCount)) {
-      state.currentCount = newM.counts[Math.floor(newM.counts.length / 2)] || 21;
-    }
     renderRecommendation();
   }));
 }
@@ -1574,6 +2189,10 @@ function renderPlayer() {
   cachedLineSpans = $('#playerDeva').querySelectorAll('.chant-line');
   $('#playerTrans').textContent = m.trans;
   $('#playerMeaning').textContent = '— ' + m.meaning;
+
+  // Build the mala — N beads arranged on a circle, starting at top, clockwise
+  buildMala(state.currentCount);
+
   $('#chantCount').textContent = '0';
   $('#chantCount').classList.remove('tick');
   $('#chantTotal').textContent = state.currentCount;
@@ -1584,6 +2203,27 @@ function renderPlayer() {
   chantIndex = 0;
   phaseElapsed = 0;
   chantPhase = 'chant';
+}
+
+/* Builds N beads on a circle inside #chantMala. Cached as a flat array
+   for fast updating during the chant tick. */
+function buildMala(count) {
+  const mala = $('#chantMala');
+  const frag = document.createDocumentFragment();
+  const r = 46; // % of wrap; pulled inward to avoid clipping
+  for (let i = 0; i < count; i++) {
+    const angle = (i / count) * 2 * Math.PI - Math.PI / 2; // start top, clockwise
+    const x = 50 + r * Math.cos(angle);
+    const y = 50 + r * Math.sin(angle);
+    const bead = document.createElement('div');
+    bead.className = 'chant-bead';
+    bead.style.left = x + '%';
+    bead.style.top = y + '%';
+    frag.appendChild(bead);
+  }
+  mala.innerHTML = '';
+  mala.appendChild(frag);
+  cachedBeads = mala.querySelectorAll('.chant-bead');
 }
 
 function renderHoroscope() {
@@ -1670,6 +2310,10 @@ $('#btnCalculate').addEventListener('click', () => {
   state.hasBirthData = true;
   $('#calcSub').textContent = chart.hasTime ? 'Moon · Sun · Lagna' : 'Moon · Sun';
   $('#calculating').classList.add('show');
+  window.naadDB?.saveProfile({
+    date, time, place: $('#inputPlace').value,
+    hasTime: !time.skipped,
+  });
   setTimeout(() => { $('#calculating').classList.remove('show'); go('horoscope'); }, 1400);
 });
 
@@ -1692,6 +2336,7 @@ let phaseElapsed = 0;     // ms within the current phase
 let chantPhase = 'chant'; // 'chant' (sweeping) | 'gap' (releasing)
 let lastTickAt = 0;       // wall-clock anchor for delta-time accumulation
 let cachedLineSpans = []; // line spans inside the mantra, populated by renderPlayer
+let cachedBeads = [];     // bead nodes on the mala, populated by renderPlayer
 
 function startPlayerSimulation() {
   // Pause-and-resume safe: don't reset state here.
@@ -1720,19 +2365,36 @@ function tickChant() {
   while (true) {
     if (chantPhase === 'chant') {
       if (phaseElapsed < chantMs) break;
-      // Chant complete — increment counter, enter gap, pulse the count
+      // Chant complete — increment counter, pulse the count, fill next bead, enter gap
       chantIndex++;
       const countEl = $('#chantCount');
       countEl.textContent = chantIndex;
-      countEl.classList.remove('tick'); // restart animation if already playing
-      void countEl.offsetWidth;          // force reflow so the re-add triggers a fresh run
+      countEl.classList.remove('tick');
+      void countEl.offsetWidth;          // restart animation
       countEl.classList.add('tick');
+      // Fill the bead at index (chantIndex - 1) with a pulse
+      const bead = cachedBeads[chantIndex - 1];
+      if (bead) {
+        bead.classList.remove('just-filled');
+        void bead.offsetWidth;
+        bead.classList.add('filled', 'just-filled');
+      }
       if (chantIndex >= total) {
-        // Final chant done — hold gradient full, transition out
+        // Final chant done — hold full state, transition out
         $('#screen-player').style.setProperty('--chant-progress', 1);
         cachedLineSpans.forEach(s => s.style.setProperty('--line-progress', 1));
         stopPlayerSimulation();
         $('#chantHint').textContent = 'complete';
+        window.naadDB?.saveSession({
+          mantraId: state.currentMantraId,
+          problem: state.currentProblem,
+          count: state.currentCount,
+        });
+        const streakNow = window.naadDB?.getStreak?.() ?? 0;
+        const sl = document.getElementById('streakLine');
+        if (sl) sl.textContent = streakNow > 0
+          ? `🔥 ${streakNow} day${streakNow === 1 ? '' : 's'} in a row`
+          : '';
         setTimeout(() => go('completion'), 900);
         return;
       }
@@ -1767,10 +2429,11 @@ function tickChant() {
 
 /* ============================================================
    SHARE: CANVAS GENERATION + WHATSAPP
-   Generates a 1080x1920 image (story format) with the mantra,
-   transliteration, meaning, and a dummy URL.
+   Generates a 1080×1080 SQUARE image with the mantra,
+   transliteration, meaning, and the live web URL.
    ============================================================ */
-const SHARE_BASE_URL = 'https://naad.app/m/'; // ← replace with real URL when live
+const SHARE_URL = 'https://thedebasishrath.github.io/naad/';
+const SHARE_URL_DISPLAY = 'thedebasishrath.github.io/naad';
 
 async function generateShareCard(mantra, contextLabel) {
   // Ensure fonts are loaded into the canvas font cache
@@ -1778,120 +2441,112 @@ async function generateShareCard(mantra, contextLabel) {
   await Promise.all([
     document.fonts.load('500 84px "Noto Sans Devanagari"'),
     document.fonts.load('400 64px "Noto Sans Devanagari"'),
-    document.fonts.load('italic 42px "Fraunces"'),
-    document.fonts.load('500 32px "Manrope"'),
-    document.fonts.load('600 36px "Manrope"')
+    document.fonts.load('italic 36px "Fraunces"'),
+    document.fonts.load('500 28px "Manrope"'),
+    document.fonts.load('600 32px "Manrope"')
   ]);
 
   const canvas = $('#shareCanvas');
   const ctx = canvas.getContext('2d');
+  const W = 1080, H = 1080;
 
   // Clear
-  ctx.clearRect(0, 0, 1080, 1920);
+  ctx.clearRect(0, 0, W, H);
 
-  // Background gradient (dark walnut → warm amber)
-  const grad = ctx.createLinearGradient(0, 0, 0, 1920);
+  // Background gradient (dark walnut → warm amber, top to bottom)
+  const grad = ctx.createLinearGradient(0, 0, 0, H);
   grad.addColorStop(0, '#1A0F08');
-  grad.addColorStop(0.55, '#3D2A1A');
+  grad.addColorStop(0.6, '#3D2A1A');
   grad.addColorStop(1, '#5A3D26');
   ctx.fillStyle = grad;
-  ctx.fillRect(0, 0, 1080, 1920);
+  ctx.fillRect(0, 0, W, H);
 
   // Vignette
-  const vignette = ctx.createRadialGradient(540, 960, 200, 540, 960, 1300);
+  const vignette = ctx.createRadialGradient(W / 2, H / 2, 200, W / 2, H / 2, 800);
   vignette.addColorStop(0, 'rgba(0, 0, 0, 0)');
-  vignette.addColorStop(1, 'rgba(0, 0, 0, 0.5)');
+  vignette.addColorStop(1, 'rgba(0, 0, 0, 0.45)');
   ctx.fillStyle = vignette;
-  ctx.fillRect(0, 0, 1080, 1920);
+  ctx.fillRect(0, 0, W, H);
 
-  // Decorative concentric rings around Om
-  ctx.strokeStyle = 'rgba(212, 165, 116, 0.18)';
-  ctx.lineWidth = 1;
-  for (const r of [330, 280, 230, 180, 130]) {
-    ctx.beginPath();
-    ctx.arc(540, 580, r, 0, Math.PI * 2);
-    ctx.stroke();
-  }
+  // Big faint Om watermark behind everything (subtle warmth)
+  ctx.fillStyle = 'rgba(212, 165, 116, 0.07)';
+  ctx.font = '720px "Noto Sans Devanagari", serif';
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'middle';
+  ctx.fillText('ॐ', W / 2, H / 2 + 30);
 
-  // Top divider lines flanking context label
-  const labelY = 200;
+  // Top divider lines flanking the context label
+  const labelY = 130;
   ctx.strokeStyle = 'rgba(212, 165, 116, 0.4)';
   ctx.lineWidth = 1;
   ctx.beginPath();
-  ctx.moveTo(180, labelY); ctx.lineTo(360, labelY);
-  ctx.moveTo(720, labelY); ctx.lineTo(900, labelY);
+  ctx.moveTo(220, labelY); ctx.lineTo(380, labelY);
+  ctx.moveTo(700, labelY); ctx.lineTo(860, labelY);
   ctx.stroke();
 
   // Context label "FOR STRESS TODAY"
   ctx.fillStyle = 'rgba(212, 165, 116, 0.85)';
-  ctx.font = '600 26px "Manrope", sans-serif';
+  ctx.font = '600 22px "Manrope", sans-serif';
   ctx.textAlign = 'center';
   ctx.textBaseline = 'middle';
-  drawLetterSpaced(ctx, contextLabel.toUpperCase(), 540, labelY, 6);
+  drawLetterSpaced(ctx, contextLabel.toUpperCase(), W / 2, labelY, 5);
 
-  // Om symbol
-  ctx.fillStyle = '#D4A574';
-  ctx.font = '300px "Noto Sans Devanagari", serif';
-  ctx.textAlign = 'center';
-  ctx.textBaseline = 'middle';
-  ctx.fillText('ॐ', 540, 580);
-
-  // Mantra Devanagari (multi-line aware)
+  // Mantra Devanagari (multi-line aware), centered vertically in the middle band
   const lines = mantra.deva.split('\n');
-  const fontSize = lines.length === 1 ? 80 : (lines.length === 2 ? 60 : 50);
+  const fontSize = lines.length === 1 ? 88 : (lines.length === 2 ? 64 : (lines.length === 3 ? 52 : 44));
   ctx.fillStyle = '#ECD9BD';
   ctx.font = `500 ${fontSize}px "Noto Sans Devanagari", serif`;
   ctx.textAlign = 'center';
   ctx.textBaseline = 'middle';
   const lineHeight = fontSize * 1.45;
   const blockHeight = lines.length * lineHeight;
-  let mantraY = 1010 - (blockHeight / 2) + (lineHeight / 2);
+  // Anchor the mantra block visually centered in the upper-middle of the canvas
+  const mantraCenterY = 460;
+  let mantraY = mantraCenterY - (blockHeight / 2) + (lineHeight / 2);
   for (const line of lines) {
-    ctx.fillText(line, 540, mantraY);
+    ctx.fillText(line, W / 2, mantraY);
     mantraY += lineHeight;
   }
 
-  // Transliteration
-  const transY = mantraY + 30;
+  // Transliteration directly below the mantra block
+  const transY = mantraCenterY + (blockHeight / 2) + 40;
   ctx.fillStyle = '#D4A574';
-  ctx.font = 'italic 400 38px "Fraunces", serif';
-  const transLines = wrapText(ctx, mantra.trans, 920);
+  ctx.font = 'italic 400 32px "Fraunces", serif';
+  const transLines = wrapText(ctx, mantra.trans, 880);
   let yy = transY;
   for (const line of transLines) {
-    ctx.fillText(line, 540, yy);
-    yy += 52;
+    ctx.fillText(line, W / 2, yy);
+    yy += 44;
   }
 
-  // Meaning
-  ctx.fillStyle = 'rgba(236, 217, 189, 0.65)';
-  ctx.font = '400 30px "Manrope", sans-serif';
-  const meaningLines = wrapText(ctx, '— ' + mantra.meaning, 880);
-  let my = yy + 40;
+  // Meaning — italic, muted
+  ctx.fillStyle = 'rgba(236, 217, 189, 0.6)';
+  ctx.font = '400 24px "Manrope", sans-serif';
+  const meaningLines = wrapText(ctx, '— ' + mantra.meaning, 820);
+  let my = yy + 28;
   for (const line of meaningLines) {
-    ctx.fillText(line, 540, my);
-    my += 42;
+    ctx.fillText(line, W / 2, my);
+    my += 34;
   }
 
-  // Bottom brand block
-  // Decorative line
+  // Bottom brand block — pinned near bottom edge
+  const brandY = 940;
+
+  // Decorative line above brand
   ctx.strokeStyle = 'rgba(212, 165, 116, 0.3)';
   ctx.lineWidth = 1;
   ctx.beginPath();
-  ctx.moveTo(420, 1700); ctx.lineTo(660, 1700);
+  ctx.moveTo(460, brandY - 30); ctx.lineTo(620, brandY - 30);
   ctx.stroke();
 
   ctx.fillStyle = '#D4A574';
-  ctx.font = '600 38px "Manrope", sans-serif';
+  ctx.font = '600 32px "Manrope", sans-serif';
   ctx.textAlign = 'center';
-  drawLetterSpaced(ctx, 'NAAD', 540, 1755, 14);
+  drawLetterSpaced(ctx, 'NAAD', W / 2, brandY + 6, 12);
 
-  ctx.fillStyle = 'rgba(212, 165, 116, 0.55)';
-  ctx.font = '400 24px "Manrope", sans-serif';
-  ctx.fillText('mantras for modern moments', 540, 1810);
-
-  ctx.fillStyle = 'rgba(212, 165, 116, 0.4)';
-  ctx.font = '400 20px "Manrope", sans-serif';
-  ctx.fillText('naad.app', 540, 1850);
+  ctx.fillStyle = 'rgba(212, 165, 116, 0.5)';
+  ctx.font = '400 18px "Manrope", sans-serif';
+  ctx.fillText(SHARE_URL_DISPLAY, W / 2, brandY + 42);
 
   return new Promise(resolve => canvas.toBlob(resolve, 'image/png', 0.95));
 }
@@ -1930,7 +2585,7 @@ async function openShareModal() {
   const m = MANTRA_DB[state.currentMantraId];
   const p = PROBLEMS_DB[state.currentProblem];
   const contextLabel = p ? p.contextLabel : 'A mantra for today';
-  const shareUrl = SHARE_BASE_URL + state.currentMantraId;
+  const shareUrl = SHARE_URL;
   const shareText = `${m.trans}\n— ${m.meaning}\n\nListen on Naad: ${shareUrl}`;
 
   $('#shareModal').classList.add('show');
@@ -2017,17 +2672,13 @@ function triggerDownload(blob, filename) {
 function closeShareModal() { $('#shareModal').classList.remove('show'); }
 
 /* ============================================================
-   SHEET / NAV
+   GLOBAL HANDLERS
    ============================================================ */
-function openSheet() { $('#sheet').classList.add('show'); $('#sheetBackdrop').classList.add('show'); }
-function closeSheet() { $('#sheet').classList.remove('show'); $('#sheetBackdrop').classList.remove('show'); }
-
 document.body.addEventListener('click', e => {
   const target = e.target.closest('[data-go]');
   if (target) { e.stopPropagation(); go(target.dataset.go); }
 });
 
-$$('#sheetNav button').forEach(b => b.addEventListener('click', () => go(b.dataset.screen)));
 $('#chantStage').addEventListener('click', () => {
   if (chantIndex >= state.currentCount) return; // session done — no toggle
   if (playerInterval) {
@@ -2054,16 +2705,210 @@ $('#shareModal').addEventListener('click', e => {
   if (e.target.id === 'shareModal') closeShareModal();
 });
 
-$('#btnReset').addEventListener('click', () => {
-  state = { currentScreen: 'welcome', currentMantraId: 'om-namah-shivaya', currentProblem: 'stress',
-    currentCount: 21, hasBirthData: false, bannerDismissed: false, showAllMoods: false, chart: null };
-  go('welcome');
+/* ============================================================
+   CHAT ONBOARDING
+   WhatsApp-style conversation that collects name + phone,
+   then welcomes the user and transitions to home.
+   ============================================================ */
+const chat = {
+  step: 'init',     // 'init' | 'name' | 'phone' | 'wrapup' | 'done'
+  userName: '',
+  userPhone: '',
+  started: false
+};
+
+function chatScrollBottom() {
+  const el = $('#chatMessages');
+  el.scrollTop = el.scrollHeight;
+}
+
+/* Calibrate typing delay to message length — short greetings show fast,
+   longer prose holds the indicator longer (caps at 1.6s for natural pacing). */
+function chatTypingDelay(text) {
+  const len = text.replace(/<[^>]*>/g, '').length;
+  return Math.min(1600, Math.max(700, len * 22));
+}
+
+function chatBot(html, onDone) {
+  const messages = $('#chatMessages');
+  // Insert typing indicator
+  const typing = document.createElement('div');
+  typing.className = 'chat-typing';
+  typing.innerHTML = '<span></span><span></span><span></span>';
+  messages.appendChild(typing);
+  chatScrollBottom();
+
+  setTimeout(() => {
+    typing.remove();
+    const msg = document.createElement('div');
+    msg.className = 'chat-msg bot';
+    msg.innerHTML = html; // allows inline Devanagari spans
+    messages.appendChild(msg);
+    chatScrollBottom();
+    if (onDone) onDone();
+  }, chatTypingDelay(html));
+}
+
+function chatUser(text) {
+  const messages = $('#chatMessages');
+  const msg = document.createElement('div');
+  msg.className = 'chat-msg user';
+  msg.textContent = text;
+  messages.appendChild(msg);
+  chatScrollBottom();
+}
+
+/* Sets the input field's placeholder/type/enabled state for the current step.
+   Auto-focuses when enabled — tap-to-keyboard on mobile.
+   Pulses the input briefly on enable so the user notices it's ready. */
+function chatSetInput({ placeholder, type = 'text', enabled = true, value = '' } = {}) {
+  const input = $('#chatInput');
+  const send = $('#chatSend');
+  const bar = $('#chatForm');
+  input.placeholder = placeholder;
+  input.type = type;
+  input.value = value;
+  input.disabled = !enabled;
+  send.disabled = !enabled;
+  if (enabled) {
+    // Visual cue — flash the border saffron so user notices the input is ready
+    bar.classList.remove('ready-pulse');
+    void bar.offsetWidth; // force reflow
+    bar.classList.add('ready-pulse');
+    setTimeout(() => bar.classList.remove('ready-pulse'), 1000);
+    // Defer focus so animations settle first
+    setTimeout(() => input.focus(), 60);
+  }
+}
+
+/* Sequenced bot message helper — runs an array of [text, postDelayMs] tuples
+   one after another, returning a Promise that resolves when all are delivered. */
+function chatBotSequence(messages) {
+  return messages.reduce((promise, [html, gap = 280]) => {
+    return promise.then(() => new Promise(resolve => {
+      chatBot(html, () => setTimeout(resolve, gap));
+    }));
+  }, Promise.resolve());
+}
+
+function startChatFlow() {
+  if (chat.started) return;
+  chat.started = true;
+  $('#chatMessages').innerHTML = '';
+
+  // Greeting → ask name (kept tight so input becomes available quickly)
+  setTimeout(() => {
+    chatBotSequence([
+      ['<span class="deva">नमस्ते</span> 🙏 Welcome to <strong>Naad</strong>.', 320],
+      ['I\'m here to help you find the right mantra for whatever you\'re feeling. May I know your name?']
+    ]).then(() => {
+      chat.step = 'name';
+      chatSetInput({ placeholder: 'Type your name…', type: 'text' });
+    });
+  }, 300);
+}
+
+function handleChatSubmit() {
+  const input = $('#chatInput');
+  const value = input.value.trim();
+  if (!value) return;
+
+  if (chat.step === 'name') {
+    if (value.length < 2) return;
+    chat.userName = value.replace(/\s+/g, ' ').slice(0, 40);
+    chatUser(chat.userName);
+    chatSetInput({ placeholder: '', enabled: false });
+
+    setTimeout(() => {
+      chatBotSequence([
+        [`Lovely to meet you, <strong>${escapeHtml(chat.userName.split(' ')[0])}</strong>.`, 320],
+        ['One more thing — could you share your phone number with country code? It helps keep your practice synced.']
+      ]).then(() => {
+        chat.step = 'phone';
+        chatSetInput({ placeholder: '+91 98765 43210', type: 'tel' });
+      });
+    }, 380);
+
+  } else if (chat.step === 'phone') {
+    // Lightweight validation: at least 6 digits in total, allow + and spaces
+    const digitsOnly = value.replace(/\D/g, '');
+    if (digitsOnly.length < 6) {
+      // Shake the input to indicate invalid
+      input.style.borderColor = 'var(--saffron)';
+      setTimeout(() => { input.style.borderColor = ''; }, 500);
+      return;
+    }
+    chat.userPhone = value;
+    chatUser(chat.userPhone);
+    chatSetInput({ placeholder: '', enabled: false });
+
+    window.naadDB?.saveUser({
+      name: chat.userName,
+      phone: chat.userPhone,
+    });
+
+    setTimeout(() => {
+      chatBotSequence([
+        [`Wonderful, <strong>${escapeHtml(chat.userName.split(' ')[0])}</strong>.`, 280],
+        ['At <strong>Naad</strong>, you\'ll find spiritual mantra solutions for every problem life brings — stress, anxiety, fear, heartbreak, money worries, grief, and more.', 360],
+        ['Each mantra is sourced from the Vedas and ancient texts — a precise sound tool refined over centuries.', 320],
+        ['Please wait — we\'re preparing your mantras…']
+      ]).then(() => {
+        chat.step = 'wrapup';
+        // Show loading overlay + transition to home
+        setTimeout(() => {
+          $('#chatLoading').classList.add('show');
+          setTimeout(() => {
+            chat.step = 'done';
+            go('home');
+            // Fade overlay out after the screen transition begins
+            setTimeout(() => {
+              $('#chatLoading').classList.remove('show');
+            }, 500);
+          }, 2200);
+        }, 600);
+      });
+    }, 380);
+  }
+}
+
+function escapeHtml(s) {
+  return s.replace(/[&<>"']/g, c => ({
+    '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
+  }[c]));
+}
+
+// Three layered handlers — works even if form submit doesn't fire on a given browser/platform
+$('#chatForm').addEventListener('submit', e => {
+  e.preventDefault();
+  handleChatSubmit();
+});
+$('#chatSend').addEventListener('click', e => {
+  e.preventDefault();
+  handleChatSubmit();
+});
+$('#chatInput').addEventListener('keydown', e => {
+  if (e.key === 'Enter') {
+    e.preventDefault();
+    handleChatSubmit();
+  }
 });
 
-$('#devFab').addEventListener('click', openSheet);
-$('#sheetBackdrop').addEventListener('click', closeSheet);
+// Splash → welcome transition: hold splash briefly, fade it, then start chat
+setTimeout(() => {
+  const splash = document.getElementById('screen-splash');
+  if (splash) splash.classList.add('fade-out');
+  setTimeout(() => {
+    go('welcome');
+    startChatFlow();
+  }, 480);
+}, 1600);
 
-go('welcome');
+// When Firestore session history loads after page render,
+// refresh the home tracker so streak + week dots reflect real data.
+window.onSessionsLoaded = () => {
+  if (state.currentScreen === 'home') renderCheckin();
+};
 </script>
 
 </body>
