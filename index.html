@@ -753,26 +753,38 @@
     right: 14px;
     width: 40px; height: 40px;
     border-radius: 50%;
-    border: 1px solid var(--paper-soft);
-    background: rgba(255, 255, 255, 0.92);
+    /* Default theme: light backgrounds (home, refer, etc.) — dark icon on a
+       crisp white pill that has enough contrast against paper-warm. */
+    border: 1px solid rgba(31, 22, 17, 0.08);
+    background: rgba(255, 255, 255, 0.96);
     backdrop-filter: blur(10px);
     -webkit-backdrop-filter: blur(10px);
     display: none;
     align-items: center; justify-content: center;
     color: var(--ink);
     z-index: 80;
-    box-shadow: 0 2px 10px rgba(31, 22, 17, 0.1);
+    box-shadow: 0 2px 12px rgba(31, 22, 17, 0.18);
     cursor: pointer;
     padding: 0;
-    transition: transform 0.15s ease, color 0.25s ease, background 0.2s ease;
+    transition: transform 0.15s ease, color 0.25s ease, background 0.25s ease, border-color 0.25s ease;
     animation: audioToggleIn 0.5s ease both;
   }
   .audio-toggle.show { display: flex; }
   .audio-toggle:active { transform: scale(0.92); }
   .audio-toggle .icon-off { display: none; }
-  .audio-toggle.muted { color: var(--warm-gray-light); }
+  .audio-toggle.muted { color: var(--warm-gray); }
   .audio-toggle.muted .icon-on { display: none; }
   .audio-toggle.muted .icon-off { display: block; }
+  /* Dark-background variant: applied while the user is on screens with a
+     dark gradient (horoscope, player). Gold-pale icon on a translucent
+     amber tint blends with the theme and stays visible. */
+  .audio-toggle.on-dark {
+    background: rgba(255, 245, 232, 0.12);
+    border-color: rgba(236, 217, 189, 0.28);
+    color: var(--gold-pale);
+    box-shadow: 0 2px 14px rgba(0, 0, 0, 0.35);
+  }
+  .audio-toggle.on-dark.muted { color: rgba(236, 217, 189, 0.5); }
   @keyframes audioToggleIn {
     from { opacity: 0; transform: translateY(-6px); }
     to   { opacity: 1; transform: translateY(0); }
@@ -1813,8 +1825,8 @@
     <div class="birth-sub">Stays on your device. Never shared.</div>
     <div class="field" id="fieldDate">
       <label>Date of birth</label>
-      <input type="text" id="inputDate" placeholder="DD / MM / YYYY" value="14 / 08 / 1996" inputmode="numeric">
-      <div class="field-error">Use DD / MM / YYYY</div>
+      <input type="text" id="inputDate" placeholder="DD/MM/YYYY" value="14/08/1996" inputmode="numeric" maxlength="10" autocomplete="bday">
+      <div class="field-error">Use DD/MM/YYYY</div>
     </div>
     <div class="field" id="fieldTime">
       <label>Time of birth <span class="opt">— optional, unlocks Lagna</span></label>
@@ -2027,9 +2039,9 @@
 <div class="screen" id="screen-horoscope">
   <div class="top-actions">
     <button class="icon-btn" data-go="home" aria-label="Back"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M12 19l-7-7 7-7"/></svg></button>
-    <button class="share-pill" aria-label="Share as">
+    <button class="share-pill" id="shareBtnHoro" aria-label="Share today's prediction">
       <svg viewBox="0 0 24 24" fill="currentColor"><path d="M19.05 4.91A9.816 9.816 0 0 0 12.04 2c-5.46 0-9.91 4.45-9.91 9.91 0 1.75.46 3.45 1.32 4.95L2.05 22l5.25-1.38c1.45.79 3.08 1.21 4.74 1.21 5.46 0 9.91-4.45 9.91-9.91 0-2.65-1.03-5.14-2.9-7.01zM12.04 20.15c-1.48 0-2.93-.4-4.2-1.15l-.3-.18-3.12.82.83-3.04-.2-.31a8.264 8.264 0 0 1-1.26-4.38c0-4.54 3.7-8.24 8.24-8.24 2.2 0 4.27.86 5.82 2.42a8.183 8.183 0 0 1 2.41 5.83c.02 4.54-3.68 8.23-8.22 8.23zm4.52-6.16c-.25-.12-1.47-.72-1.69-.81-.23-.08-.39-.12-.56.12-.17.25-.64.81-.78.97-.14.17-.29.19-.54.06-.25-.12-1.05-.39-1.99-1.23-.74-.66-1.23-1.47-1.38-1.72-.14-.25-.02-.38.11-.51.11-.11.25-.29.37-.43s.17-.25.25-.41c.08-.17.04-.31-.02-.43s-.56-1.34-.76-1.84c-.2-.48-.41-.42-.56-.43h-.48c-.17 0-.43.06-.66.31-.22.25-.86.85-.86 2.07 0 1.22.89 2.4 1.01 2.56.12.17 1.75 2.67 4.23 3.74.59.26 1.05.41 1.41.52.59.19 1.13.16 1.56.1.48-.07 1.47-.6 1.67-1.18.21-.58.21-1.07.14-1.18s-.22-.16-.47-.28z"/></svg>
-      Share as
+      Share
     </button>
   </div>
   <div class="horo-content">
@@ -2100,8 +2112,8 @@
 <div class="share-modal" id="shareModal">
   <div class="share-modal-content">
     <button class="share-close" id="shareClose">×</button>
-    <h3>Share as WhatsApp status</h3>
-    <div class="sub">A 1080×1080 square image, ready for status</div>
+    <h3 id="shareModalTitle">Share as WhatsApp status</h3>
+    <div class="sub" id="shareModalSub">A 1080×1080 square image, ready for status</div>
     <div id="sharePreviewWrap" class="share-loading">
       <div class="spinner"></div>
       <div>Generating your card…</div>
@@ -2747,6 +2759,18 @@ function go(screenId) {
   $$('.bottom-nav .nav-item').forEach(item => {
     item.classList.toggle('active', item.dataset.go === screenId);
   });
+
+  // Audio toggle — visible from home onward (regardless of audio playback);
+  // adapt theme to dark or light background screens for contrast.
+  const POST_HOME_SCREENS = ['home', 'recommendation', 'player', 'completion', 'birth', 'horoscope', 'refer'];
+  const DARK_BG_SCREENS = ['horoscope', 'player'];
+  const audioBtn = document.getElementById('audioToggle');
+  if (audioBtn) {
+    if (POST_HOME_SCREENS.includes(screenId)) showAudioToggle();
+    else audioBtn.classList.remove('show');
+    audioBtn.classList.toggle('on-dark', DARK_BG_SCREENS.includes(screenId));
+  }
+
   if (screenId === 'home') {
     // Only fade in if priming already happened (audio is allowed to play).
     // For returning users who skipped the splash, the first tap primes and
@@ -3236,6 +3260,17 @@ function parseTime(s) {
   if (hour < 0 || hour > 23 || minute < 0 || minute > 59) return null;
   return { hour, minute, skipped: false };
 }
+// Auto-insert slashes as the user types DD/MM/YYYY. Strips non-digits, caps
+// at 8 digits, then re-formats. Backspace and paste both flow through cleanly
+// because we always rebuild from the digit-only stream.
+$('#inputDate').addEventListener('input', e => {
+  const digits = e.target.value.replace(/\D/g, '').slice(0, 8);
+  let out = digits;
+  if (digits.length > 4)      out = digits.slice(0, 2) + '/' + digits.slice(2, 4) + '/' + digits.slice(4);
+  else if (digits.length > 2) out = digits.slice(0, 2) + '/' + digits.slice(2);
+  if (e.target.value !== out) e.target.value = out;
+});
+
 $('#btnCalculate').addEventListener('click', () => {
   $$('.field').forEach(f => f.classList.remove('has-error'));
   const date = parseDate($('#inputDate').value);
@@ -3523,12 +3558,38 @@ function wrapText(ctx, text, maxWidth) {
   return lines;
 }
 
-async function openShareModal() {
-  const m = MANTRA_DB[state.currentMantraId];
-  const p = PROBLEMS_DB[state.currentProblem];
-  const contextLabel = p ? p.contextLabel : 'A mantra for today';
+async function openShareModal(kind) {
+  // kind: 'mantra' (default) or 'horoscope'. Anything else falls back to mantra.
+  const isHoro = kind === 'horoscope';
+
+  let blobPromise, shareText, fileName, previewAlt, shareTitle, modalTitle, modalSub;
   const shareUrl = SHARE_URL;
-  const shareText = `${m.trans}\n— ${m.meaning}\n\nListen on Saarthi: ${shareUrl}`;
+
+  if (isHoro) {
+    if (!state.chart) return;
+    const prediction = composePrediction(state.chart);
+    blobPromise = generateHoroscopeShareCard();
+    shareText = `My Saarthi prediction for today:\n\n${prediction.visible}\n\nGet yours at ${shareUrl}`;
+    fileName = `saarthi-horoscope-${new Date().toISOString().slice(0, 10)}.png`;
+    previewAlt = "Today's prediction card";
+    shareTitle = "Today's Prediction · Saarthi";
+    modalTitle = 'Share your prediction';
+    modalSub = 'A 1080×1080 image with today\'s prediction';
+  } else {
+    const m = MANTRA_DB[state.currentMantraId];
+    const p = PROBLEMS_DB[state.currentProblem];
+    const contextLabel = p ? p.contextLabel : 'A mantra for today';
+    blobPromise = generateShareCard(m, contextLabel);
+    shareText = `${m.trans}\n— ${m.meaning}\n\nListen on Saarthi: ${shareUrl}`;
+    fileName = `saarthi-${state.currentMantraId}.png`;
+    previewAlt = 'Mantra card preview';
+    shareTitle = 'Mantra from Saarthi';
+    modalTitle = 'Share as WhatsApp status';
+    modalSub = 'A 1080×1080 square image, ready for status';
+  }
+
+  $('#shareModalTitle').textContent = modalTitle;
+  $('#shareModalSub').textContent = modalSub;
 
   $('#shareModal').classList.add('show');
   $('#sharePreviewWrap').innerHTML = '<div class="spinner"></div><div>Generating your card…</div>';
@@ -3537,45 +3598,35 @@ async function openShareModal() {
   $('#shareLinkRow').style.display = 'none';
 
   try {
-    const blob = await generateShareCard(m, contextLabel);
+    const blob = await blobPromise;
+    if (!blob) throw new Error('Blob generation returned null');
     const url = URL.createObjectURL(blob);
 
-    // Show preview
     $('#sharePreviewWrap').className = '';
-    $('#sharePreviewWrap').innerHTML = `<img id="sharePreview" src="${url}" alt="Mantra card preview">`;
+    $('#sharePreviewWrap').innerHTML = `<img id="sharePreview" src="${url}" alt="${previewAlt}">`;
     $('#shareActions').style.display = 'flex';
     $('#shareLinkRow').style.display = 'flex';
     $('#shareUrl').textContent = shareUrl;
 
-    // Wire up share to WhatsApp
     $('#btnShareWhatsapp').onclick = async () => {
-      const file = new File([blob], `naad-${state.currentMantraId}.png`, { type: 'image/png' });
-      // Try native Web Share API with file (mobile)
+      const file = new File([blob], fileName, { type: 'image/png' });
       if (navigator.canShare && navigator.canShare({ files: [file] })) {
         try {
-          await navigator.share({
-            files: [file],
-            text: shareText,
-            url: shareUrl,
-            title: 'Mantra from Saarthi'
-          });
+          await navigator.share({ files: [file], text: shareText, url: shareUrl, title: shareTitle });
           return;
         } catch (err) {
-          if (err.name === 'AbortError') return; // user cancelled
+          if (err.name === 'AbortError') return;
           console.warn('Web Share failed, falling back:', err);
         }
       }
-      // Fallback: trigger download + open WhatsApp web with text
-      triggerDownload(blob, `naad-${state.currentMantraId}.png`);
+      triggerDownload(blob, fileName);
       setTimeout(() => {
         window.open('https://wa.me/?text=' + encodeURIComponent(shareText), '_blank');
       }, 400);
     };
 
-    // Download button
-    $('#btnDownload').onclick = () => triggerDownload(blob, `naad-${state.currentMantraId}.png`);
+    $('#btnDownload').onclick = () => triggerDownload(blob, fileName);
 
-    // Copy link
     $('#copyLinkBtn').onclick = async () => {
       try {
         await navigator.clipboard.writeText(shareUrl);
@@ -3586,7 +3637,6 @@ async function openShareModal() {
           $('#copyLinkBtn').classList.remove('copied');
         }, 1500);
       } catch (e) {
-        // Fallback for older browsers
         const ta = document.createElement('textarea');
         ta.value = shareUrl;
         document.body.appendChild(ta);
@@ -3599,6 +3649,119 @@ async function openShareModal() {
     console.error('Generation failed', err);
     $('#sharePreviewWrap').innerHTML = '<div style="color: #9A2D0A">Couldn\'t generate the card. Please try again.</div>';
   }
+}
+
+// === Horoscope share card generator ===
+// Renders today's visible prediction onto a 1080×1080 canvas using the same
+// dark gradient + Om watermark + SAARTHI brand block as the mantra card.
+async function generateHoroscopeShareCard() {
+  if (!state.chart) return null;
+  const prediction = composePrediction(state.chart);
+
+  await document.fonts.ready;
+  await Promise.all([
+    document.fonts.load('500 36px "Manrope"'),
+    document.fonts.load('600 32px "Manrope"'),
+    document.fonts.load('600 22px "Manrope"'),
+    document.fonts.load('italic 500 28px "Manrope"'),
+    document.fonts.load('400 24px "Manrope"'),
+    document.fonts.load('500 720px "Noto Sans Devanagari"')
+  ]);
+
+  const canvas = $('#shareCanvas');
+  const ctx = canvas.getContext('2d');
+  const W = 1080, H = 1080;
+  ctx.clearRect(0, 0, W, H);
+
+  // Background
+  const grad = ctx.createLinearGradient(0, 0, 0, H);
+  grad.addColorStop(0, '#1A0F08');
+  grad.addColorStop(0.6, '#3D2A1A');
+  grad.addColorStop(1, '#5A3D26');
+  ctx.fillStyle = grad;
+  ctx.fillRect(0, 0, W, H);
+
+  // Vignette
+  const vignette = ctx.createRadialGradient(W / 2, H / 2, 200, W / 2, H / 2, 800);
+  vignette.addColorStop(0, 'rgba(0, 0, 0, 0)');
+  vignette.addColorStop(1, 'rgba(0, 0, 0, 0.45)');
+  ctx.fillStyle = vignette;
+  ctx.fillRect(0, 0, W, H);
+
+  // Faint Om watermark
+  ctx.fillStyle = 'rgba(212, 165, 116, 0.07)';
+  ctx.font = '720px "Noto Sans Devanagari", serif';
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'middle';
+  ctx.fillText('ॐ', W / 2, H / 2 + 30);
+
+  // Top label with flanking dividers
+  const labelY = 130;
+  ctx.strokeStyle = 'rgba(212, 165, 116, 0.4)';
+  ctx.lineWidth = 1;
+  ctx.beginPath();
+  ctx.moveTo(180, labelY); ctx.lineTo(360, labelY);
+  ctx.moveTo(720, labelY); ctx.lineTo(900, labelY);
+  ctx.stroke();
+  ctx.fillStyle = 'rgba(212, 165, 116, 0.85)';
+  ctx.font = '600 22px "Manrope", sans-serif';
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'middle';
+  drawLetterSpaced(ctx, "TODAY'S PREDICTION", W / 2, labelY, 5);
+
+  // Date subtitle
+  const today = new Date();
+  const months = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+  const dateStr = `${months[today.getMonth()]} ${today.getDate()}, ${today.getFullYear()}`;
+  ctx.fillStyle = 'rgba(236, 217, 189, 0.55)';
+  ctx.font = '400 20px "Manrope", sans-serif';
+  ctx.fillText(dateStr, W / 2, labelY + 42);
+
+  // Sign line — moon (and rising if available)
+  const c = state.chart;
+  const signLine = c.ascendant
+    ? `Moon in ${c.moon.en}  ·  ${c.ascendant.en} rising`
+    : `Moon in ${c.moon.en}  ·  Sun in ${c.sun.en}`;
+  ctx.fillStyle = 'rgba(212, 165, 116, 0.75)';
+  ctx.font = 'italic 500 28px "Manrope", system-ui, sans-serif';
+  ctx.fillText(signLine, W / 2, 250);
+
+  // Prediction body — wrap to ~880px
+  ctx.fillStyle = '#ECD9BD';
+  ctx.font = '500 36px "Manrope", system-ui, sans-serif';
+  const predLines = wrapText(ctx, prediction.visible, 880);
+  const predLineHeight = 52;
+  const predBlockHeight = predLines.length * predLineHeight;
+  const predCenterY = 540;
+  let py = predCenterY - predBlockHeight / 2 + predLineHeight / 2;
+  for (const line of predLines) {
+    ctx.fillText(line, W / 2, py);
+    py += predLineHeight;
+  }
+
+  // Teaser
+  ctx.fillStyle = 'rgba(212, 165, 116, 0.65)';
+  ctx.font = 'italic 400 24px "Manrope", system-ui, sans-serif';
+  ctx.fillText('There\'s more — unlock the rest in the app.', W / 2, py + 36);
+
+  // Brand block
+  const brandY = 940;
+  ctx.strokeStyle = 'rgba(212, 165, 116, 0.3)';
+  ctx.lineWidth = 1;
+  ctx.beginPath();
+  ctx.moveTo(460, brandY - 30); ctx.lineTo(620, brandY - 30);
+  ctx.stroke();
+
+  ctx.fillStyle = '#D4A574';
+  ctx.font = '600 32px "Manrope", sans-serif';
+  ctx.textAlign = 'center';
+  drawLetterSpaced(ctx, 'SAARTHI', W / 2, brandY + 6, 10);
+
+  ctx.fillStyle = 'rgba(212, 165, 116, 0.5)';
+  ctx.font = '400 18px "Manrope", sans-serif';
+  ctx.fillText(SHARE_URL_DISPLAY, W / 2, brandY + 42);
+
+  return new Promise(resolve => canvas.toBlob(resolve, 'image/png', 0.95));
 }
 
 function triggerDownload(blob, filename) {
@@ -3640,9 +3803,10 @@ $$('.mood-emoji button').forEach(b => b.addEventListener('click', () => {
 }));
 
 // Share buttons
-$('#shareBtnRec').addEventListener('click', openShareModal);
-$('#shareBtnPlayer').addEventListener('click', openShareModal);
-$('#shareBtnCompletion').addEventListener('click', openShareModal);
+$('#shareBtnRec').addEventListener('click', () => openShareModal('mantra'));
+$('#shareBtnPlayer').addEventListener('click', () => openShareModal('mantra'));
+$('#shareBtnCompletion').addEventListener('click', () => openShareModal('mantra'));
+$('#shareBtnHoro')?.addEventListener('click', () => openShareModal('horoscope'));
 $('#shareClose').addEventListener('click', closeShareModal);
 $('#shareModal').addEventListener('click', e => {
   if (e.target.id === 'shareModal') closeShareModal();
@@ -3943,6 +4107,8 @@ const bgAudio = document.getElementById('bgMusic');
 // Surface load/network failures to the console so the user can debug
 // Firebase Storage rules / CORS / bucket name issues. These are the usual
 // reasons the file silently fails to play.
+let bgAudioFailed = false;
+
 if (bgAudio) {
   bgAudio.addEventListener('error', () => {
     const e = bgAudio.error;
@@ -3950,14 +4116,25 @@ if (bgAudio) {
     console.error('[naad] bg music FAILED to load —',
       e ? `${codes[e.code] || e.code}: ${e.message || '(no message)'}` : '(no error info)',
       '\nLikely fix: confirm the Firebase Storage object is publicly readable, the bucket name is correct, and CORS allows your origin.');
+    // Audio is genuinely unavailable — hide the toggle so we don't show a
+    // dead button. (If it was never shown, this is a no-op.)
+    bgAudioFailed = true;
+    document.getElementById('audioToggle')?.classList.remove('show');
   });
   bgAudio.addEventListener('stalled', () => console.warn('[naad] bg music stalled'));
   bgAudio.addEventListener('canplay',  () => {
     console.log('[naad] bg music canplay');
-    // If we tried to fade in before the audio was ready, run it now.
     if (bgFadeQueued) { bgFadeQueued = false; startBgMusicFadeIn(); }
   });
   bgAudio.addEventListener('playing',  () => console.log('[naad] bg music playing'));
+}
+
+// Show the toggle as soon as the user reaches home (or any post-home screen).
+// Decoupled from audio state so the user always has consistent control —
+// even if priming hasn't finished or the file is still buffering.
+function showAudioToggle() {
+  if (bgAudioFailed) return; // file genuinely missing → keep hidden
+  document.getElementById('audioToggle')?.classList.add('show');
 }
 
 function bgFadeVolume(audio, fromV, toV, durationMs, onDone) {
@@ -4003,7 +4180,9 @@ function startBgMusicFadeIn() {
     bgAudio.play().catch(err => console.warn('[naad] bg music play blocked:', err.name, err.message));
   }
   bgFadeVolume(bgAudio, bgAudio.volume || 0, BG_TARGET_VOLUME, BG_FADE_IN_MS);
-  document.getElementById('audioToggle')?.classList.add('show');
+  // Toggle visibility is owned by go() — kept here as a no-op safeguard
+  // in case startBgMusicFadeIn is invoked from a non-screen-change path.
+  showAudioToggle();
 }
 
 function toggleBgMusic() {
