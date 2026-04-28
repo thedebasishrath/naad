@@ -10,7 +10,7 @@
 <title>Naad</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght,SOFT@9..144,300..800,0..100&family=Manrope:wght@300;400;500;600;700&family=Noto+Sans+Devanagari:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@300;400;500;600;700;800&family=Noto+Sans+Devanagari:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
   :root {
     --paper: #F5F6F8;
@@ -53,7 +53,10 @@
     max-width: 480px;
     margin: 0 auto;
     position: relative;
-    height: 100dvh; height: 100vh;
+    /* 100vh as the legacy fallback; 100dvh tracks the *visible* viewport so
+       the bottom nav and splash CTA stay above the browser's URL/nav bar. */
+    height: 100vh;
+    height: 100dvh;
     box-shadow: 0 0 80px rgba(31, 22, 17, 0.08);
   }
   button { font-family: inherit; cursor: pointer; }
@@ -148,7 +151,7 @@
     animation: splashEntry 0.9s cubic-bezier(0.34, 1.2, 0.64, 1) both;
   }
   #screen-splash .splash-wordmark {
-    font-family: 'Fraunces', serif;
+    font-family: 'Manrope', system-ui, sans-serif;
     font-style: italic;
     font-weight: 300;
     font-size: 38px;
@@ -164,6 +167,65 @@
     color: var(--warm-gray);
     letter-spacing: 0.32em;
     animation: splashFade 0.7s 0.55s both;
+  }
+  #screen-splash {
+    cursor: pointer;
+  }
+  #screen-splash .splash-cta {
+    position: absolute;
+    bottom: calc(72px + var(--safe-bot));
+    left: 50%;
+    background: var(--saffron);
+    color: #FFFFFF;
+    border: none;
+    padding: 16px 30px;
+    border-radius: 999px;
+    font-family: 'Manrope', system-ui, sans-serif;
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    cursor: pointer;
+    box-shadow:
+      0 10px 28px rgba(196, 65, 12, 0.38),
+      0 2px 6px rgba(196, 65, 12, 0.22);
+    z-index: 3;
+    animation:
+      ctaFadeIn 0.6s 0.9s both,
+      ctaBounce 1.6s 1.7s infinite ease-in-out;
+  }
+  #screen-splash .splash-cta::before,
+  #screen-splash .splash-cta::after {
+    content: '';
+    position: absolute;
+    inset: -2px;
+    border-radius: inherit;
+    border: 2px solid var(--saffron);
+    pointer-events: none;
+    opacity: 0;
+    animation: ctaRipple 1.8s 1.7s infinite ease-out;
+  }
+  #screen-splash .splash-cta::after {
+    animation-delay: 2.6s;
+  }
+  #screen-splash .splash-cta:active {
+    background: var(--saffron-deep);
+    transform: translateX(-50%) scale(0.96);
+  }
+  @keyframes ctaFadeIn {
+    from { opacity: 0; transform: translate(-50%, 14px); }
+    to   { opacity: 1; transform: translate(-50%, 0); }
+  }
+  @keyframes ctaBounce {
+    0%, 100% { transform: translateX(-50%) translateY(0); }
+    50%      { transform: translateX(-50%) translateY(-5px); }
+  }
+  @keyframes ctaRipple {
+    0%   { opacity: 0.7; transform: scale(1); }
+    100% { opacity: 0;   transform: scale(1.32); }
   }
   #screen-splash.fade-out {
     opacity: 0;
@@ -408,7 +470,7 @@
     animation: spin 1.2s linear infinite;
   }
   .chat-loading-text {
-    font-family: 'Fraunces', serif;
+    font-family: 'Manrope', system-ui, sans-serif;
     font-style: italic;
     font-weight: 300;
     font-size: 22px;
@@ -428,25 +490,27 @@
   #screen-home { padding-bottom: calc(72px + var(--safe-bot)); }
   .home-bar {
     padding: max(20px, calc(var(--safe-top) + 14px)) 24px 14px;
-    display: flex; justify-content: space-between; align-items: center;
+    display: flex; align-items: center;
     background: var(--paper-warm); position: sticky; top: 0; z-index: 5;
   }
-  .home-bar .brand {
-    font-family: 'Fraunces', serif; font-weight: 500; font-size: 19px;
-    letter-spacing: 0.24em; text-transform: uppercase; color: var(--ink);
+  .salutation { display: flex; }
+  .salutation-name {
+    font-family: 'Manrope', system-ui, sans-serif;
+    font-weight: 600; font-size: 24px;
+    color: var(--ink);
+    display: flex; align-items: baseline; gap: 8px;
+    letter-spacing: -0.01em;
   }
-  .home-bar .right { display: flex; gap: 12px; align-items: center; }
+  .salutation-name em {
+    font-style: normal;
+    font-weight: 700;
+    color: var(--saffron-deep);
+  }
+  .salutation-emoji { font-size: 20px; }
   .streak {
     display: inline-flex; align-items: center; gap: 4px;
     background: var(--paper-soft); padding: 6px 12px; border-radius: 999px;
     font-size: 13px; font-weight: 600; color: var(--saffron-deep);
-  }
-  .avatar {
-    width: 34px; height: 34px; border-radius: 50%;
-    background: var(--gradient-horoscope);
-    display: flex; align-items: center; justify-content: center;
-    color: var(--gold-pale); font-size: 13px; font-weight: 600;
-    font-family: 'Fraunces', serif;
   }
 
   .banner {
@@ -463,14 +527,9 @@
     background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200' viewBox='0 0 200 200'%3E%3Cdefs%3E%3CradialGradient id='g'%3E%3Cstop offset='0' stop-color='%23ffffff' stop-opacity='0.3'/%3E%3Cstop offset='1' stop-color='%23ffffff' stop-opacity='0'/%3E%3C/radialGradient%3E%3C/defs%3E%3Ccircle cx='160' cy='40' r='80' fill='url(%23g)'/%3E%3C/svg%3E");
     pointer-events: none;
   }
-  .banner-title { font-family: 'Fraunces', serif; font-weight: 500; font-size: 18px; color: var(--walnut); margin-bottom: 4px; position: relative; z-index: 2; }
-  .banner-sub { font-size: 12px; color: rgba(31, 22, 17, 0.7); position: relative; z-index: 2; }
+  .banner-title { font-family: 'Manrope', system-ui, sans-serif; font-weight: 600; font-size: 18px; color: var(--walnut); margin-bottom: 4px; position: relative; z-index: 2; }
+  .banner-sub { font-size: 12px; color: rgba(31, 22, 17, 0.85); font-weight: 500; position: relative; z-index: 2; }
   .banner-arrow { position: absolute; right: 22px; top: 50%; transform: translateY(-50%); color: var(--walnut); font-size: 22px; z-index: 2; }
-  .banner-chart { background: var(--gradient-horoscope); }
-  .banner-chart .banner-title { color: var(--gold-pale); }
-  .banner-chart .banner-sub { color: rgba(236, 217, 189, 0.75); }
-  .banner-chart .banner-arrow { color: var(--gold-soft); }
-  .banner-chart::before { display: none; }
   .banner-compact {
     background: transparent !important; box-shadow: none !important;
     border: 1px dashed var(--gold-soft);
@@ -499,7 +558,7 @@
     min-width: 0;
   }
   .tracker-day {
-    font-family: 'Fraunces', serif;
+    font-family: 'Manrope', system-ui, sans-serif;
     font-style: italic;
     font-weight: 400;
     font-size: 26px;
@@ -524,7 +583,7 @@
     flex-shrink: 0;
   }
   .tracker-streak-num {
-    font-family: 'Fraunces', serif;
+    font-family: 'Manrope', system-ui, sans-serif;
     font-style: italic;
     font-weight: 400;
     font-size: 30px;
@@ -570,7 +629,7 @@
     font-weight: 700;
   }
   .tracker-cell .day-num {
-    font-family: 'Fraunces', serif;
+    font-family: 'Manrope', system-ui, sans-serif;
     font-style: italic;
     font-weight: 400;
     font-size: 13px;
@@ -621,7 +680,7 @@
 
   .home-question { padding: 8px 24px 22px; }
   .home-question h2 {
-    font-family: 'Fraunces', serif; font-weight: 300; font-size: 32px;
+    font-family: 'Manrope', system-ui, sans-serif; font-weight: 300; font-size: 32px;
     line-height: 1.18; color: var(--ink); letter-spacing: -0.015em;
     font-variation-settings: 'opsz' 144;
   }
@@ -657,26 +716,6 @@
   .mood-extra { display: none; }
   .mood-extra.show { display: contents; }
 
-  .resume-card {
-    margin: 24px; padding: 14px 18px;
-    background: rgba(31, 22, 17, 0.04); border-radius: 14px;
-    display: flex; align-items: center; gap: 14px;
-    transition: background 0.2s;
-  }
-  .resume-card:active { background: rgba(31, 22, 17, 0.08); }
-  .resume-card .play {
-    width: 38px; height: 38px; border-radius: 50%;
-    background: var(--ink); color: var(--paper);
-    display: flex; align-items: center; justify-content: center;
-    font-size: 13px; flex-shrink: 0;
-  }
-  .resume-card .meta { flex: 1; min-width: 0; }
-  .resume-card .meta .t { font-size: 13px; font-weight: 600; color: var(--ink); margin-bottom: 1px; }
-  .resume-card .meta .d {
-    font-size: 11px; color: var(--warm-gray);
-    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
-  }
-
   .bottom-nav {
     position: absolute; bottom: 0; left: 0; right: 0;
     height: calc(64px + var(--safe-bot));
@@ -698,17 +737,51 @@
   .nav-item.active { color: var(--saffron); }
   .nav-item .ico { font-size: 18px; }
 
+  /* === AUDIO TOGGLE (floating, top-right) === */
+  .audio-toggle {
+    position: absolute;
+    top: max(14px, calc(var(--safe-top) + 10px));
+    right: 14px;
+    width: 40px; height: 40px;
+    border-radius: 50%;
+    border: 1px solid var(--paper-soft);
+    background: rgba(255, 255, 255, 0.92);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    display: none;
+    align-items: center; justify-content: center;
+    color: var(--ink);
+    z-index: 80;
+    box-shadow: 0 2px 10px rgba(31, 22, 17, 0.1);
+    cursor: pointer;
+    padding: 0;
+    transition: transform 0.15s ease, color 0.25s ease, background 0.2s ease;
+    animation: audioToggleIn 0.5s ease both;
+  }
+  .audio-toggle.show { display: flex; }
+  .audio-toggle:active { transform: scale(0.92); }
+  .audio-toggle .icon-off { display: none; }
+  .audio-toggle.muted { color: var(--warm-gray-light); }
+  .audio-toggle.muted .icon-on { display: none; }
+  .audio-toggle.muted .icon-off { display: block; }
+  @keyframes audioToggleIn {
+    from { opacity: 0; transform: translateY(-6px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
   /* === RECOMMENDATION === */
   .top-actions {
     display: flex; align-items: center; justify-content: space-between;
-    padding: max(14px, calc(var(--safe-top) + 8px)) 24px 8px;
+    /* Right padding reserves space for the floating audio-toggle (40px wide
+       at right:14px) so the share-pill never sits underneath it. */
+    padding: max(14px, calc(var(--safe-top) + 8px)) 68px 8px 24px;
   }
   .rec-content { padding: 12px 24px 60px; }
 
   /* Tiny italic eyebrow above the mantra hero */
   .rec-eyebrow {
     text-align: center;
-    font-family: 'Fraunces', serif;
+    font-family: 'Manrope', system-ui, sans-serif;
     font-style: italic;
     font-weight: 400;
     font-size: 13px;
@@ -736,7 +809,7 @@
   }
   .mantra-deva.long { font-size: 28px; line-height: 1.55; font-weight: 500; }
   .mantra-trans {
-    font-family: 'Fraunces', serif;
+    font-family: 'Manrope', system-ui, sans-serif;
     font-style: italic;
     font-weight: 500;
     font-size: 19px;
@@ -787,7 +860,7 @@
     background: linear-gradient(90deg, transparent, var(--line), transparent);
   }
   .rec-divider-mark {
-    font-family: 'Fraunces', serif;
+    font-family: 'Manrope', system-ui, sans-serif;
     font-style: italic;
     font-size: 14px;
     color: var(--gold);
@@ -795,7 +868,7 @@
 
   /* SESSION SETUP zone */
   .rec-session-label {
-    font-family: 'Fraunces', serif;
+    font-family: 'Manrope', system-ui, sans-serif;
     font-style: italic;
     font-weight: 400;
     font-size: 18px;
@@ -833,7 +906,7 @@
     content: ''; flex: 1; height: 1px;
     background: linear-gradient(90deg, transparent, var(--line), transparent);
   }
-  .divider-ornate-symbol { font-family: 'Fraunces', serif; font-style: italic; font-size: 14px; color: var(--gold); }
+  .divider-ornate-symbol { font-family: 'Manrope', system-ui, sans-serif; font-style: italic; font-size: 14px; color: var(--gold); }
 
   .secondary-card {
     background: linear-gradient(140deg, rgba(184, 117, 79, 0.06), rgba(212, 165, 116, 0.10));
@@ -841,12 +914,12 @@
     border-radius: 18px; padding: 22px;
   }
   .secondary-card .label {
-    font-family: 'Fraunces', serif; font-style: italic;
+    font-family: 'Manrope', system-ui, sans-serif; font-style: italic;
     font-size: 13px; color: var(--gold); margin-bottom: 8px;
   }
   .secondary-card .label::before { content: '✦'; margin-right: 6px; }
   .secondary-card .name {
-    font-family: 'Fraunces', serif; font-weight: 500; font-size: 19px;
+    font-family: 'Manrope', system-ui, sans-serif; font-weight: 500; font-size: 19px;
     color: var(--ink); margin-bottom: 6px;
   }
   .secondary-card .reason {
@@ -945,7 +1018,7 @@
     width: 70%;
   }
   .chant-mega-num {
-    font-family: 'Fraunces', serif;
+    font-family: 'Manrope', system-ui, sans-serif;
     font-style: italic;
     font-weight: 200;
     font-size: clamp(96px, 32vw, 132px);
@@ -966,7 +1039,7 @@
     100% { transform: scale(1);    color: var(--saffron); text-shadow: none; }
   }
   .chant-mega-caption {
-    font-family: 'Fraunces', serif;
+    font-family: 'Manrope', system-ui, sans-serif;
     font-style: italic;
     font-size: 12px;
     color: var(--gold);
@@ -1010,7 +1083,7 @@
     -webkit-text-fill-color: transparent;
   }
   .chant-mantra-trans {
-    font-family: 'Fraunces', serif;
+    font-family: 'Manrope', system-ui, sans-serif;
     font-style: italic;
     font-weight: 400;
     font-size: 15px;
@@ -1061,13 +1134,13 @@
   }
   @keyframes scaleIn { from { opacity: 0; transform: scale(0.5); } to { opacity: 1; transform: scale(1); } }
   .completion-title {
-    font-family: 'Fraunces', serif; font-weight: 300; font-size: 36px;
+    font-family: 'Manrope', system-ui, sans-serif; font-weight: 300; font-size: 36px;
     line-height: 1.15; color: var(--ink); margin-bottom: 10px;
     font-variation-settings: 'opsz' 144;
   }
   .completion-title em { font-style: italic; color: var(--saffron-deep); }
   .streak-line {
-    font-family: 'Fraunces', serif; font-style: italic;
+    font-family: 'Manrope', system-ui, sans-serif; font-style: italic;
     font-size: 17px; color: var(--saffron); margin-bottom: 48px;
   }
   .mood-prompt {
@@ -1089,7 +1162,7 @@
   /* === BIRTH INPUT === */
   .birth-content { padding: 16px 24px 60px; }
   .birth-title {
-    font-family: 'Fraunces', serif; font-weight: 300; font-size: 34px;
+    font-family: 'Manrope', system-ui, sans-serif; font-weight: 300; font-size: 34px;
     line-height: 1.15; color: var(--ink); margin: 12px 0 8px;
     font-variation-settings: 'opsz' 144;
   }
@@ -1144,7 +1217,7 @@
   #screen-horoscope .top-actions .share-pill svg { color: var(--gold-soft); }
   .horo-content { padding: 12px 24px 60px; }
   .horo-title {
-    font-family: 'Fraunces', serif; font-weight: 300; font-size: 34px;
+    font-family: 'Manrope', system-ui, sans-serif; font-weight: 300; font-size: 34px;
     line-height: 1.15; color: var(--gold-pale); margin: 12px 0 32px;
     font-variation-settings: 'opsz' 144;
   }
@@ -1163,7 +1236,7 @@
   }
   .planet-info { flex: 1; padding-top: 2px; }
   .planet-info .name {
-    font-family: 'Fraunces', serif; font-weight: 500; font-size: 16px;
+    font-family: 'Manrope', system-ui, sans-serif; font-weight: 500; font-size: 16px;
     color: var(--gold-pale); margin-bottom: 4px;
   }
   .planet-info .name em { font-style: italic; color: var(--gold-soft); font-weight: 400; margin-left: 6px; }
@@ -1179,8 +1252,96 @@
     background: linear-gradient(90deg, transparent, rgba(236, 217, 189, 0.2), transparent);
     margin: 32px 0 22px;
   }
+  .horo-section-label {
+    font-family: 'Manrope', system-ui, sans-serif; font-style: italic;
+    font-size: 14px; color: var(--gold-soft); margin-bottom: 14px;
+  }
+  .horo-prediction-card {
+    background: rgba(255, 245, 232, 0.04);
+    border: 1px solid rgba(236, 217, 189, 0.14);
+    border-radius: 22px;
+    padding: 26px 22px 0;
+    overflow: hidden;
+  }
+  .horo-prediction-visible {
+    font-family: 'Manrope', system-ui, sans-serif;
+    font-weight: 300; font-size: 19px;
+    line-height: 1.5;
+    color: var(--gold-pale);
+    font-variation-settings: 'opsz' 144;
+  }
+  .horo-prediction-lock {
+    position: relative;
+    margin-top: 16px;
+    margin-left: -22px; margin-right: -22px;
+    padding: 0 22px 22px;
+  }
+  .horo-prediction-locked {
+    font-family: 'Manrope', system-ui, sans-serif;
+    font-weight: 300; font-size: 17px;
+    line-height: 1.55;
+    color: rgba(236, 217, 189, 0.95);
+    filter: blur(7px);
+    user-select: none;
+    pointer-events: none;
+    font-variation-settings: 'opsz' 144;
+    min-height: 180px;
+    transition: filter 0.4s ease;
+  }
+  .horo-prediction-lock.unlocked .horo-prediction-locked {
+    filter: none;
+    user-select: text;
+    pointer-events: auto;
+    min-height: 0;
+  }
+  .horo-prediction-lock.unlocked .horo-prediction-unlock {
+    display: none;
+  }
+  .horo-prediction-unlock {
+    position: absolute;
+    left: 0; right: 0; bottom: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: 6px;
+    padding: 60px 22px 22px;
+    background: linear-gradient(180deg,
+      rgba(45, 33, 26, 0) 0%,
+      rgba(45, 33, 26, 0.85) 35%,
+      rgba(45, 33, 26, 0.97) 65%);
+  }
+  .horo-prediction-unlock .lock-icon {
+    width: 42px; height: 42px;
+    border-radius: 50%;
+    background: rgba(255, 245, 232, 0.08);
+    border: 1px solid rgba(236, 217, 189, 0.22);
+    display: flex; align-items: center; justify-content: center;
+    color: var(--gold-pale);
+    margin-bottom: 4px;
+  }
+  .horo-prediction-unlock .unlock-title {
+    font-family: 'Manrope', system-ui, sans-serif; font-style: italic;
+    font-size: 18px; color: var(--gold-pale);
+    line-height: 1.3;
+  }
+  .horo-prediction-unlock .unlock-btn {
+    margin-top: 10px;
+    width: auto;
+    padding: 13px 22px;
+    font-size: 13px;
+    background: var(--gold-pale);
+    color: var(--walnut);
+  }
+  .horo-prediction-unlock .unlock-btn:active {
+    background: white;
+  }
+  .horo-prediction-unlock .unlock-btn svg {
+    color: var(--whatsapp-deep);
+    margin-right: 4px;
+  }
   .horo-mantras-label {
-    font-family: 'Fraunces', serif; font-style: italic;
+    font-family: 'Manrope', system-ui, sans-serif; font-style: italic;
     font-size: 14px; color: var(--gold-soft); margin-bottom: 16px;
   }
   .horo-mantra {
@@ -1205,6 +1366,63 @@
   #screen-horoscope .btn-primary { background: var(--gold-pale); color: var(--walnut); }
   #screen-horoscope .btn-primary:active { background: white; }
 
+  /* === REFER === */
+  #screen-refer {
+    background: var(--paper-warm);
+    padding-bottom: calc(72px + var(--safe-bot));
+  }
+  .refer-content {
+    padding: max(60px, calc(var(--safe-top) + 40px)) 28px 40px;
+    display: flex; flex-direction: column;
+    align-items: center; text-align: center;
+  }
+  .refer-icon {
+    font-size: 56px; line-height: 1;
+    margin-bottom: 22px;
+    filter: drop-shadow(0 6px 20px rgba(196, 65, 12, 0.18));
+  }
+  .refer-title {
+    font-family: 'Manrope', system-ui, sans-serif;
+    font-weight: 300; font-size: 32px;
+    line-height: 1.15; color: var(--ink);
+    font-variation-settings: 'opsz' 144;
+    margin-bottom: 14px;
+  }
+  .refer-title em { font-style: italic; color: var(--saffron-deep); }
+  .refer-sub {
+    font-size: 14px; line-height: 1.55;
+    color: var(--warm-gray);
+    max-width: 320px; margin-bottom: 30px;
+  }
+  .refer-stats {
+    display: flex; gap: 12px; width: 100%;
+    margin-bottom: 28px;
+  }
+  .refer-stat {
+    flex: 1;
+    background: var(--paper-soft);
+    border-radius: 14px;
+    padding: 18px 14px;
+  }
+  .refer-stat-value {
+    font-family: 'Manrope', system-ui, sans-serif;
+    font-weight: 500; font-size: 28px;
+    color: var(--saffron-deep);
+    font-variant-numeric: tabular-nums;
+    line-height: 1;
+    margin-bottom: 6px;
+  }
+  .refer-stat-label {
+    font-size: 11px; font-weight: 600;
+    letter-spacing: 0.08em; text-transform: uppercase;
+    color: var(--warm-gray);
+  }
+  .refer-fineprint {
+    font-size: 11px; color: var(--warm-gray-light);
+    margin-top: 18px; max-width: 280px;
+    line-height: 1.5;
+  }
+
   .calculating {
     position: absolute; inset: 0;
     background: rgba(45, 33, 26, 0.97);
@@ -1219,7 +1437,7 @@
     animation: spin 1.4s linear infinite; margin-bottom: 28px;
   }
   @keyframes spin { to { transform: rotate(360deg); } }
-  .calc-text { font-family: 'Fraunces', serif; font-style: italic; font-size: 20px; color: var(--gold-pale); }
+  .calc-text { font-family: 'Manrope', system-ui, sans-serif; font-style: italic; font-size: 20px; color: var(--gold-pale); }
   .calc-sub { font-size: 11px; color: rgba(236, 217, 189, 0.6); margin-top: 8px; letter-spacing: 0.18em; text-transform: uppercase; }
 
   /* === SHARE MODAL === */
@@ -1251,7 +1469,7 @@
     display: flex; align-items: center; justify-content: center;
   }
   .share-modal h3 {
-    font-family: 'Fraunces', serif; font-weight: 500; font-size: 18px;
+    font-family: 'Manrope', system-ui, sans-serif; font-weight: 500; font-size: 18px;
     color: var(--ink); margin: 8px 0 4px;
   }
   .share-modal .sub {
@@ -1305,6 +1523,141 @@
     position: fixed; top: -10000px; left: -10000px;
     pointer-events: none;
   }
+
+  /* === INVITE MODAL === */
+  .invite-modal {
+    position: fixed; inset: 0;
+    background: rgba(20, 14, 10, 0.6);
+    backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px);
+    display: none; align-items: center; justify-content: center;
+    z-index: 200; padding: 24px;
+    opacity: 0; transition: opacity 0.25s ease;
+  }
+  .invite-modal.show { display: flex; opacity: 1; }
+  .invite-modal-content {
+    background: #FFFFFF;
+    border-radius: 22px;
+    padding: 32px 24px 24px;
+    max-width: 380px; width: 100%;
+    position: relative;
+    text-align: center;
+    box-shadow: 0 20px 60px rgba(31, 22, 17, 0.35);
+    animation: inviteRise 0.3s ease both;
+  }
+  @keyframes inviteRise {
+    from { opacity: 0; transform: translateY(16px) scale(0.97); }
+    to   { opacity: 1; transform: translateY(0) scale(1); }
+  }
+  .invite-close {
+    position: absolute; top: 10px; right: 10px;
+    width: 32px; height: 32px; border-radius: 50%;
+    border: none; background: transparent;
+    color: var(--warm-gray); font-size: 22px; line-height: 1;
+    cursor: pointer;
+  }
+  .invite-close:active { background: var(--paper-soft); }
+  .invite-icon {
+    font-size: 44px; line-height: 1;
+    margin-bottom: 14px;
+    filter: drop-shadow(0 4px 14px rgba(196, 65, 12, 0.2));
+  }
+  .invite-title {
+    font-family: 'Manrope', system-ui, sans-serif;
+    font-weight: 600; font-size: 19px;
+    color: var(--ink); margin: 0 0 8px;
+    letter-spacing: -0.01em;
+  }
+  .invite-sub {
+    font-size: 13px; line-height: 1.5;
+    color: var(--warm-gray);
+    margin: 0 0 22px;
+  }
+  .invite-field {
+    text-align: left;
+    margin-bottom: 14px;
+  }
+  .invite-field label {
+    display: block;
+    font-size: 11px; font-weight: 600;
+    letter-spacing: 0.06em; text-transform: uppercase;
+    color: var(--warm-gray); margin-bottom: 6px;
+  }
+  .invite-field input {
+    width: 100%;
+    background: var(--paper-soft);
+    border: 1px solid transparent;
+    border-radius: 12px;
+    padding: 13px 16px;
+    font-size: 15px;
+    color: var(--ink);
+    transition: border-color 0.2s, background 0.2s;
+  }
+  .invite-field input:focus {
+    outline: none;
+    border-color: var(--saffron);
+    background: #FFFFFF;
+  }
+  .invite-field input.invalid {
+    border-color: var(--saffron-deep);
+    background: rgba(154, 45, 10, 0.05);
+  }
+  .invite-error {
+    font-size: 12px; color: var(--saffron-deep);
+    min-height: 16px;
+    margin-bottom: 8px;
+  }
+  #inviteSubmit {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+  }
+  #inviteSubmit.loading .invite-submit-label { opacity: 0.4; }
+  #inviteSubmit.loading .invite-spinner { display: inline-block; }
+  .invite-spinner {
+    display: none;
+    width: 16px; height: 16px;
+    border: 2px solid rgba(255, 255, 255, 0.35);
+    border-top-color: #FFFFFF;
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+  }
+  .invite-success {
+    display: none;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+    padding: 12px 0 4px;
+  }
+  .invite-success.show { display: flex; }
+  .invite-success-icon {
+    width: 56px; height: 56px;
+    border-radius: 50%;
+    background: var(--whatsapp);
+    color: #FFFFFF;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 28px; font-weight: 700;
+    margin-bottom: 8px;
+    animation: inviteCheckPop 0.4s cubic-bezier(0.34, 1.4, 0.64, 1) both;
+  }
+  @keyframes inviteCheckPop {
+    from { transform: scale(0.4); opacity: 0; }
+    to   { transform: scale(1);   opacity: 1; }
+  }
+  .invite-success-title {
+    font-family: 'Manrope', system-ui, sans-serif;
+    font-weight: 600; font-size: 18px;
+    color: var(--ink);
+  }
+  .invite-success-text {
+    font-size: 13px;
+    color: var(--warm-gray);
+  }
+  .invite-modal-content.success-mode form,
+  .invite-modal-content.success-mode .invite-sub,
+  .invite-modal-content.success-mode .invite-title { display: none; }
+  .invite-modal-content.success-mode .invite-success { display: flex; }
 </style>
 </head>
 <body>
@@ -1314,6 +1667,12 @@
   <img class="splash-logo" src="https://raw.githubusercontent.com/thedebasishrath/naad/main/ganesha.webp" alt="Naad" decoding="async">
   <div class="splash-wordmark">Naad</div>
   <div class="splash-deva">नाद</div>
+  <button class="splash-cta" type="button">
+    <span>Tap to Enter</span>
+    <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+      <path d="M5 12h14M13 5l7 7-7 7"/>
+    </svg>
+  </button>
 </div>
 
 <div class="screen" id="screen-welcome">
@@ -1356,9 +1715,8 @@
 <!-- 02 HOME -->
 <div class="screen" id="screen-home">
   <div class="home-bar">
-    <span class="brand">N A A D</span>
-    <div class="right">
-      <div class="avatar">A</div>
+    <div class="salutation">
+      <div class="salutation-name" id="salutationName">Namaste <span class="salutation-emoji">🙏</span></div>
     </div>
   </div>
   <div id="bannerSlot"></div>
@@ -1367,13 +1725,6 @@
     <h2>How are <em>you feeling?</em></h2>
   </div>
   <div class="mood-grid" id="moodGrid"></div>
-  <div class="resume-card">
-    <div class="play">▶</div>
-    <div class="meta">
-      <div class="t">Continue: Shiva Mantra</div>
-      <div class="d">87 of 108 chants · this morning</div>
-    </div>
-  </div>
 </div>
 
 <!-- 03 RECOMMENDATION -->
@@ -1507,7 +1858,28 @@
     </button>
   </div>
   <div class="horo-content">
-    <div class="horo-title">Your <em>chart.</em></div>
+    <div class="horo-title">Today's <em>prediction.</em></div>
+    <div class="horo-prediction-card">
+      <p class="horo-prediction-visible" id="horoPredictionVisible"></p>
+      <div class="horo-prediction-lock">
+        <p class="horo-prediction-locked" id="horoPredictionLocked"></p>
+        <div class="horo-prediction-unlock">
+          <div class="lock-icon">
+            <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="4" y="11" width="16" height="10" rx="2"/>
+              <path d="M8 11V7a4 4 0 0 1 8 0v4"/>
+            </svg>
+          </div>
+          <div class="unlock-title">Invite a friend to Unlock</div>
+          <button class="btn-primary unlock-btn" id="referFriendBtn">
+            <svg viewBox="0 0 24 24" width="15" height="15" fill="currentColor"><path d="M19.05 4.91A9.816 9.816 0 0 0 12.04 2c-5.46 0-9.91 4.45-9.91 9.91 0 1.75.46 3.45 1.32 4.95L2.05 22l5.25-1.38c1.45.79 3.08 1.21 4.74 1.21 5.46 0 9.91-4.45 9.91-9.91 0-2.65-1.03-5.14-2.9-7.01zM12.04 20.15c-1.48 0-2.93-.4-4.2-1.15l-.3-.18-3.12.82.83-3.04-.2-.31a8.264 8.264 0 0 1-1.26-4.38c0-4.54 3.7-8.24 8.24-8.24 2.2 0 4.27.86 5.82 2.42a8.183 8.183 0 0 1 2.41 5.83c.02 4.54-3.68 8.23-8.22 8.23zm4.52-6.16c-.25-.12-1.47-.72-1.69-.81-.23-.08-.39-.12-.56.12-.17.25-.64.81-.78.97-.14.17-.29.19-.54.06-.25-.12-1.05-.39-1.99-1.23-.74-.66-1.23-1.47-1.38-1.72-.14-.25-.02-.38.11-.51.11-.11.25-.29.37-.43s.17-.25.25-.41c.08-.17.04-.31-.02-.43s-.56-1.34-.76-1.84c-.2-.48-.41-.42-.56-.43h-.48c-.17 0-.43.06-.66.31-.22.25-.86.85-.86 2.07 0 1.22.89 2.4 1.01 2.56.12.17 1.75 2.67 4.23 3.74.59.26 1.05.41 1.41.52.59.19 1.13.16 1.56.1.48-.07 1.47-.6 1.67-1.18.21-.58.21-1.07.14-1.18s-.22-.16-.47-.28z"/></svg>
+            Invite Friend
+          </button>
+        </div>
+      </div>
+    </div>
+    <div class="horo-divider"></div>
+    <div class="horo-section-label">Your chart</div>
     <div id="planetRows"></div>
     <div class="horo-divider"></div>
     <div class="horo-mantras-label">Your mantras</div>
@@ -1518,11 +1890,35 @@
   </div>
 </div>
 
+<!-- 08 REFER -->
+<div class="screen" id="screen-refer">
+  <div class="refer-content">
+    <div class="refer-icon">🎁</div>
+    <div class="refer-title">Invite friends, <em>unlock more.</em></div>
+    <p class="refer-sub">When a friend signs up using your invite, you unlock today's full prediction — and they get their first mantra session free.</p>
+    <div class="refer-stats" id="referStats">
+      <div class="refer-stat">
+        <div class="refer-stat-value" id="referCount">0</div>
+        <div class="refer-stat-label">friends joined</div>
+      </div>
+      <div class="refer-stat">
+        <div class="refer-stat-value" id="referLocks">1</div>
+        <div class="refer-stat-label">locks remaining</div>
+      </div>
+    </div>
+    <button class="btn-primary whatsapp" id="referMainBtn">
+      <svg viewBox="0 0 24 24" width="17" height="17" fill="currentColor"><path d="M19.05 4.91A9.816 9.816 0 0 0 12.04 2c-5.46 0-9.91 4.45-9.91 9.91 0 1.75.46 3.45 1.32 4.95L2.05 22l5.25-1.38c1.45.79 3.08 1.21 4.74 1.21 5.46 0 9.91-4.45 9.91-9.91 0-2.65-1.03-5.14-2.9-7.01zM12.04 20.15c-1.48 0-2.93-.4-4.2-1.15l-.3-.18-3.12.82.83-3.04-.2-.31a8.264 8.264 0 0 1-1.26-4.38c0-4.54 3.7-8.24 8.24-8.24 2.2 0 4.27.86 5.82 2.42a8.183 8.183 0 0 1 2.41 5.83c.02 4.54-3.68 8.23-8.22 8.23zm4.52-6.16c-.25-.12-1.47-.72-1.69-.81-.23-.08-.39-.12-.56.12-.17.25-.64.81-.78.97-.14.17-.29.19-.54.06-.25-.12-1.05-.39-1.99-1.23-.74-.66-1.23-1.47-1.38-1.72-.14-.25-.02-.38.11-.51.11-.11.25-.29.37-.43s.17-.25.25-.41c.08-.17.04-.31-.02-.43s-.56-1.34-.76-1.84c-.2-.48-.41-.42-.56-.43h-.48c-.17 0-.43.06-.66.31-.22.25-.86.85-.86 2.07 0 1.22.89 2.4 1.01 2.56.12.17 1.75 2.67 4.23 3.74.59.26 1.05.41 1.41.52.59.19 1.13.16 1.56.1.48-.07 1.47-.6 1.67-1.18.21-.58.21-1.07.14-1.18s-.22-.16-.47-.28z"/></svg>
+      Invite via WhatsApp
+    </button>
+    <button class="btn-secondary" id="copyReferLink">Copy invite link</button>
+    <div class="refer-fineprint">No spam. Friends only see your name when they sign up.</div>
+  </div>
+</div>
+
 <!-- BOTTOM NAV (sibling of screens, pinned to body bottom) -->
 <div class="bottom-nav" id="bottomNav">
-  <button class="nav-item active"><span class="ico">⌂</span><span>Home</span></button>
-  <button class="nav-item"><span class="ico">☰</span><span>Library</span></button>
-  <button class="nav-item"><span class="ico">◐</span><span>Me</span></button>
+  <button class="nav-item active" data-go="home"><span class="ico">⌂</span><span>Home</span></button>
+  <button class="nav-item" data-go="refer"><span class="ico">🎁</span><span>Refer</span></button>
 </div>
 
 <!-- SHARE MODAL -->
@@ -1549,7 +1945,66 @@
   </div>
 </div>
 
+<!-- INVITE MODAL — opens from the horoscope unlock CTA. Captures friend's name
+     and phone, dedupes against `users` by phone, writes referral, unlocks. -->
+<div class="invite-modal" id="inviteModal">
+  <div class="invite-modal-content">
+    <button class="invite-close" id="inviteClose" type="button" aria-label="Close">×</button>
+    <div class="invite-icon">🎁</div>
+    <h3 class="invite-title">Invite a friend to Unlock</h3>
+    <p class="invite-sub">Enter your friend's details. The moment they're added, today's full prediction unlocks for you.</p>
+    <form id="inviteForm" autocomplete="off" novalidate>
+      <div class="invite-field">
+        <label for="inviteName">Friend's Name</label>
+        <input id="inviteName" type="text" placeholder="Their name" required>
+      </div>
+      <div class="invite-field">
+        <label for="invitePhone">Friend's Mobile Number</label>
+        <input id="invitePhone" type="tel" placeholder="+91 98765 43210" inputmode="tel" required>
+      </div>
+      <div class="invite-error" id="inviteError"></div>
+      <button type="submit" class="btn-primary" id="inviteSubmit">
+        <span class="invite-submit-label">Send Invite</span>
+        <span class="invite-spinner" aria-hidden="true"></span>
+      </button>
+    </form>
+    <div class="invite-success" id="inviteSuccess">
+      <div class="invite-success-icon">✓</div>
+      <div class="invite-success-title">Done!</div>
+      <div class="invite-success-text">Today's full prediction is now unlocked.</div>
+    </div>
+  </div>
+</div>
+
 <canvas id="shareCanvas" width="1080" height="1080"></canvas>
+
+<!-- Ambient background music. Source is in the nidra-7d8a3 Firebase Storage
+     bucket — the gs:// URL converts to the public download endpoint below.
+     Bucket rules must allow public read for this object, otherwise it 403s.
+     No crossorigin attribute: media playback doesn't need CORS, and adding
+     it would block loading if the bucket isn't CORS-configured. -->
+<audio id="bgMusic" preload="auto" loop playsinline>
+  <!-- Try the new firebasestorage.app domain first; fall back to the legacy
+       appspot.com alias which still routes for buckets created on either side
+       of the recent Firebase Storage rename. -->
+  <source src="https://firebasestorage.googleapis.com/v0/b/nidra-7d8a3.firebasestorage.app/o/Audiobg%20%281%29.mp3?alt=media" type="audio/mpeg">
+  <source src="https://firebasestorage.googleapis.com/v0/b/nidra-7d8a3.appspot.com/o/Audiobg%20%281%29.mp3?alt=media" type="audio/mpeg">
+</audio>
+
+<!-- Floating mute/unmute control. Hidden until the home screen starts the
+     fade-in, then stays visible across every screen so the user always has
+     a way to silence the audio. -->
+<button class="audio-toggle" id="audioToggle" type="button" aria-label="Toggle music">
+  <svg class="icon-on" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+    <path d="M11 5L6 9H2v6h4l5 4V5z"/>
+    <path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"/>
+  </svg>
+  <svg class="icon-off" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+    <path d="M11 5L6 9H2v6h4l5 4V5z"/>
+    <line x1="23" y1="9" x2="17" y2="15"/>
+    <line x1="17" y1="9" x2="23" y2="15"/>
+  </svg>
+</button>
 
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-app.js";
@@ -1635,6 +2090,80 @@
     }
   }
 
+  // ----- Referrals: row per successful join, queried by referrer -----
+  async function saveReferral(referrerUid) {
+    if (!referrerUid || referrerUid === uid) return null; // self-referral guard
+    return save('referrals', { referrerUid, refereeUid: uid });
+  }
+  async function getReferralCount() {
+    try {
+      const snap = await getDocs(query(collection(db, 'referrals'), where('referrerUid', '==', uid)));
+      return snap.size;
+    } catch (err) {
+      console.error('[naad] getReferralCount failed', err.code || '', err.message || err);
+      return 0;
+    }
+  }
+
+  // Friend invite from the horoscope unlock flow. Captures the friend's name +
+  // phone, deduplicates against the existing `users` collection by phone, and
+  // records the referral so the inviter's lock opens. If the friend already
+  // exists (e.g., invited by someone else earlier or a real user), we reuse
+  // that record instead of creating a duplicate.
+  async function inviteFriend(name, phone) {
+    if (!name || !phone) return { ok: false, error: 'Missing fields' };
+
+    let friendUid;
+    let friendDocId;
+    try {
+      const usersSnap = await getDocs(query(collection(db, 'users'), where('phone', '==', phone)));
+      if (!usersSnap.empty) {
+        const doc0 = usersSnap.docs[0];
+        friendDocId = doc0.id;
+        friendUid = doc0.data().uid || doc0.id;
+        console.log('[naad] invite: matched existing user for', phone, '→', friendUid);
+      } else {
+        friendUid = 'inv_' + Date.now().toString(36) + '_' + Math.random().toString(36).slice(2, 8);
+        const ref = await addDoc(collection(db, 'users'), {
+          uid: friendUid,
+          name,
+          phone,
+          referredBy: uid,
+          source: 'invited',
+          createdAt: serverTimestamp()
+        });
+        friendDocId = ref.id;
+        console.log('[naad] invite: created new user', friendUid, '(doc', ref.id + ')');
+      }
+    } catch (err) {
+      console.error('[naad] inviteFriend user upsert failed', err.code || '', err.message || err);
+      return { ok: false, error: 'Couldn\'t save your friend\'s details. Please try again.' };
+    }
+
+    // Dedup the referrals row too — same inviter + same friend = at most one entry.
+    try {
+      const refSnap = await getDocs(query(
+        collection(db, 'referrals'),
+        where('referrerUid', '==', uid),
+        where('refereeUid', '==', friendUid)
+      ));
+      if (refSnap.empty) {
+        await addDoc(collection(db, 'referrals'), {
+          referrerUid: uid,
+          refereeUid: friendUid,
+          friendDocId,
+          createdAt: serverTimestamp()
+        });
+      } else {
+        console.log('[naad] invite: referral row already existed, skipping');
+      }
+    } catch (err) {
+      console.error('[naad] inviteFriend referral upsert failed', err.code || '', err.message || err);
+    }
+
+    return { ok: true, friendUid };
+  }
+
   window.naadDB = {
     uid,
     saveUser:    (user)    => save('users', user),
@@ -1646,6 +2175,9 @@
     saveMood:    (mood)    => save('moods', mood),
     getCheckins,
     getStreak,
+    saveReferral,
+    getReferralCount,
+    inviteFriend,
   };
 
   loadSessions();
@@ -1939,6 +2471,37 @@ const PLANET_MANTRA_IDS = {
   'Mercury': 'om-aim-saraswati', 'Jupiter': 'gayatri',
   'Venus': 'om-shreem-mahalakshmi', 'Saturn': 'om-namah-shivaya'
 };
+const MASALA_PREDICTIONS = {
+  'Sun': {
+    visible: "Today the spotlight finds you — whether you asked for it or not. Someone from your past is about to walk back in carrying news you didn't see coming.",
+    locked:  "By Friday, three doors will open at once, and the choice you make will quietly shape the next six months. Watch out for someone in authority who isn't being fully honest about their motives — their smile is hiding a calculation. There's a financial opportunity hiding in plain sight; you'll spot it only if you stop chasing the louder one. And a conversation you've been avoiding becomes unavoidable in the most surprising way before Sunday."
+  },
+  'Moon': {
+    visible: "Your emotions are running high tonight — and there's a reason. Someone you trust deeply is about to reveal something that quietly changes how you see them.",
+    locked:  "By the weekend an old wound resurfaces, but this time you have the power to close it for good. A family member will reach out unexpectedly with news that shifts the whole equation around money. Pay attention to your dreams this week — especially Wednesday's; they're carrying a message your waking mind keeps ignoring. And someone is about to confess a feeling they've held back for years, when you least expect it."
+  },
+  'Mars': {
+    visible: "Brace yourself — there's heat building under the surface. A confrontation you've been avoiding for weeks is finally arriving, and it won't be on your timing.",
+    locked:  "Here's the twist though: the person you think is the enemy is secretly your biggest ally — you'll see it by Tuesday. A passion project will demand your full attention soon, and saying yes to it could mean walking away from something safe and comfortable. A romantic spark is waiting in a place you stopped checking weeks ago. And money you thought was lost will resurface in the most unexpected envelope."
+  },
+  'Mercury': {
+    visible: "A message you've been waiting for finally arrives today — but not from who you expected. Read between the lines: the real news is hidden in what isn't being said.",
+    locked:  "By midweek a contract or agreement lands on your desk that demands very careful reading — fine print is your friend this week. Someone in your inner circle is spreading information they shouldn't be, and you'll find out exactly who by Thursday afternoon. A creative idea you've been sitting on for months will catch the right ear. And a phone call on Saturday rewrites a plan you thought was already set in stone."
+  },
+  'Jupiter': {
+    visible: "Luck has noticed you again — and not subtly. An opportunity you almost dismissed last month is circling back, this time with a name attached you weren't expecting.",
+    locked:  "A mentor figure will offer guidance that quietly shifts the trajectory of your next year — listen, even if it stings at first. Travel plans you've been postponing will suddenly become urgent; be ready to say yes within forty-eight hours. Money matters open up in a way that asks you to trust instinct over spreadsheet. And someone older will say one sentence on Sunday that you'll remember for a decade."
+  },
+  'Venus': {
+    visible: "Romance, money, or beauty — one of these three is about to surprise you, and possibly all three at once. Someone watching from the edges is finally ready to make their move.",
+    locked:  "A purchase you've been dreaming about becomes possible — but only if you say no to something else first, and you'll know which when the moment comes. An old flame will resurface this week, and the choice you make in that conversation sets the tone for months. A creative project finds an unexpected backer. And a compliment you receive on Friday is going to mean far more than the person giving it realizes."
+  },
+  'Saturn': {
+    visible: "The weight you've been carrying is about to lift — but not before one final test arrives at your door. The delay you've been frustrated with is actually protecting you.",
+    locked:  "By the end of the week a decision made in patience will pay off in a way you didn't anticipate, and bigger than you'd hoped. An older figure — a parent, a boss, a teacher — is going to offer advice that initially feels harsh but turns out to be exactly what you needed. A long-term goal you'd quietly given up on starts moving again. And a quiet apology arrives from a place you'd stopped expecting one."
+  }
+};
+
 const PLANET_NAVAGRAHA = {
   'Sun':     { deva: 'ॐ ह्रां ह्रीं ह्रौं सः सूर्याय नमः',     trans: 'Om Hraam Hreem Hraum Sah Suryaya Namaha' },
   'Moon':    { deva: 'ॐ श्राँ श्रीं श्रौं सः चन्द्रमसे नमः',   trans: 'Om Shraam Shreem Shraum Sah Chandraya Namaha' },
@@ -1967,7 +2530,7 @@ function fmtDeg(deg) { const d = Math.floor(deg), m = Math.round((deg - d) * 60)
 /* ============================================================
    STATE & RENDERING
    ============================================================ */
-const screensWithBottomNav = ['home'];
+const screensWithBottomNav = ['home', 'refer'];
 let state = {
   currentScreen: 'welcome',
   currentMantraId: 'om-namah-shivaya',
@@ -1976,8 +2539,26 @@ let state = {
   hasBirthData: false,
   bannerDismissed: false,
   showAllMoods: false,
-  chart: null
+  chart: null,
+  referralCode: '',         // user's own uid, used as their share code
+  referralCount: 0,         // friends who joined via this user's link
+  referralUnlocked: false   // count >= 1 → today's full prediction unlocks
 };
+
+// Capture inbound referral once on load: a fresh visitor arriving via
+// https://…/?ref=<inviterUid> stashes the inviter so we can record the bond
+// when they finish chat onboarding. Self-referrals are dropped after the
+// firebase script assigns this device its own uid.
+(function captureInboundReferral() {
+  try {
+    const params = new URLSearchParams(location.search);
+    const ref = params.get('ref');
+    if (!ref) return;
+    const myUid = localStorage.getItem('naad_uid');
+    if (myUid && ref === myUid) return;
+    localStorage.setItem('naad_pending_ref', ref);
+  } catch {}
+})();
 
 const $ = sel => document.querySelector(sel);
 const $$ = sel => document.querySelectorAll(sel);
@@ -1987,11 +2568,28 @@ function go(screenId) {
   document.getElementById('screen-' + screenId).classList.add('active');
   state.currentScreen = screenId;
   $('#bottomNav').classList.toggle('show', screensWithBottomNav.includes(screenId));
-  if (screenId === 'home') { renderBanner(); renderCheckin(); renderMoodGrid(); }
+  $$('.bottom-nav .nav-item').forEach(item => {
+    item.classList.toggle('active', item.dataset.go === screenId);
+  });
+  if (screenId === 'home') {
+    // Only fade in if priming already happened (audio is allowed to play).
+    // For returning users who skipped the splash, the first tap primes and
+    // the global pointerdown listener kicks the fade-in.
+    if (bgPrimed) startBgMusicFadeIn();
+    renderSalutation(); renderBanner(); renderCheckin(); renderMoodGrid();
+  }
   if (screenId === 'recommendation') renderRecommendation();
   if (screenId === 'player') { renderPlayer(); startPlayerSimulation(); }
   else stopPlayerSimulation();
   if (screenId === 'horoscope') renderHoroscope();
+  if (screenId === 'refer') renderRefer();
+}
+
+function renderSalutation() {
+  const firstName = (chat.userName || '').trim().split(/\s+/)[0];
+  $('#salutationName').innerHTML = firstName
+    ? `Namaste, <em>${escapeHtml(firstName)}</em> <span class="salutation-emoji">🙏</span>`
+    : `Namaste <span class="salutation-emoji">🙏</span>`;
 }
 
 function renderMoodGrid() {
@@ -2121,7 +2719,7 @@ function renderBanner() {
     </div>`;
   } else {
     slot.innerHTML = `<div class="banner" data-go="birth">
-      <div class="banner-title">✨ Your mantra horoscope</div>
+      <div class="banner-title">✨ Today's Horoscope</div>
       <div class="banner-sub">60 seconds · birth details · personalized mantras</div>
       <div class="banner-arrow">→</div>
     </div>`;
@@ -2226,6 +2824,179 @@ function buildMala(count) {
   cachedBeads = mala.querySelectorAll('.chant-bead');
 }
 
+function composePrediction(c) {
+  return MASALA_PREDICTIONS[c.moon.lord] || MASALA_PREDICTIONS['Moon'];
+}
+
+function buildReferLink() {
+  const code = state.referralCode || window.naadDB?.uid || '';
+  const sep = SHARE_URL.includes('?') ? '&' : '?';
+  return code ? `${SHARE_URL}${sep}ref=${encodeURIComponent(code)}` : SHARE_URL;
+}
+function buildReferText() {
+  return `I've been using Naad — a quiet little app for daily mantras and a morning prediction. Try it and unlock yours: ${buildReferLink()}`;
+}
+
+function referFriend() {
+  const url = buildReferLink();
+  const text = buildReferText();
+  if (navigator.share) {
+    // Pass `url` separately for share targets that prefer the canonical field
+    // (Twitter, some Android share sheets). WhatsApp linkifies from text either way.
+    navigator.share({ title: 'Naad', text, url }).catch(() => {});
+  } else {
+    window.open('https://wa.me/?text=' + encodeURIComponent(text), '_blank');
+  }
+}
+
+// Pull live referral count from Firestore and update the locked-prediction
+// state. Called after firebase init, on every refer/horoscope screen entry,
+// and after a referee completes onboarding (best-effort, eventually consistent).
+async function refreshReferralState() {
+  if (!window.naadDB) return;
+  state.referralCode = window.naadDB.uid;
+  try {
+    const count = await window.naadDB.getReferralCount();
+    state.referralCount = count;
+    state.referralUnlocked = count >= 1;
+  } catch {}
+  // Patch DOM in place — don't re-mount the screen (would recurse via renderRefer)
+  const cEl = document.getElementById('referCount');
+  const lEl = document.getElementById('referLocks');
+  if (cEl) cEl.textContent = state.referralCount;
+  if (lEl) lEl.textContent = Math.max(0, 1 - state.referralCount);
+  if (state.currentScreen === 'horoscope') applyReferralUnlock();
+}
+
+function applyReferralUnlock() {
+  const lock = document.querySelector('.horo-prediction-lock');
+  if (!lock) return;
+  lock.classList.toggle('unlocked', state.referralUnlocked);
+}
+
+// === Invite-friend modal: opens from horoscope unlock CTA ===
+function normalizePhoneForInvite(input) {
+  const digits = String(input || '').replace(/\D/g, '');
+  if (!digits) return '';
+  // Indian mobile: 10 digits starting 6-9 → prepend +91
+  if (digits.length === 10 && /^[6-9]/.test(digits)) return '+91' + digits;
+  // 91-prefixed Indian: 12 digits starting 91 + Indian mobile
+  if (digits.length === 12 && /^91[6-9]/.test(digits))   return '+' + digits;
+  // US/Canada: 11 digits starting with 1
+  if (digits.length === 11 && digits.startsWith('1'))    return '+' + digits;
+  // Generic international fallback — keep digits, prefix +
+  return '+' + digits;
+}
+
+function openInviteModal() {
+  const modal = $('#inviteModal');
+  const content = modal.querySelector('.invite-modal-content');
+  content.classList.remove('success-mode');
+  $('#inviteName').value = '';
+  $('#invitePhone').value = '';
+  $('#inviteError').textContent = '';
+  $$('#inviteName, #invitePhone').forEach(el => el.classList.remove('invalid'));
+  $('#inviteSubmit').classList.remove('loading');
+  $('#inviteSubmit').disabled = false;
+  modal.classList.add('show');
+  setTimeout(() => $('#inviteName').focus(), 80);
+}
+function closeInviteModal() {
+  $('#inviteModal').classList.remove('show');
+}
+
+async function handleInviteSubmit(e) {
+  e.preventDefault();
+  const nameEl = $('#inviteName');
+  const phoneEl = $('#invitePhone');
+  const errEl = $('#inviteError');
+  const submitBtn = $('#inviteSubmit');
+
+  const name = nameEl.value.trim();
+  const phoneRaw = phoneEl.value.trim();
+  const phone = normalizePhoneForInvite(phoneRaw);
+
+  // Reset prior invalid state
+  nameEl.classList.remove('invalid');
+  phoneEl.classList.remove('invalid');
+  errEl.textContent = '';
+
+  if (name.length < 2) {
+    nameEl.classList.add('invalid');
+    errEl.textContent = 'Please enter your friend\'s name.';
+    return;
+  }
+  if (!phone || phone.replace(/\D/g, '').length < 10) {
+    phoneEl.classList.add('invalid');
+    errEl.textContent = 'Please enter a valid mobile number.';
+    return;
+  }
+  if (!window.naadDB?.inviteFriend) {
+    errEl.textContent = 'Connection still loading. Try again in a moment.';
+    return;
+  }
+
+  submitBtn.classList.add('loading');
+  submitBtn.disabled = true;
+
+  const result = await window.naadDB.inviteFriend(name, phone);
+
+  if (!result.ok) {
+    submitBtn.classList.remove('loading');
+    submitBtn.disabled = false;
+    errEl.textContent = result.error || 'Something went wrong. Please try again.';
+    return;
+  }
+
+  // Refresh state so the lock opens
+  await refreshReferralState();
+
+  // Open WhatsApp prefilled with the friend's number + an invite message that
+  // carries the app link with this inviter's referral code embedded. wa.me
+  // takes the recipient as digits-only (no leading + or spaces).
+  const friendFirstName = name.split(/\s+/)[0];
+  const inviteLink = buildReferLink();
+  const waText =
+    `Hey ${friendFirstName}! I just added you on Naad 🙏 — a quiet little app for daily mantras and your personal morning prediction. Try it here: ${inviteLink}`;
+  const waUrl = `https://wa.me/${phone.replace(/\D/g, '')}?text=${encodeURIComponent(waText)}`;
+  try { window.open(waUrl, '_blank'); } catch (err) {
+    console.warn('[naad] WhatsApp open failed:', err);
+  }
+
+  // Show success — auto-close after a beat
+  $('#inviteModal').querySelector('.invite-modal-content').classList.add('success-mode');
+  setTimeout(closeInviteModal, 1800);
+}
+
+document.getElementById('inviteForm')?.addEventListener('submit', handleInviteSubmit);
+document.getElementById('inviteClose')?.addEventListener('click', closeInviteModal);
+document.getElementById('inviteModal')?.addEventListener('click', e => {
+  if (e.target.id === 'inviteModal') closeInviteModal();
+});
+
+function renderRefer() {
+  $('#referCount').textContent = state.referralCount;
+  $('#referLocks').textContent = Math.max(0, 1 - state.referralCount);
+
+  $('#referMainBtn').onclick = referFriend;
+
+  const copyBtn = $('#copyReferLink');
+  copyBtn.onclick = async () => {
+    const link = buildReferLink();
+    try {
+      await navigator.clipboard.writeText(link);
+      const original = copyBtn.textContent;
+      copyBtn.textContent = '✓ Link copied';
+      setTimeout(() => { copyBtn.textContent = original; }, 1600);
+    } catch {
+      window.prompt('Copy this link:', link);
+    }
+  };
+
+  // Refresh on view — catches the referrer's count moving up after a friend joins
+  refreshReferralState();
+}
+
 function renderHoroscope() {
   if (!state.chart) return;
   const c = state.chart;
@@ -2244,6 +3015,13 @@ function renderHoroscope() {
       </div>
     </div>
   `).join('');
+
+  const prediction = composePrediction(c);
+  $('#horoPredictionVisible').textContent = prediction.visible;
+  $('#horoPredictionLocked').textContent = prediction.locked;
+  $('#referFriendBtn').onclick = openInviteModal;
+  applyReferralUnlock();
+  refreshReferralState(); // re-check live, in case a friend just joined
 
   const mantras = [];
   const moonNg = PLANET_NAVAGRAHA[c.moon.lord];
@@ -2441,7 +3219,7 @@ async function generateShareCard(mantra, contextLabel) {
   await Promise.all([
     document.fonts.load('500 84px "Noto Sans Devanagari"'),
     document.fonts.load('400 64px "Noto Sans Devanagari"'),
-    document.fonts.load('italic 36px "Fraunces"'),
+    document.fonts.load('italic 500 36px "Manrope"'),
     document.fonts.load('500 28px "Manrope"'),
     document.fonts.load('600 32px "Manrope"')
   ]);
@@ -2511,7 +3289,7 @@ async function generateShareCard(mantra, contextLabel) {
   // Transliteration directly below the mantra block
   const transY = mantraCenterY + (blockHeight / 2) + 40;
   ctx.fillStyle = '#D4A574';
-  ctx.font = 'italic 400 32px "Fraunces", serif';
+  ctx.font = 'italic 500 32px "Manrope", system-ui, sans-serif';
   const transLines = wrapText(ctx, mantra.trans, 880);
   let yy = transY;
   for (const line of transLines) {
@@ -2614,6 +3392,7 @@ async function openShareModal() {
           await navigator.share({
             files: [file],
             text: shareText,
+            url: shareUrl,
             title: 'Mantra from Naad'
           });
           return;
@@ -2714,8 +3493,65 @@ const chat = {
   step: 'init',     // 'init' | 'name' | 'phone' | 'wrapup' | 'done'
   userName: '',
   userPhone: '',
-  started: false
+  started: false,
+  isIndia: false,
+  userIsIndian: false
 };
+
+// === Per-device user cache (localStorage) ============================
+// Firestore is the source of truth (write-through happens at chat completion),
+// but we also mirror name/phone to localStorage so returning visitors can be
+// rehydrated synchronously — no network round-trip, no chat replay.
+const STORAGE_KEY_USER = 'naad_user_v1';
+
+function saveUserToDevice() {
+  try {
+    localStorage.setItem(STORAGE_KEY_USER, JSON.stringify({
+      name: chat.userName,
+      phone: chat.userPhone,
+      isIndian: !!chat.userIsIndian,
+      savedAt: Date.now()
+    }));
+  } catch (err) {
+    console.warn('[naad] localStorage write failed:', err);
+  }
+}
+
+function loadStoredUser() {
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY_USER);
+    if (!raw) return false;
+    const stored = JSON.parse(raw);
+    if (!stored || !stored.name) return false;
+    chat.userName     = stored.name;
+    chat.userPhone    = stored.phone || '';
+    chat.userIsIndian = !!stored.isIndian;
+    chat.step         = 'done';
+    chat.started      = true;
+    return true;
+  } catch (err) {
+    console.warn('[naad] localStorage read failed:', err);
+    return false;
+  }
+}
+
+function detectIndia() {
+  // Primary: timezone (synchronous, offline-safe)
+  try {
+    const tz = Intl.DateTimeFormat().resolvedOptions().timeZone;
+    chat.isIndia = (tz === 'Asia/Kolkata' || tz === 'Asia/Calcutta');
+  } catch {}
+  // Enhancement: best-effort IP lookup, may refine the timezone result
+  try {
+    const ctrl = new AbortController();
+    const t = setTimeout(() => ctrl.abort(), 2000);
+    fetch('https://ipapi.co/country/', { signal: ctrl.signal })
+      .then(r => r.ok ? r.text() : null)
+      .then(country => { if (country) chat.isIndia = country.trim() === 'IN'; })
+      .catch(() => {})
+      .finally(() => clearTimeout(t));
+  } catch {}
+}
 
 function chatScrollBottom() {
   const el = $('#chatMessages');
@@ -2776,8 +3612,13 @@ function chatSetInput({ placeholder, type = 'text', enabled = true, value = '' }
     void bar.offsetWidth; // force reflow
     bar.classList.add('ready-pulse');
     setTimeout(() => bar.classList.remove('ready-pulse'), 1000);
-    // Defer focus so animations settle first
-    setTimeout(() => input.focus(), 60);
+    // Defer focus so animations settle first; place caret at the end if prefilled
+    setTimeout(() => {
+      input.focus();
+      if (input.value) {
+        try { input.setSelectionRange(input.value.length, input.value.length); } catch {}
+      }
+    }, 60);
   }
 }
 
@@ -2794,13 +3635,15 @@ function chatBotSequence(messages) {
 function startChatFlow() {
   if (chat.started) return;
   chat.started = true;
+  detectIndia();
   $('#chatMessages').innerHTML = '';
 
-  // Greeting → ask name (kept tight so input becomes available quickly)
   setTimeout(() => {
     chatBotSequence([
       ['<span class="deva">नमस्ते</span> 🙏 Welcome to <strong>Naad</strong>.', 320],
-      ['I\'m here to help you find the right mantra for whatever you\'re feeling. May I know your name?']
+      ['Whatever\'s troubling you — stress, money worries, fear, heartbreak, even a quiet ache at home — your birth chart already carries the answer.', 420],
+      ['I\'ll read your stars, find the root of what\'s pulling you down, and give you the exact <strong>Vedic mantra</strong> meant for that wound. A few minutes a day, and the shift begins.', 420],
+      ['What\'s your name?']
     ]).then(() => {
       chat.step = 'name';
       chatSetInput({ placeholder: 'Type your name…', type: 'text' });
@@ -2820,12 +3663,13 @@ function handleChatSubmit() {
     chatSetInput({ placeholder: '', enabled: false });
 
     setTimeout(() => {
-      chatBotSequence([
-        [`Lovely to meet you, <strong>${escapeHtml(chat.userName.split(' ')[0])}</strong>.`, 320],
-        ['One more thing — could you share your phone number with country code? It helps keep your practice synced.']
-      ]).then(() => {
+      chatBot('What\'s your mobile number?', () => {
         chat.step = 'phone';
-        chatSetInput({ placeholder: '+91 98765 43210', type: 'tel' });
+        chatSetInput({
+          placeholder: '+91 98765 43210',
+          type: 'tel',
+          value: chat.isIndia ? '+91 ' : ''
+        });
       });
     }, 380);
 
@@ -2842,18 +3686,41 @@ function handleChatSubmit() {
     chatUser(chat.userPhone);
     chatSetInput({ placeholder: '', enabled: false });
 
+    // Hinglish gating: trust the country code, not just the digits.
+    // Bare 10-digit mobiles starting 6–9 only count as Indian when the
+    // device is also in IST (avoids US 917-area-code false positives).
+    const explicit91   = value.trim().startsWith('+91') || /^91[6-9]\d{9}$/.test(digitsOnly);
+    const bareIndian10 = digitsOnly.length === 10 && /^[6-9]/.test(digitsOnly);
+    chat.userIsIndian  = explicit91 || (bareIndian10 && chat.isIndia);
+
+    const pendingRef = localStorage.getItem('naad_pending_ref');
     window.naadDB?.saveUser({
       name: chat.userName,
       phone: chat.userPhone,
+      referredBy: pendingRef || null,
     });
+    if (pendingRef) {
+      window.naadDB?.saveReferral?.(pendingRef);
+      localStorage.removeItem('naad_pending_ref');
+    }
+    // Per-device cache so returning visitors skip onboarding next time
+    saveUserToDevice();
+
+    const firstName = escapeHtml(chat.userName.split(' ')[0]);
+    const wrapup = chat.userIsIndian ? [
+      [`Bahut khoob, <strong>${firstName}</strong>!`, 280],
+      ['<strong>Naad</strong> par aapko zindagi ki har problem ka mantra solution milega — stress, paise ki tension, dar, dil ka dard, family ki uljhanein, sab kuch.', 360],
+      ['Har mantra Vedas aur prachin shastron se nikla hua hai — saalon ki sadhana se banaya gaya <span class="deva">ध्वनि</span> ka power.', 320],
+      [`Bas thoda ruko, <strong>${firstName}</strong> — aapke mantras taiyaar ho rahe hain…`]
+    ] : [
+      [`Wonderful, <strong>${firstName}</strong>.`, 280],
+      ['At <strong>Naad</strong>, you\'ll find spiritual mantra solutions for every problem life brings — stress, anxiety, fear, heartbreak, money worries, grief, and more.', 360],
+      ['Each mantra is sourced from the Vedas and ancient texts — a precise sound tool refined over centuries.', 320],
+      ['Please wait — we\'re preparing your mantras…']
+    ];
 
     setTimeout(() => {
-      chatBotSequence([
-        [`Wonderful, <strong>${escapeHtml(chat.userName.split(' ')[0])}</strong>.`, 280],
-        ['At <strong>Naad</strong>, you\'ll find spiritual mantra solutions for every problem life brings — stress, anxiety, fear, heartbreak, money worries, grief, and more.', 360],
-        ['Each mantra is sourced from the Vedas and ancient texts — a precise sound tool refined over centuries.', 320],
-        ['Please wait — we\'re preparing your mantras…']
-      ]).then(() => {
+      chatBotSequence(wrapup).then(() => {
         chat.step = 'wrapup';
         // Show loading overlay + transition to home
         setTimeout(() => {
@@ -2894,20 +3761,170 @@ $('#chatInput').addEventListener('keydown', e => {
   }
 });
 
-// Splash → welcome transition: hold splash briefly, fade it, then start chat
-setTimeout(() => {
+// === Background music: prime on splash tap, fade in on home, toggle to mute ===
+// Browsers block audio autoplay without a user gesture. The splash tap is the
+// first guaranteed gesture, so we call .play() then with volume 0 to "prime"
+// the audio for the session. When the user finally lands on home we ramp the
+// volume up. Mute/unmute also crossfades for a smoother feel.
+const BG_TARGET_VOLUME = 0.35;
+const BG_FADE_IN_MS    = 1800;
+const BG_TOGGLE_MS     = 450;
+let bgPrimed     = false;
+let bgFadedIn    = false;
+let bgFadeRAF    = null;
+let bgFadeQueued = false; // true if home was reached but audio isn't loaded yet
+
+const bgAudio = document.getElementById('bgMusic');
+
+// Surface load/network failures to the console so the user can debug
+// Firebase Storage rules / CORS / bucket name issues. These are the usual
+// reasons the file silently fails to play.
+if (bgAudio) {
+  bgAudio.addEventListener('error', () => {
+    const e = bgAudio.error;
+    const codes = { 1: 'MEDIA_ERR_ABORTED', 2: 'MEDIA_ERR_NETWORK', 3: 'MEDIA_ERR_DECODE', 4: 'MEDIA_ERR_SRC_NOT_SUPPORTED' };
+    console.error('[naad] bg music FAILED to load —',
+      e ? `${codes[e.code] || e.code}: ${e.message || '(no message)'}` : '(no error info)',
+      '\nLikely fix: confirm the Firebase Storage object is publicly readable, the bucket name is correct, and CORS allows your origin.');
+  });
+  bgAudio.addEventListener('stalled', () => console.warn('[naad] bg music stalled'));
+  bgAudio.addEventListener('canplay',  () => {
+    console.log('[naad] bg music canplay');
+    // If we tried to fade in before the audio was ready, run it now.
+    if (bgFadeQueued) { bgFadeQueued = false; startBgMusicFadeIn(); }
+  });
+  bgAudio.addEventListener('playing',  () => console.log('[naad] bg music playing'));
+}
+
+function bgFadeVolume(audio, fromV, toV, durationMs, onDone) {
+  if (bgFadeRAF) cancelAnimationFrame(bgFadeRAF);
+  const start = performance.now();
+  function step(now) {
+    const t = Math.min(1, (now - start) / durationMs);
+    audio.volume = Math.max(0, Math.min(1, fromV + (toV - fromV) * t));
+    if (t < 1) bgFadeRAF = requestAnimationFrame(step);
+    else { bgFadeRAF = null; onDone?.(); }
+  }
+  bgFadeRAF = requestAnimationFrame(step);
+}
+
+// Called from the splash pointerdown handler (live user gesture). Starts
+// silent playback so subsequent fade-ins don't need another gesture.
+function primeBgMusic() {
+  if (bgPrimed || !bgAudio) return;
+  bgPrimed = true;
+  bgAudio.volume = 0;
+  // load() forces the browser to start fetching even if preload was lazy
+  try { bgAudio.load(); } catch {}
+  bgAudio.play().then(() => {
+    console.log('[naad] bg music primed (silent)');
+  }).catch(err => {
+    console.warn('[naad] bg music prime blocked:', err.name, err.message);
+    bgPrimed = false; // allow another attempt later
+  });
+}
+
+// Called once when the user enters the home screen. Crossfade in.
+function startBgMusicFadeIn() {
+  if (bgFadedIn || !bgAudio) return;
+  // If the file hasn't downloaded enough to play, queue and let `canplay`
+  // re-invoke this once it's ready.
+  if (bgAudio.readyState < 2) {
+    bgFadeQueued = true;
+    console.log('[naad] bg music not ready yet (readyState=' + bgAudio.readyState + '), waiting for canplay');
+    return;
+  }
+  bgFadedIn = true;
+  if (bgAudio.paused) {
+    bgAudio.play().catch(err => console.warn('[naad] bg music play blocked:', err.name, err.message));
+  }
+  bgFadeVolume(bgAudio, bgAudio.volume || 0, BG_TARGET_VOLUME, BG_FADE_IN_MS);
+  document.getElementById('audioToggle')?.classList.add('show');
+}
+
+function toggleBgMusic() {
+  const audio = bgAudio;
+  const btn = document.getElementById('audioToggle');
+  if (!audio || !btn) return;
+  if (btn.classList.contains('muted')) {
+    btn.classList.remove('muted');
+    if (audio.paused) audio.play().catch(err => console.warn('[naad] unmute play blocked:', err));
+    bgFadeVolume(audio, audio.volume || 0, BG_TARGET_VOLUME, BG_TOGGLE_MS);
+  } else {
+    bgFadeVolume(audio, audio.volume, 0, BG_TOGGLE_MS, () => btn.classList.add('muted'));
+  }
+}
+
+document.getElementById('audioToggle')?.addEventListener('click', toggleBgMusic);
+
+// Browsers require a user gesture to enter fullscreen — we can't trigger it
+// on page load. The splash doubles as the gesture: the first tap on it both
+// requests fullscreen AND advances to the welcome screen. iOS Safari ignores
+// requestFullscreen for non-video elements; on iOS the chrome-less PWA path
+// is "Add to Home Screen" (apple-mobile-web-app-capable meta is already set).
+let fullscreenRequested = false;
+function requestAppFullscreen() {
+  if (fullscreenRequested) return;
+  fullscreenRequested = true;
+  const el = document.documentElement;
+  const req = el.requestFullscreen || el.webkitRequestFullscreen
+            || el.mozRequestFullScreen || el.msRequestFullscreen;
+  if (req) {
+    try { req.call(el).catch(() => {}); } catch {}
+  }
+  try { screen.orientation?.lock?.('portrait').catch(() => {}); } catch {}
+}
+
+let splashDismissed = false;
+function dismissSplash() {
+  if (splashDismissed) return;
+  splashDismissed = true;
   const splash = document.getElementById('screen-splash');
   if (splash) splash.classList.add('fade-out');
   setTimeout(() => {
     go('welcome');
     startChatFlow();
   }, 480);
-}, 1600);
+}
+
+// === Boot flow ===
+// First-time user: splash → tap → fullscreen + audio prime + onboarding.
+// Returning user: rehydrate from localStorage and land on home immediately,
+// skipping the splash entirely. Audio + fullscreen still need a user gesture
+// to engage (browser policy), so the first tap on home triggers them.
+const isReturningUser = loadStoredUser();
+
+if (isReturningUser) {
+  // Hide the splash so it never flashes on screen
+  splashDismissed = true;
+  const splash = document.getElementById('screen-splash');
+  if (splash) splash.classList.remove('active');
+  go('home');
+  // First tap anywhere on the page primes audio + requests fullscreen.
+  // We defer the fade-in slightly so play() resolves before we ramp volume.
+  document.addEventListener('pointerdown', () => {
+    requestAppFullscreen();
+    primeBgMusic();
+    setTimeout(() => startBgMusicFadeIn(), 200);
+  }, { once: true, capture: true });
+} else {
+  // First-time user — splash with Tap to Enter is the gesture
+  document.getElementById('screen-splash')?.addEventListener('pointerdown', () => {
+    requestAppFullscreen();
+    primeBgMusic();
+    dismissSplash();
+  }, { once: true });
+  document.addEventListener('pointerdown', requestAppFullscreen, { once: true, capture: true });
+  // Safety net: if the user never taps, auto-advance after 5s (no fullscreen)
+  setTimeout(dismissSplash, 5000);
+}
 
 // When Firestore session history loads after page render,
-// refresh the home tracker so streak + week dots reflect real data.
+// refresh the home tracker AND fetch the referral count so the lock state
+// reflects real data on every screen that depends on it.
 window.onSessionsLoaded = () => {
   if (state.currentScreen === 'home') renderCheckin();
+  refreshReferralState();
 };
 </script>
 
