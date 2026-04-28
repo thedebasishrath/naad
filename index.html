@@ -525,7 +525,7 @@
   .banner {
     margin: 8px 24px 24px;
     background: var(--gradient-banner);
-    border-radius: 22px; padding: 20px 22px;
+    border-radius: 22px; padding: 28px 22px 30px;
     position: relative; overflow: hidden;
     box-shadow: 0 4px 18px rgba(196, 65, 12, 0.16);
     transition: transform 0.15s;
@@ -1219,6 +1219,38 @@
   }
   .field input::placeholder { color: var(--warm-gray-light); }
   .field-error { color: var(--saffron-deep); font-size: 12px; margin-top: 6px; font-style: italic; display: none; }
+  .time-input-group {
+    display: flex;
+    gap: 10px;
+    align-items: stretch;
+  }
+  .time-input-group input { flex: 1; min-width: 0; }
+  .meridiem-toggle {
+    display: flex;
+    background: var(--paper-soft);
+    border: 1px solid transparent;
+    border-radius: 12px;
+    padding: 3px;
+    flex-shrink: 0;
+  }
+  .meridiem-btn {
+    padding: 0 16px;
+    border: none;
+    background: transparent;
+    color: var(--warm-gray);
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    border-radius: 9px;
+    cursor: pointer;
+    transition: background 0.2s, color 0.2s, box-shadow 0.2s;
+  }
+  .meridiem-btn.active {
+    background: #FFFFFF;
+    color: var(--ink);
+    box-shadow: 0 1px 3px rgba(31, 22, 17, 0.12);
+  }
+  .meridiem-btn:active { transform: scale(0.96); }
   .field.has-error input, .field.has-error select { border-color: var(--saffron-deep); }
   .field.has-error .field-error { display: block; }
   .field-help {
@@ -1830,8 +1862,14 @@
     </div>
     <div class="field" id="fieldTime">
       <label>Time of birth <span class="opt">— optional, unlocks Lagna</span></label>
-      <input type="text" id="inputTime" placeholder="HH : MM (24h)" value="06 : 22" inputmode="numeric">
-      <div class="field-error">Use HH : MM (24-hour)</div>
+      <div class="time-input-group">
+        <input type="text" id="inputTime" placeholder="HH:MM" value="06:22" inputmode="numeric" maxlength="5">
+        <div class="meridiem-toggle" id="meridiemToggle">
+          <button type="button" class="meridiem-btn active" data-meridiem="AM">AM</button>
+          <button type="button" class="meridiem-btn" data-meridiem="PM">PM</button>
+        </div>
+      </div>
+      <div class="field-error">Use HH:MM (12-hour)</div>
     </div>
     <div class="field" id="fieldPlace">
       <label>Place of birth</label>
@@ -2908,7 +2946,7 @@ function renderBanner() {
     const todayLord = todayPlanet();
     const ascText = c.ascendant ? ` · ${c.ascendant.en} rising` : '';
     slot.innerHTML = `<div class="banner banner-chart" data-go="horoscope">
-      <div class="banner-title">Today's chart</div>
+      <div class="banner-title">Today's Horoscope</div>
       <div class="banner-sub">${c.moon.en} Moon${ascText} · Today: ${todayLord}</div>
       <div class="banner-arrow">→</div>
     </div>`;
@@ -3256,8 +3294,13 @@ function parseTime(s) {
   if (!s.trim()) return { skipped: true };
   const m = s.replace(/\s+/g, '').match(/^(\d{1,2}):(\d{2})$/);
   if (!m) return null;
-  const hour = +m[1], minute = +m[2];
-  if (hour < 0 || hour > 23 || minute < 0 || minute > 59) return null;
+  let hour = +m[1];
+  const minute = +m[2];
+  // 12-hour input (1–12), converted to 24-hour using the AM/PM toggle.
+  if (hour < 1 || hour > 12 || minute < 0 || minute > 59) return null;
+  const meridiem = document.querySelector('.meridiem-btn.active')?.dataset.meridiem || 'AM';
+  if (meridiem === 'AM' && hour === 12)      hour = 0;
+  else if (meridiem === 'PM' && hour < 12)   hour += 12;
   return { hour, minute, skipped: false };
 }
 // Auto-insert slashes as the user types DD/MM/YYYY. Strips non-digits, caps
@@ -3269,6 +3312,22 @@ $('#inputDate').addEventListener('input', e => {
   if (digits.length > 4)      out = digits.slice(0, 2) + '/' + digits.slice(2, 4) + '/' + digits.slice(4);
   else if (digits.length > 2) out = digits.slice(0, 2) + '/' + digits.slice(2);
   if (e.target.value !== out) e.target.value = out;
+});
+
+// Same idea for time — auto-insert colon after the 2nd digit (HH:MM, 12-hour).
+$('#inputTime').addEventListener('input', e => {
+  const digits = e.target.value.replace(/\D/g, '').slice(0, 4);
+  let out = digits;
+  if (digits.length > 2) out = digits.slice(0, 2) + ':' + digits.slice(2);
+  if (e.target.value !== out) e.target.value = out;
+});
+
+// AM/PM segmented toggle — single-select within the meridiem group
+document.querySelectorAll('.meridiem-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.meridiem-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+  });
 });
 
 $('#btnCalculate').addEventListener('click', () => {
