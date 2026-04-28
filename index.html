@@ -7,7 +7,7 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <meta name="format-detection" content="telephone=no">
-<title>Naad</title>
+<title>Saarthi — Your Spiritual Guide</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@300;400;500;600;700;800&family=Noto+Sans+Devanagari:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -167,6 +167,15 @@
     color: var(--warm-gray);
     letter-spacing: 0.32em;
     animation: splashFade 0.7s 0.55s both;
+  }
+  #screen-splash .splash-tagline {
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.24em;
+    text-transform: uppercase;
+    color: var(--warm-gray-light);
+    margin-top: 4px;
+    animation: splashFade 0.7s 0.7s both;
   }
   #screen-splash {
     cursor: pointer;
@@ -1664,9 +1673,10 @@
 
 <!-- 01 WELCOME -->
 <div class="screen active" id="screen-splash">
-  <img class="splash-logo" src="https://raw.githubusercontent.com/thedebasishrath/naad/main/ganesha.webp" alt="Naad" decoding="async">
-  <div class="splash-wordmark">Naad</div>
-  <div class="splash-deva">नाद</div>
+  <img class="splash-logo" src="https://raw.githubusercontent.com/thedebasishrath/naad/main/ganesha.webp" alt="Saarthi" decoding="async">
+  <div class="splash-wordmark">Saarthi</div>
+  <div class="splash-deva">सारथी</div>
+  <div class="splash-tagline">Your Spiritual Guide</div>
   <button class="splash-cta" type="button">
     <span>Tap to Enter</span>
     <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
@@ -1677,9 +1687,9 @@
 
 <div class="screen" id="screen-welcome">
   <div class="chat-header">
-    <div class="chat-header-avatar"><img src="https://raw.githubusercontent.com/thedebasishrath/naad/main/ganesha.webp" alt="Naad" decoding="async"></div>
+    <div class="chat-header-avatar"><img src="https://raw.githubusercontent.com/thedebasishrath/naad/main/ganesha.webp" alt="Saarthi" decoding="async"></div>
     <div class="chat-header-info">
-      <div class="chat-header-name">Naad</div>
+      <div class="chat-header-name">Saarthi</div>
       <div class="chat-header-status">online</div>
     </div>
   </div>
@@ -2105,53 +2115,54 @@
     }
   }
 
-  // Friend invite from the horoscope unlock flow. Captures the friend's name +
-  // phone, deduplicates against the existing `users` collection by phone, and
-  // records the referral so the inviter's lock opens. If the friend already
-  // exists (e.g., invited by someone else earlier or a real user), we reuse
-  // that record instead of creating a duplicate.
+  // Friend invite from the horoscope unlock flow. Writes to a SEPARATE `leads`
+  // collection (not `users`) so prospects stay distinct from real signed-up
+  // users. Each lead row carries the inviter's uid via `referredBy`. Dedup is
+  // by phone within `leads` — re-inviting the same number reuses the row.
   async function inviteFriend(name, phone) {
     if (!name || !phone) return { ok: false, error: 'Missing fields' };
 
-    let friendUid;
-    let friendDocId;
+    let leadUid;
+    let leadDocId;
     try {
-      const usersSnap = await getDocs(query(collection(db, 'users'), where('phone', '==', phone)));
-      if (!usersSnap.empty) {
-        const doc0 = usersSnap.docs[0];
-        friendDocId = doc0.id;
-        friendUid = doc0.data().uid || doc0.id;
-        console.log('[naad] invite: matched existing user for', phone, '→', friendUid);
+      const leadsSnap = await getDocs(query(collection(db, 'leads'), where('phone', '==', phone)));
+      if (!leadsSnap.empty) {
+        const doc0 = leadsSnap.docs[0];
+        leadDocId = doc0.id;
+        leadUid = doc0.data().leadUid || doc0.id;
+        console.log('[naad] invite: matched existing lead for', phone, '→', leadUid);
       } else {
-        friendUid = 'inv_' + Date.now().toString(36) + '_' + Math.random().toString(36).slice(2, 8);
-        const ref = await addDoc(collection(db, 'users'), {
-          uid: friendUid,
+        leadUid = 'lead_' + Date.now().toString(36) + '_' + Math.random().toString(36).slice(2, 8);
+        const ref = await addDoc(collection(db, 'leads'), {
+          leadUid,
           name,
           phone,
           referredBy: uid,
-          source: 'invited',
+          status: 'invited',
           createdAt: serverTimestamp()
         });
-        friendDocId = ref.id;
-        console.log('[naad] invite: created new user', friendUid, '(doc', ref.id + ')');
+        leadDocId = ref.id;
+        console.log('[naad] invite: created new lead', leadUid, '(doc', ref.id + ')');
       }
     } catch (err) {
-      console.error('[naad] inviteFriend user upsert failed', err.code || '', err.message || err);
+      console.error('[naad] inviteFriend lead upsert failed', err.code || '', err.message || err);
       return { ok: false, error: 'Couldn\'t save your friend\'s details. Please try again.' };
     }
 
-    // Dedup the referrals row too — same inviter + same friend = at most one entry.
+    // Dedup the referrals row too — same inviter + same lead = at most one entry.
+    // The referrals collection still drives the unlock count.
     try {
       const refSnap = await getDocs(query(
         collection(db, 'referrals'),
         where('referrerUid', '==', uid),
-        where('refereeUid', '==', friendUid)
+        where('refereeUid', '==', leadUid)
       ));
       if (refSnap.empty) {
         await addDoc(collection(db, 'referrals'), {
           referrerUid: uid,
-          refereeUid: friendUid,
-          friendDocId,
+          refereeUid: leadUid,
+          leadDocId,
+          source: 'invite-form',
           createdAt: serverTimestamp()
         });
       } else {
@@ -2161,7 +2172,7 @@
       console.error('[naad] inviteFriend referral upsert failed', err.code || '', err.message || err);
     }
 
-    return { ok: true, friendUid };
+    return { ok: true, leadUid };
   }
 
   window.naadDB = {
@@ -2834,7 +2845,7 @@ function buildReferLink() {
   return code ? `${SHARE_URL}${sep}ref=${encodeURIComponent(code)}` : SHARE_URL;
 }
 function buildReferText() {
-  return `I've been using Naad — a quiet little app for daily mantras and a morning prediction. Try it and unlock yours: ${buildReferLink()}`;
+  return `I've been using Saarthi — a quiet little app for daily mantras and a morning prediction. Try it and unlock yours: ${buildReferLink()}`;
 }
 
 function referFriend() {
@@ -2843,7 +2854,7 @@ function referFriend() {
   if (navigator.share) {
     // Pass `url` separately for share targets that prefer the canonical field
     // (Twitter, some Android share sheets). WhatsApp linkifies from text either way.
-    navigator.share({ title: 'Naad', text, url }).catch(() => {});
+    navigator.share({ title: 'Saarthi', text, url }).catch(() => {});
   } else {
     window.open('https://wa.me/?text=' + encodeURIComponent(text), '_blank');
   }
@@ -2957,7 +2968,7 @@ async function handleInviteSubmit(e) {
   const friendFirstName = name.split(/\s+/)[0];
   const inviteLink = buildReferLink();
   const waText =
-    `Hey ${friendFirstName}! I just added you on Naad 🙏 — a quiet little app for daily mantras and your personal morning prediction. Try it here: ${inviteLink}`;
+    `Hey ${friendFirstName}! I just added you on Saarthi 🙏 — a quiet little app for daily mantras and your personal morning prediction. Try it here: ${inviteLink}`;
   const waUrl = `https://wa.me/${phone.replace(/\D/g, '')}?text=${encodeURIComponent(waText)}`;
   try { window.open(waUrl, '_blank'); } catch (err) {
     console.warn('[naad] WhatsApp open failed:', err);
@@ -3320,7 +3331,7 @@ async function generateShareCard(mantra, contextLabel) {
   ctx.fillStyle = '#D4A574';
   ctx.font = '600 32px "Manrope", sans-serif';
   ctx.textAlign = 'center';
-  drawLetterSpaced(ctx, 'NAAD', W / 2, brandY + 6, 12);
+  drawLetterSpaced(ctx, 'SAARTHI', W / 2, brandY + 6, 10);
 
   ctx.fillStyle = 'rgba(212, 165, 116, 0.5)';
   ctx.font = '400 18px "Manrope", sans-serif';
@@ -3364,7 +3375,7 @@ async function openShareModal() {
   const p = PROBLEMS_DB[state.currentProblem];
   const contextLabel = p ? p.contextLabel : 'A mantra for today';
   const shareUrl = SHARE_URL;
-  const shareText = `${m.trans}\n— ${m.meaning}\n\nListen on Naad: ${shareUrl}`;
+  const shareText = `${m.trans}\n— ${m.meaning}\n\nListen on Saarthi: ${shareUrl}`;
 
   $('#shareModal').classList.add('show');
   $('#sharePreviewWrap').innerHTML = '<div class="spinner"></div><div>Generating your card…</div>';
@@ -3393,7 +3404,7 @@ async function openShareModal() {
             files: [file],
             text: shareText,
             url: shareUrl,
-            title: 'Mantra from Naad'
+            title: 'Mantra from Saarthi'
           });
           return;
         } catch (err) {
@@ -3640,7 +3651,7 @@ function startChatFlow() {
 
   setTimeout(() => {
     chatBotSequence([
-      ['<span class="deva">नमस्ते</span> 🙏 Welcome to <strong>Naad</strong>.', 320],
+      ['<span class="deva">नमस्ते</span> 🙏 Welcome to <strong>Saarthi</strong> — your spiritual guide.', 320],
       ['Whatever\'s troubling you — stress, money worries, fear, heartbreak, even a quiet ache at home — your birth chart already carries the answer.', 420],
       ['I\'ll read your stars, find the root of what\'s pulling you down, and give you the exact <strong>Vedic mantra</strong> meant for that wound. A few minutes a day, and the shift begins.', 420],
       ['What\'s your name?']
@@ -3709,12 +3720,12 @@ function handleChatSubmit() {
     const firstName = escapeHtml(chat.userName.split(' ')[0]);
     const wrapup = chat.userIsIndian ? [
       [`Bahut khoob, <strong>${firstName}</strong>!`, 280],
-      ['<strong>Naad</strong> par aapko zindagi ki har problem ka mantra solution milega — stress, paise ki tension, dar, dil ka dard, family ki uljhanein, sab kuch.', 360],
+      ['<strong>Saarthi</strong> par aapko zindagi ki har problem ka mantra solution milega — stress, paise ki tension, dar, dil ka dard, family ki uljhanein, sab kuch.', 360],
       ['Har mantra Vedas aur prachin shastron se nikla hua hai — saalon ki sadhana se banaya gaya <span class="deva">ध्वनि</span> ka power.', 320],
       [`Bas thoda ruko, <strong>${firstName}</strong> — aapke mantras taiyaar ho rahe hain…`]
     ] : [
       [`Wonderful, <strong>${firstName}</strong>.`, 280],
-      ['At <strong>Naad</strong>, you\'ll find spiritual mantra solutions for every problem life brings — stress, anxiety, fear, heartbreak, money worries, grief, and more.', 360],
+      ['At <strong>Saarthi</strong>, you\'ll find spiritual mantra solutions for every problem life brings — stress, anxiety, fear, heartbreak, money worries, grief, and more.', 360],
       ['Each mantra is sourced from the Vedas and ancient texts — a precise sound tool refined over centuries.', 320],
       ['Please wait — we\'re preparing your mantras…']
     ];
